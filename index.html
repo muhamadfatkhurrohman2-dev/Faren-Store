@@ -1,0 +1,2653 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Toko Online 7 — Faren Store</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter','Segoe UI',Tahoma,sans-serif}
+:root{--primary:#2b2540;--primary-dark:#1b1730;--primary-light:#463f60;--secondary:#7d5a63;--accent:#b08a5c;--accent-light:#d3b489;--success:#4a7a66;--danger:#a84a4a;--warning:#b8903f;--bg:#f4f0e8;--bg-2:#ebe4d8;--card:#fffdfa;--text:#221e2e;--text-light:#6a6478;--border:#e2dacd;--shadow:0 2px 8px rgba(43,37,64,.06),0 8px 24px rgba(43,37,64,.05);--shadow-lg:0 12px 40px rgba(43,37,64,.14);--radius:14px;--font-serif:'Playfair Display',Georgia,serif}
+body.dark{--primary:#332c4a;--primary-dark:#241f36;--primary-light:#4a4166;--secondary:#8f6a72;--accent:#c9a877;--accent-light:#d3b489;--bg:#100e17;--bg-2:#16141e;--card:#1b1826;--text:#efe9dd;--text-light:#9b96a6;--border:#2a2638;--shadow:0 2px 8px rgba(0,0,0,.45);--shadow-lg:0 12px 40px rgba(0,0,0,.55)}
+body{background:linear-gradient(180deg,var(--bg) 0%,var(--bg-2) 100%);color:var(--text);line-height:1.55;transition:background .3s,color .3s;overflow-x:hidden;min-height:100vh}
+img{max-width:100%;display:block}
+button{cursor:pointer;font-family:inherit;border:none;background:none;color:inherit}
+input,textarea,select{font-family:inherit}
+a{color:inherit;text-decoration:none}
+h1,h2,h3,h4{font-family:var(--font-serif);letter-spacing:-.3px}
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--primary-light);border-radius:4px}
+.topbar{background:linear-gradient(90deg,var(--primary),var(--secondary));color:#f2ece0;padding:9px 24px;font-size:13px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.topbar-left,.topbar-right{display:flex;gap:20px;align-items:center;flex-wrap:wrap}
+.topbar a{opacity:.92}.topbar a:hover{opacity:1}
+header{background:var(--card);padding:16px 24px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:100;box-shadow:var(--shadow);flex-wrap:wrap;border-bottom:1px solid var(--border)}
+.logo{font-family:var(--font-serif);font-size:24px;font-weight:800;color:var(--primary);display:flex;align-items:center;gap:8px;cursor:pointer;white-space:nowrap}
+body.dark .logo{color:var(--accent-light)}
+.logo .logo-mark{width:36px;height:36px;background:linear-gradient(135deg,var(--primary),var(--secondary));border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px;font-weight:800}
+.search-wrapper{flex:1;min-width:200px;position:relative;max-width:520px}
+.search-wrapper input{width:100%;padding:12px 45px 12px 44px;border:1.5px solid var(--border);border-radius:25px;background:var(--bg);color:var(--text);font-size:14px;outline:none;transition:all .2s}
+.search-wrapper input:focus{border-color:var(--accent);box-shadow:0 0 0 4px rgba(176,138,92,.14)}
+.search-wrapper .search-icon{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:var(--text-light);pointer-events:none}
+.search-wrapper .clear-search{position:absolute;right:16px;top:50%;transform:translateY(-50%);color:var(--text-light);display:none}
+.search-suggestions{position:absolute;top:calc(100% + 8px);left:0;right:0;background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow-lg);max-height:350px;overflow-y:auto;display:none;z-index:50;border:1px solid var(--border)}
+.search-suggestions.active{display:block}
+.suggestion-item{padding:10px 15px;display:flex;gap:12px;align-items:center;cursor:pointer;transition:background .15s}
+.suggestion-item:hover{background:var(--bg)}
+.suggestion-item .sug-img{width:44px;height:44px;background:linear-gradient(135deg,var(--bg),var(--border));border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;overflow:hidden}
+.suggestion-item .sug-img img{width:100%;height:100%;object-fit:cover}
+.suggestion-item .sug-info{flex:1;min-width:0}
+.suggestion-item .sug-name{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.suggestion-item .sug-price{font-size:12px;color:var(--accent);font-weight:700}
+.header-actions{display:flex;align-items:center;gap:6px;position:relative}
+.icon-btn{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;position:relative;font-size:18px;transition:background .2s;color:var(--text)}
+.icon-btn:hover{background:var(--bg)}
+.badge{position:absolute;top:-2px;right:-2px;background:var(--accent);color:#1a1728;border-radius:10px;min-width:20px;height:20px;font-size:11px;display:flex;align-items:center;justify-content:center;font-weight:800;padding:0 5px;border:2px solid var(--card)}
+.badge.hidden{display:none}
+nav.main-nav{background:var(--card);padding:0 24px;display:flex;gap:4px;overflow-x:auto;border-bottom:1px solid var(--border);scrollbar-width:none}
+nav.main-nav::-webkit-scrollbar{display:none}
+nav.main-nav button{padding:14px 18px;color:var(--text-light);font-weight:500;font-size:14px;white-space:nowrap;border-bottom:2px solid transparent;transition:all .2s;display:flex;align-items:center;gap:4px}
+nav.main-nav button:hover{color:var(--primary)}
+nav.main-nav button.active{color:var(--primary);border-bottom-color:var(--accent);font-weight:700}
+body.dark nav.main-nav button:hover,body.dark nav.main-nav button.active{color:var(--accent-light)}
+.nav-voucher-count{background:var(--accent);color:#1b1730;border-radius:10px;padding:1px 7px;font-size:10px;font-weight:800;min-width:18px;text-align:center}
+.features-top{margin:24px;display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.feature-top-card{background:var(--card);border:1.5px solid var(--border);border-radius:16px;padding:22px 20px;display:flex;align-items:center;gap:16px;transition:all .3s;position:relative;overflow:hidden}
+.feature-top-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent-light));transform:scaleX(0);transform-origin:left;transition:transform .4s}
+.feature-top-card:hover{transform:translateY(-6px);border-color:var(--accent);box-shadow:0 12px 32px rgba(176,138,92,.18),var(--shadow-lg)}
+.feature-top-card:hover::before{transform:scaleX(1)}
+.feature-top-icon{width:56px;height:56px;background:linear-gradient(135deg,var(--primary),var(--primary-light));border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;box-shadow:0 6px 16px rgba(43,37,64,.25);transition:transform .3s}
+.feature-top-text h4{font-size:15px;margin-bottom:3px;font-weight:800;color:var(--text)}
+.feature-top-text p{font-size:12px;color:var(--text-light);line-height:1.4}
+.hero{margin:0 24px 24px;border-radius:20px;overflow:hidden;position:relative;height:340px;box-shadow:var(--shadow-lg)}
+.slide{position:absolute;inset:0;display:flex;align-items:center;padding:50px 60px;opacity:0;transition:opacity .7s;color:#f2ece0}
+.slide.active{opacity:1}
+.slide-1{background:linear-gradient(135deg,#2b2540 0%,#463f60 100%)}
+.slide-2{background:linear-gradient(135deg,#7d5a63 0%,#9e7a82 100%)}
+.slide-3{background:linear-gradient(135deg,#b08a5c 0%,#d3b489 100%);color:#2b2540}
+.slide-content{max-width:520px;z-index:2}
+.slide-content .eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:3px;font-weight:700;opacity:.85;margin-bottom:12px}
+.slide-content h2{font-size:44px;margin-bottom:14px;line-height:1.15}
+.slide-content p{font-size:16px;margin-bottom:24px;opacity:.92}
+.slide-content button{padding:13px 32px;background:#f2ece0;color:#2b2540;border-radius:30px;font-weight:700;font-size:14px;transition:transform .2s;letter-spacing:.5px;border:none;cursor:pointer}
+.slide-3 .slide-content button{background:#2b2540;color:#f2ece0}
+.slide-emoji{position:absolute;right:60px;top:50%;transform:translateY(-50%);font-size:170px;opacity:.28}
+.slider-dots{position:absolute;bottom:22px;left:50%;transform:translateX(-50%);display:flex;gap:8px;z-index:3}
+.slider-dots span{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.5);cursor:pointer;transition:all .3s}
+.slider-dots span.active{background:#f2ece0;width:28px;border-radius:5px}
+.section-header{display:flex;justify-content:space-between;align-items:center;padding:24px 24px 14px;flex-wrap:wrap;gap:12px}
+.section-title{font-size:26px;font-weight:700;display:flex;align-items:center;gap:12px}
+.section-title::before{content:'';width:4px;height:26px;background:var(--accent);border-radius:2px}
+.view-all{color:var(--accent);font-weight:700;font-size:13px;letter-spacing:.3px}
+body.dark .view-all{color:var(--accent-light)}
+.controls{padding:12px 24px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;justify-content:space-between}
+.filter-chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{padding:8px 18px;background:var(--card);border:1.5px solid var(--border);color:var(--text);border-radius:20px;font-size:13px;font-weight:500;transition:all .2s}
+.chip:hover{border-color:var(--accent);color:var(--accent)}
+.chip.active{background:var(--primary);border-color:var(--primary);color:#f2ece0;font-weight:600}
+.sort-select{padding:9px 18px;border:1.5px solid var(--border);border-radius:20px;background:var(--card);color:var(--text);font-size:13px;outline:none;cursor:pointer;font-weight:500}
+.products-grid{padding:12px 24px 20px;display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:22px}
+.product-card{background:var(--card);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);transition:transform .3s,box-shadow .3s;display:flex;flex-direction:column;position:relative;cursor:pointer;border:1px solid var(--border)}
+.product-card:hover{transform:translateY(-6px);box-shadow:var(--shadow-lg);border-color:var(--accent)}
+.product-badge{position:absolute;top:12px;left:12px;padding:5px 11px;border-radius:6px;font-size:10px;font-weight:800;color:#fff;z-index:3;text-transform:uppercase;letter-spacing:.8px;box-shadow:0 3px 10px rgba(0,0,0,.25)}
+.badge-new{background:linear-gradient(135deg,#4a7a66,#5e947e)}
+.badge-sale{background:linear-gradient(135deg,#a84a4a,#c26a6a)}
+.badge-hot{background:linear-gradient(135deg,#b8903f,#d4a854)}
+.badge-trend{background:linear-gradient(135deg,#5a4d8a,#7a6aa8)}
+.badge-best{background:linear-gradient(135deg,#b08a5c,#d3b489);color:#1b1730}
+.badge-limited{background:linear-gradient(135deg,#1b1730,#2b2540);border:1px solid var(--accent)}
+.wishlist-btn{position:absolute;top:12px;right:12px;width:36px;height:36px;background:rgba(255,253,250,.95);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:var(--shadow);z-index:3}
+.wishlist-btn.active{color:var(--danger)}
+.product-img{width:100%;height:220px;background:linear-gradient(135deg,var(--bg),var(--border));display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;font-size:80px}
+.product-img img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;z-index:2}
+.product-img .img-fallback{display:flex;align-items:center;justify-content:center;font-size:80px;width:100%;height:100%}
+.product-info{padding:16px;flex:1;display:flex;flex-direction:column}
+.product-category{font-size:10px;color:var(--accent);text-transform:uppercase;letter-spacing:1.2px;font-weight:800;margin-bottom:6px}
+.product-name{font-size:15px;font-weight:600;margin-bottom:8px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:42px;line-height:1.4}
+.product-rating{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--text-light);margin-bottom:10px}
+.product-rating .stars{color:var(--accent);font-size:13px}
+.product-price-row{display:flex;align-items:baseline;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+.price-current{font-size:18px;font-weight:800;color:var(--primary)}
+body.dark .price-current{color:var(--accent-light)}
+.price-old{font-size:12px;color:var(--text-light);text-decoration:line-through}
+.btn-add{margin-top:auto;padding:11px;background:linear-gradient(135deg,var(--primary),var(--primary-light));color:#f2ece0;border-radius:9px;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;gap:6px}
+.btn-add:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(43,37,64,.3)}
+.promo-section{padding:0 24px;margin:20px 0}
+.promo-scroll{display:grid;grid-template-columns:repeat(auto-fill,minmax(285px,1fr));gap:16px}
+.promo-card{border-radius:16px;padding:20px;color:#fff;position:relative;overflow:hidden;box-shadow:var(--shadow-lg);display:flex;flex-direction:column;gap:8px;min-height:180px;border:1px solid rgba(255,255,255,.12)}
+.promo-card::before{content:'';position:absolute;right:-30px;bottom:-30px;width:150px;height:150px;background:rgba(255,255,255,.13);border-radius:50%;pointer-events:none}
+.promo-card::after{content:'';position:absolute;right:40px;top:-40px;width:90px;height:90px;background:rgba(255,255,255,.09);border-radius:50%;pointer-events:none}
+.promo-emoji{position:absolute;right:16px;top:16px;font-size:46px;opacity:.9;z-index:1;filter:drop-shadow(0 4px 10px rgba(0,0,0,.2))}
+.promo-badge{display:inline-block;padding:3px 11px;background:rgba(255,255,255,.24);border-radius:12px;font-size:10px;font-weight:800;letter-spacing:1px;width:fit-content;position:relative;z-index:1}
+.promo-card h3{font-size:19px;color:#fff;line-height:1.22;max-width:76%;position:relative;z-index:1;font-weight:800}
+.promo-card p{font-size:12px;opacity:.93;max-width:78%;line-height:1.5;position:relative;z-index:1}
+.promo-discount{font-size:32px;font-weight:800;font-family:var(--font-serif);line-height:1;position:relative;z-index:1;color:#fff}
+.promo-actions{display:flex;gap:8px;margin-top:auto;flex-wrap:wrap;position:relative;z-index:1}
+.promo-btn{padding:9px 16px;border-radius:20px;font-size:12px;font-weight:800;border:none;cursor:pointer;transition:all .2s}
+.promo-btn.claim{background:#fff;color:#2b2540}
+.promo-btn.claim:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(0,0,0,.25)}
+.promo-btn.claim:disabled{background:rgba(255,255,255,.35);cursor:not-allowed;transform:none;box-shadow:none}
+.promo-btn.shop{background:rgba(255,255,255,.18);color:#fff;border:1px solid rgba(255,255,255,.45)}
+.promo-btn.shop:hover{background:rgba(255,255,255,.3)}
+.promo-empty{grid-column:1/-1;text-align:center;padding:40px 20px;color:var(--text-light);background:var(--card);border:1.5px dashed var(--border);border-radius:14px}
+.promo-empty .emoji{font-size:52px;opacity:.4;margin-bottom:10px}
+.promo-wrap{grid-column:1/-1;width:100%}
+.promo-page-header{background:linear-gradient(135deg,var(--primary),var(--secondary));color:#f2ece0;padding:26px 32px;border-radius:16px;margin-bottom:20px;position:relative;overflow:hidden;box-shadow:var(--shadow-lg)}
+.promo-page-header::before{content:'🔥';position:absolute;right:20px;top:50%;transform:translateY(-50%);font-size:140px;opacity:.09}
+.promo-page-header h2{font-size:26px;color:#fff;margin-bottom:4px;position:relative}
+.promo-page-header p{font-size:13px;opacity:.9;position:relative}
+.voucher-page-wrap{grid-column:1/-1;width:100%}
+.voucher-page-header{background:linear-gradient(135deg,var(--primary),var(--secondary));color:#f2ece0;padding:26px 32px;border-radius:16px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:20px;box-shadow:var(--shadow-lg);position:relative;overflow:hidden}
+.voucher-page-header::before{content:'🎫';position:absolute;right:20px;top:50%;transform:translateY(-50%);font-size:140px;opacity:.08}
+.voucher-page-header h2{font-size:26px;color:#fff;margin-bottom:4px;display:flex;align-items:center;gap:8px;position:relative}
+.voucher-page-header p{font-size:13px;opacity:.9;position:relative}
+.voucher-stats{display:flex;gap:22px;position:relative}
+.voucher-stat{text-align:center}
+.voucher-stat .num{font-size:26px;font-weight:800;color:var(--accent-light);line-height:1.1}
+.voucher-stat .lbl{font-size:10px;text-transform:uppercase;letter-spacing:.8px;opacity:.85;margin-top:2px}
+.voucher-tabs{display:flex;gap:6px;margin-bottom:16px;background:var(--card);padding:6px;border-radius:10px;border:1px solid var(--border);flex-wrap:wrap}
+.voucher-tab{padding:10px 18px;border-radius:8px;background:transparent;font-weight:700;font-size:13px;color:var(--text-light);cursor:pointer;border:none;display:flex;align-items:center;gap:6px;transition:all .2s}
+.voucher-tab.active{background:var(--primary);color:#fff}
+.voucher-tab:hover:not(.active){background:var(--bg)}
+.voucher-cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+.voucher-card{background:var(--card);border-radius:14px;border:1.5px solid var(--border);overflow:hidden;transition:all .3s;position:relative}
+.voucher-card:hover{border-color:var(--accent);transform:translateY(-3px);box-shadow:var(--shadow-lg)}
+.voucher-card-top{background:linear-gradient(135deg,var(--primary),var(--secondary));color:#fff;padding:18px 20px;position:relative;overflow:hidden}
+.voucher-card-top::before,.voucher-card-top::after{content:'';position:absolute;width:26px;height:26px;background:var(--bg);border-radius:50%;bottom:-13px;z-index:2}
+.voucher-card-top::before{left:-13px}
+.voucher-card-top::after{right:-13px}
+.voucher-card-top .v-source{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;background:rgba(255,255,255,.22);border-radius:12px;font-size:9px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;margin-bottom:8px}
+.voucher-card-top .v-value{font-size:32px;font-weight:800;font-family:var(--font-serif);line-height:1.1}
+.voucher-card-top .v-min{font-size:11px;opacity:.85;margin-top:4px}
+.voucher-card-status{position:absolute;top:14px;right:14px;padding:4px 10px;border-radius:10px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;z-index:3}
+.voucher-card-status.active{background:rgba(255,255,255,.25);color:#fff;border:1px solid rgba(255,255,255,.4)}
+.voucher-card-status.used{background:rgba(168,74,74,.95);color:#fff}
+.voucher-card-status.expired{background:rgba(80,80,90,.95);color:#fff}
+.voucher-card.expired{opacity:.65}
+.voucher-card-body{padding:16px 20px}
+.voucher-card-title{font-size:14px;font-weight:800;margin-bottom:6px;color:var(--text);line-height:1.35}
+.voucher-card-desc{font-size:12px;color:var(--text-light);margin-bottom:12px;line-height:1.5;min-height:34px}
+.voucher-card-code{font-family:'Courier New',monospace;font-size:15px;font-weight:800;color:var(--accent);background:var(--bg);padding:10px 12px;border-radius:8px;border:1.5px dashed var(--accent);text-align:center;letter-spacing:2px;margin-bottom:12px;position:relative;cursor:pointer;transition:all .2s}
+.voucher-card-code:hover{background:var(--bg-2);border-color:var(--accent-light)}
+.voucher-card-code .copy-hint{font-family:'Inter',sans-serif;font-size:9px;letter-spacing:.5px;opacity:.6;display:block;margin-top:2px;text-transform:uppercase}
+.voucher-card-btn{width:100%;padding:11px;border-radius:8px;font-weight:800;font-size:13px;border:none;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:6px}
+.voucher-card-btn.claim{background:linear-gradient(135deg,var(--primary),var(--secondary));color:#fff}
+.voucher-card-btn.claim:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(43,37,64,.3)}
+.voucher-card-btn.claim:disabled{background:var(--bg);color:var(--text-light);cursor:not-allowed;box-shadow:none;transform:none}
+.voucher-card-btn.use{background:linear-gradient(135deg,var(--success),#5e947e);color:#fff}
+.voucher-card-btn.used{background:var(--bg);color:var(--text-light);cursor:default}
+.voucher-empty{grid-column:1/-1;padding:50px 20px;text-align:center;color:var(--text-light);background:var(--card);border:1.5px dashed var(--border);border-radius:14px}
+.voucher-empty .emoji{font-size:64px;opacity:.4;margin-bottom:12px}
+.voucher-empty h3{color:var(--text);font-size:18px;margin-bottom:8px;font-family:var(--font-serif)}
+.voucher-empty p{font-size:13px}
+.voucher-expiry{font-size:11px;color:var(--text-light);margin-top:8px;display:flex;align-items:center;gap:4px}
+.voucher-expiry.warn{color:var(--warning);font-weight:700}
+.shopping-banner{margin:24px;padding:32px 40px;border-radius:20px;background:linear-gradient(135deg,var(--primary) 0%,var(--secondary) 100%);color:#f2ece0;position:relative;overflow:hidden;box-shadow:var(--shadow-lg);display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap}
+.shopping-banner::before{content:'🛍️';position:absolute;right:40px;top:50%;transform:translateY(-50%);font-size:180px;opacity:.12;pointer-events:none}
+.shopping-banner-content{position:relative;z-index:2;flex:1;min-width:280px}
+.shopping-banner-content .eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:3px;font-weight:700;opacity:.85;margin-bottom:10px}
+.shopping-banner-content h2{font-size:32px;margin-bottom:10px;line-height:1.15;color:#fff}
+.shopping-banner-content p{font-size:14px;opacity:.92;margin-bottom:18px}
+.shopping-banner-btn{padding:13px 30px;background:#f2ece0;color:#2b2540;border-radius:30px;font-weight:800;font-size:14px;border:none;cursor:pointer}
+.shopping-banner-stats{position:relative;z-index:2;display:flex;gap:20px;flex-wrap:wrap}
+.sb-stat{text-align:center}.sb-stat .num{font-size:28px;font-weight:800;color:var(--accent-light)}
+.sb-stat .label{font-size:11px;opacity:.85;letter-spacing:.5px;text-transform:uppercase}
+.ad-row{padding:0 24px;margin:20px 0}
+.ad-row-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.ad-full-banner{padding:0 24px;margin:20px 0}
+.ad-card{position:relative;border-radius:14px;overflow:hidden;transition:transform .3s;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.15)}
+.ad-card:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,.25)}
+.ad-x{position:absolute;top:8px;right:8px;width:24px;height:24px;background:rgba(0,0,0,.6);color:#fff;border-radius:50%;font-size:11px;z-index:20;display:flex;align-items:center;justify-content:center;font-weight:700;border:none;cursor:pointer}
+.ad-x:hover{background:var(--danger);transform:scale(1.15)}
+.ad-tag{position:absolute;top:8px;left:8px;padding:2px 7px;background:rgba(0,0,0,.55);color:#fff;border-radius:3px;font-size:8px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;z-index:10}
+.ad-canva{background:linear-gradient(135deg,#00c4cc 0%,#7d2ae8 100%);color:#fff;padding:18px 22px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;position:relative;overflow:hidden}
+.ad-canva-logo{width:48px;height:48px;background:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:#7d2ae8;flex-shrink:0;position:relative;z-index:2}
+.ad-canva-info{flex:1;min-width:180px;position:relative;z-index:2}
+.ad-canva-info h3{font-size:17px;margin-bottom:3px;color:#fff;font-weight:800;line-height:1.2}
+.ad-canva-info p{font-size:12px;opacity:.95}
+.ad-canva-btn{padding:9px 20px;background:#fff;color:#7d2ae8;border-radius:24px;font-weight:800;font-size:12px;position:relative;z-index:2;border:none;cursor:pointer;white-space:nowrap}
+.ad-ai{background:linear-gradient(135deg,#4a4180 0%,#6a4d80 100%);color:#fff;padding:20px;position:relative;overflow:hidden;min-height:170px;display:flex;flex-direction:column}
+.ad-ai h3{font-size:20px;margin-bottom:8px;color:#fff;position:relative;z-index:2;font-weight:800;line-height:1.2}
+.ad-ai p{font-size:12px;opacity:.92;margin-bottom:14px;position:relative;z-index:2}
+.ad-ai-btn{padding:9px 18px;background:#fff;color:#4a4180;border-radius:6px;font-weight:800;font-size:12px;width:fit-content;position:relative;z-index:2;border:none;cursor:pointer}
+.ad-hosting{background:linear-gradient(135deg,#1e4d7b 0%,#2a7fa8 100%);color:#fff;padding:20px;position:relative;overflow:hidden;min-height:170px;display:flex;flex-direction:column}
+.ad-hosting h3{font-size:20px;margin-bottom:6px;color:#fff;position:relative;z-index:2;font-weight:800}
+.ad-hosting .price-tag{font-size:24px;font-weight:800;margin-bottom:6px;color:#fff;position:relative;z-index:2}
+.ad-hosting p{font-size:12px;opacity:.92;margin-bottom:14px;position:relative;z-index:2}
+.ad-hosting-btn{padding:9px 18px;background:#fff;color:#1e4d7b;border-radius:6px;font-weight:800;font-size:12px;width:fit-content;position:relative;z-index:2;border:none;cursor:pointer;margin-top:auto}
+.ad-adobe{background:linear-gradient(135deg,#000 0%,#2a0000 100%);color:#fff;padding:20px;min-height:170px;display:flex;flex-direction:column;position:relative;overflow:hidden}
+.ad-adobe h3{font-size:20px;margin-bottom:8px;color:#fff;position:relative;z-index:2;font-weight:800}
+.ad-adobe p{font-size:12px;opacity:.9;margin-bottom:14px;position:relative;z-index:2;line-height:1.5}
+.ad-adobe-btn{padding:9px 18px;background:#ff0000;color:#fff;border-radius:6px;font-weight:800;font-size:12px;width:fit-content;position:relative;z-index:2;border:none;cursor:pointer;margin-top:auto}
+#videoAdsContainer{padding:0 24px;margin:20px 0;display:flex;flex-direction:column;align-items:center;gap:20px}
+.ad-video{display:flex;flex-direction:column;background:#000;cursor:default;max-width:700px;width:100%;border-radius:14px;overflow:hidden;box-shadow:0 12px 36px rgba(0,0,0,.3)}
+.ad-video-stage{position:relative;width:100%;background:#000;aspect-ratio:16/9;overflow:hidden}
+.ad-video-stage video{width:100%;height:100%;object-fit:contain;display:block;background:#000}
+.ad-video-live{position:absolute;top:10px;left:10px;display:flex;align-items:center;gap:6px;padding:4px 10px;background:rgba(168,74,74,.95);border-radius:4px;font-size:10px;font-weight:800;letter-spacing:.8px;color:#fff;z-index:5;pointer-events:none}
+.ad-video-live::before{content:'';width:7px;height:7px;background:#fff;border-radius:50%;animation:livePulse 1.4s infinite}
+@keyframes livePulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
+.ad-video-info{padding:16px 20px;background:linear-gradient(135deg,#1b1730,#2b2540);color:#f2ece0;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.ad-video-info .info-text{flex:1;min-width:180px}
+.ad-video-info .eyebrow{font-size:9px;text-transform:uppercase;letter-spacing:2.5px;font-weight:800;color:var(--accent-light);margin-bottom:6px}
+.ad-video-info h3{font-size:18px;margin-bottom:5px;color:#fff;line-height:1.2}
+.ad-video-info p{font-size:12px;opacity:.9;line-height:1.5}
+.ad-video-btn{padding:11px 22px;background:linear-gradient(135deg,var(--accent),var(--accent-light));color:#1b1730;border-radius:26px;font-weight:800;font-size:12px;border:none;cursor:pointer;white-space:nowrap;box-shadow:0 6px 20px rgba(176,138,92,.4);transition:all .25s}
+.ad-video-btn:disabled{background:linear-gradient(135deg,#4a4a55,#5a5a68);color:#b8b8c8;cursor:not-allowed;box-shadow:none;opacity:.85}
+.ad-video-btn:not(:disabled):hover{transform:translateY(-2px)}
+.ad-video-btn.claimed{background:linear-gradient(135deg,var(--success),#5e947e);color:#fff;cursor:default}
+.ad-video-voucher{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;background:rgba(176,138,92,.25);border:1px dashed var(--accent-light);border-radius:8px;font-size:11px;font-weight:700;color:var(--accent-light);margin-top:8px}
+.ad-float{position:fixed;z-index:150;width:140px;max-width:calc(100% - 24px);cursor:pointer;transition:top 1.8s cubic-bezier(.45,0,.25,1),left 1.8s cubic-bezier(.45,0,.25,1),transform .35s;transform:rotate(var(--rot,0deg));opacity:1;will-change:top,left}
+.ad-float:hover{transform:rotate(0deg) scale(1.06);z-index:170}
+.ad-float.hidden{display:none!important}
+.ad-mini{background:var(--card);border-radius:10px;overflow:hidden;box-shadow:0 8px 26px rgba(0,0,0,.35);position:relative;border:2px solid var(--accent)}
+.ad-mini .ad-x{position:absolute;top:4px;right:4px;width:18px;height:18px;background:rgba(0,0,0,.7);color:#fff;border-radius:50%;font-size:8px;z-index:10;display:flex;align-items:center;justify-content:center;font-weight:700;border:none;cursor:pointer}
+.ad-mini-content{padding:7px 8px}
+.ad-mini-badge{display:inline-block;padding:1px 6px;background:var(--accent);color:#1b1730;border-radius:4px;font-size:7px;font-weight:800;letter-spacing:.8px;margin-bottom:4px}
+.ad-mini h4{font-size:11px;margin-bottom:3px;font-weight:800;line-height:1.3}
+.ad-mini p{font-size:9px;color:var(--text-light);margin-bottom:6px;line-height:1.3}
+.ad-mini-btn{padding:5px 8px;background:var(--primary);color:#fff;border-radius:5px;font-size:9px;font-weight:700;width:100%;border:none;cursor:pointer}
+.ad-mini-visual{height:34px;display:flex;align-items:center;justify-content:center;font-size:18px}
+.ad-sticky{position:fixed;bottom:0;left:0;right:0;background:linear-gradient(90deg,var(--primary),var(--secondary));color:#fff;padding:9px 18px;display:flex;align-items:center;gap:12px;z-index:140;box-shadow:0 -4px 20px rgba(0,0,0,.35);transition:transform .4s;flex-wrap:wrap;justify-content:center}
+.ad-sticky.hidden{transform:translateY(120%)}
+.ad-sticky .ad-x{position:static;width:24px;height:24px;background:rgba(255,255,255,.2);font-size:11px;border:none;cursor:pointer;color:#fff;border-radius:50%}
+.ad-sticky-tag{padding:2px 8px;background:rgba(255,255,255,.2);border-radius:4px;font-size:9px;font-weight:800;letter-spacing:1.2px}
+.ad-sticky-text{flex:1;min-width:180px;text-align:center}
+.ad-sticky-text strong{font-size:12px;display:block}
+.ad-sticky-text p{font-size:10px;opacity:.9}
+.ad-sticky-btn{padding:6px 15px;background:#f2ece0;color:var(--primary);border-radius:20px;font-size:11px;font-weight:800;border:none;cursor:pointer}
+body.has-sticky .scroll-top{bottom:100px}
+.ad-sticky-top{position:fixed;top:0;left:0;right:0;background:linear-gradient(90deg,#8a6d4f,#b08a5c,#8a6d4f);background-size:300% 100%;animation:adShimmerTop 6s linear infinite;color:#1b1730;padding:7px 18px;display:flex;align-items:center;gap:10px;z-index:160;font-size:12px;box-shadow:0 2px 12px rgba(0,0,0,.2);flex-wrap:wrap;justify-content:center;font-weight:600}
+@keyframes adShimmerTop{0%{background-position:0% 50%}100%{background-position:300% 50%}}
+.ad-sticky-top.hidden{display:none}
+.ad-sticky-top .ad-sticky-tag{background:rgba(0,0,0,.15);color:#1b1730}
+.ad-sticky-top .ad-x{position:static;width:22px;height:22px;background:rgba(0,0,0,.15);color:#1b1730;font-size:10px;border:none;cursor:pointer;border-radius:50%}
+.ad-sticky-top-btn{padding:4px 12px;background:#1b1730;color:#f2ece0;border-radius:16px;font-size:11px;font-weight:800;border:none;cursor:pointer}
+body.has-top-ad{padding-top:38px}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(16,14,23,.78);z-index:200;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(6px)}
+.modal-overlay.active{display:flex;animation:fadeIn .2s}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal-content{background:var(--card);border-radius:20px;max-width:900px;width:100%;max-height:90vh;overflow-y:auto;position:relative;animation:slideUp .35s;border:1px solid var(--border)}
+@keyframes slideUp{from{transform:translateY(30px);opacity:0}to{transform:translateY(0);opacity:1}}
+.modal-close{position:absolute;top:15px;right:15px;width:38px;height:38px;background:rgba(0,0,0,.55);border-radius:50%;font-size:16px;z-index:5;display:flex;align-items:center;justify-content:center;color:#fff;border:none;cursor:pointer}
+.product-detail{display:grid;grid-template-columns:1fr 1fr;gap:30px;padding:30px}
+.pd-image{background:linear-gradient(135deg,var(--bg),var(--border));border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:160px;min-height:400px;position:relative;overflow:hidden}
+.pd-image img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;z-index:2}
+.pd-image .img-fallback{font-size:160px;line-height:1}
+.pd-info h2{font-size:26px;margin-bottom:12px}
+.pd-price{font-size:32px;font-weight:800;color:var(--primary);margin-bottom:12px;display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+body.dark .pd-price{color:var(--accent-light)}
+.pd-price-old{font-size:15px;color:var(--text-light);text-decoration:line-through;font-weight:400}
+.pd-desc{color:var(--text-light);margin-bottom:20px;line-height:1.7;font-size:14px}
+.pd-specs{background:var(--bg);padding:16px;border-radius:12px;margin-bottom:20px;border:1px solid var(--border)}
+.pd-specs h4{font-size:14px;margin-bottom:12px}
+.spec-row{display:flex;justify-content:space-between;padding:7px 0;font-size:13px;border-bottom:1px solid var(--border);gap:10px}
+.spec-row:last-child{border:none}
+.spec-label{color:var(--text-light)}
+.spec-value{font-weight:600;text-align:right}
+.qty-section{display:flex;align-items:center;gap:15px;margin-bottom:20px}
+.qty-section label{font-weight:700;font-size:14px}
+.qty-selector{display:flex;align-items:center;border:1.5px solid var(--border);border-radius:9px;overflow:hidden}
+.qty-selector button{width:38px;height:38px;font-size:18px;font-weight:bold;color:var(--accent);background:var(--bg);border:none;cursor:pointer}
+.qty-selector span{width:50px;text-align:center;font-weight:600;background:var(--card);height:38px;line-height:38px}
+.pd-actions{display:flex;gap:10px}
+.btn-primary{flex:1;padding:14px;background:linear-gradient(135deg,var(--primary),var(--primary-light));color:#f2ece0;border-radius:10px;font-weight:700;font-size:14px;border:none;cursor:pointer}
+.btn-secondary{padding:14px 20px;background:var(--bg);border:1.5px solid var(--border);border-radius:10px;font-weight:600;font-size:14px;cursor:pointer}
+.btn-secondary.active{color:var(--danger);border-color:var(--danger);background:rgba(168,74,74,.1)}
+.variant-title{font-size:13px;font-weight:700;margin-bottom:8px;color:var(--text)}
+.color-options,.size-options{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+.color-option{padding:8px 14px;border:1.5px solid var(--border);border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;background:var(--bg);transition:all .2s}
+.color-option.selected{border-color:var(--accent);background:rgba(176,138,92,.15);color:var(--accent)}
+.size-option{padding:8px 16px;border:1.5px solid var(--border);border-radius:8px;cursor:pointer;font-size:13px;font-weight:700;background:var(--bg);transition:all .2s;display:flex;flex-direction:column;align-items:center;min-width:70px}
+.size-option .sz-name{font-size:13px}
+.size-option .sz-price{font-size:10px;color:var(--text-light);margin-top:2px}
+.size-option.selected{border-color:var(--accent);background:var(--accent);color:#1b1730}
+.size-option.selected .sz-price{color:rgba(27,23,48,.7)}
+.cart-sidebar{position:fixed;top:0;right:0;width:420px;max-width:100%;height:100%;background:var(--card);z-index:250;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1);box-shadow:-10px 0 30px rgba(0,0,0,.25)}
+.cart-sidebar.active{transform:translateX(0)}
+.cart-header{padding:20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.cart-header h3{font-size:18px;display:flex;align-items:center;gap:8px}
+.cart-items{flex:1;overflow-y:auto;padding:15px 20px}
+.empty-cart{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--text-light);gap:12px;text-align:center}
+.empty-cart-emoji{font-size:60px;opacity:.5}
+.cart-item{display:flex;gap:12px;padding:14px 0;border-bottom:1px solid var(--border)}
+.cart-item-img{width:72px;height:72px;background:linear-gradient(135deg,var(--bg),var(--border));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:32px;flex-shrink:0;overflow:hidden;position:relative}
+.cart-item-img img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;z-index:2}
+.cart-item-info{flex:1;min-width:0}
+.cart-item-name{font-size:14px;font-weight:600;margin-bottom:4px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.35}
+.cart-item-variant{font-size:11px;color:var(--text-light);margin-bottom:4px}
+.cart-item-price{font-size:14px;color:var(--accent);font-weight:800;margin-bottom:8px}
+.cart-item-controls{display:flex;justify-content:space-between;align-items:center}
+.mini-qty{display:flex;align-items:center;gap:4px;background:var(--bg);border-radius:7px;padding:3px;border:1px solid var(--border)}
+.mini-qty button{width:26px;height:26px;border-radius:5px;font-weight:bold;color:var(--accent);font-size:14px;border:none;background:none;cursor:pointer}
+.mini-qty span{min-width:24px;text-align:center;font-size:13px;font-weight:700}
+.remove-btn{color:var(--danger);font-size:12px;padding:4px 8px;border-radius:4px;border:none;background:none;cursor:pointer}
+.cart-footer{padding:20px;border-top:1px solid var(--border);background:var(--card)}
+.cart-summary-row{display:flex;justify-content:space-between;margin-bottom:8px;font-size:14px;color:var(--text-light)}
+.cart-total-row{display:flex;justify-content:space-between;margin:12px 0 15px;padding-top:14px;border-top:2px dashed var(--border);font-size:19px;font-weight:800;font-family:var(--font-serif)}
+.cart-total-row .total-value{color:var(--accent)}
+.btn-checkout{width:100%;padding:15px;background:linear-gradient(135deg,var(--primary),var(--secondary));color:#f2ece0;border-radius:10px;font-weight:800;font-size:14px;border:none;cursor:pointer}
+.free-ship-notice{background:rgba(74,122,102,.15);color:var(--success);padding:9px 12px;border-radius:8px;font-size:12px;margin-bottom:10px;display:flex;align-items:center;gap:6px;font-weight:700}
+.checkout-grid{display:grid;grid-template-columns:1.3fr 1fr;gap:30px;padding:30px}
+.form-group{margin-bottom:14px}
+.form-group label{display:block;font-size:13px;font-weight:700;margin-bottom:6px}
+.form-group input,.form-group textarea,.form-group select{width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:10px;background:var(--bg);color:var(--text);font-size:14px;outline:none}
+.form-group input:focus,.form-group textarea:focus{border-color:var(--accent);box-shadow:0 0 0 4px rgba(176,138,92,.12)}
+.form-group textarea{resize:vertical;min-height:70px}
+.payment-methods{display:flex;flex-direction:column;gap:8px}
+.payment-option{display:flex;align-items:center;gap:10px;padding:13px;border:1.5px solid var(--border);border-radius:10px;cursor:pointer;font-size:14px;font-weight:600}
+.payment-option.selected{border-color:var(--accent);background:rgba(176,138,92,.1)}
+.payment-option input{width:auto;accent-color:var(--accent)}
+.order-summary{background:var(--bg);padding:20px;border-radius:12px;height:fit-content;position:sticky;top:20px;border:1px solid var(--border)}
+.order-summary h4{font-size:15px;margin-bottom:15px;padding-bottom:12px;border-bottom:1px solid var(--border)}
+.summary-item{display:flex;justify-content:space-between;font-size:13px;margin-bottom:8px;color:var(--text-light);gap:8px}
+.summary-item.total{margin-top:12px;padding-top:12px;border-top:1px solid var(--border);font-size:16px;font-weight:800;color:var(--text)}
+.summary-item.total span:last-child{color:var(--accent)}
+.summary-item.discount{color:var(--success);font-weight:700}
+.voucher-picker{background:var(--card);border:1.5px dashed var(--accent);border-radius:10px;padding:12px;margin-bottom:14px}
+.voucher-picker-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.voucher-picker-header h5{font-size:13px;font-weight:800;color:var(--accent);text-transform:uppercase;letter-spacing:.5px}
+.voucher-option{display:flex;align-items:center;gap:10px;padding:10px;border:1.5px solid var(--border);border-radius:8px;cursor:pointer;margin-bottom:6px;background:var(--card);font-size:13px}
+.voucher-option:hover{border-color:var(--accent)}
+.voucher-option.selected{border-color:var(--accent);background:rgba(176,138,92,.1)}
+.voucher-option input{width:auto;accent-color:var(--accent)}
+.voucher-option .v-info{flex:1}
+.voucher-option .v-title{font-weight:700;font-size:13px}
+.voucher-option .v-detail{font-size:11px;color:var(--text-light);margin-top:2px}
+.voucher-option .v-value{color:var(--success);font-weight:800;font-size:13px}
+.checkout-section-title{font-size:15px;margin:20px 0 12px;padding-bottom:8px;border-bottom:2px solid var(--border);color:var(--text);font-weight:800;display:flex;align-items:center;gap:8px}
+.payment-tabs{display:flex;gap:6px;margin-bottom:14px;background:var(--bg);padding:5px;border-radius:10px;flex-wrap:wrap}
+.payment-tab{padding:9px 14px;border-radius:8px;font-size:12px;font-weight:700;border:none;background:transparent;color:var(--text-light);cursor:pointer;display:flex;align-items:center;gap:5px;transition:all .2s}
+.payment-tab:hover{background:var(--border)}
+.payment-tab.active{background:var(--primary);color:#fff;box-shadow:var(--shadow)}
+.payment-group{display:none;flex-direction:column;gap:8px}
+.payment-group.active{display:flex}
+.pay-option{display:flex;align-items:center;gap:12px;padding:12px;border:1.5px solid var(--border);border-radius:10px;cursor:pointer;transition:all .2s;background:var(--card)}
+.pay-option:hover{border-color:var(--accent);transform:translateX(2px)}
+.pay-option.selected{border-color:var(--accent);background:rgba(176,138,92,.08);box-shadow:0 0 0 3px rgba(176,138,92,.12)}
+.pay-logo{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;flex-shrink:0;color:#fff;letter-spacing:.5px;text-align:center;line-height:1}
+.pay-option .pay-info{flex:1;min-width:0}
+.pay-option .pay-name{font-weight:800;font-size:14px;color:var(--text)}
+.pay-option .pay-detail{font-size:11px;color:var(--text-light);margin-top:2px}
+.pay-option .pay-check{width:22px;height:22px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:12px;color:transparent;font-weight:800}
+.pay-option.selected .pay-check{background:var(--accent);border-color:var(--accent);color:#fff}
+.qris-box{text-align:center;padding:18px;background:#fff;border-radius:12px;border:2px dashed var(--accent);margin-top:10px}
+.qris-qr{width:180px;height:180px;margin:0 auto 10px;background:#fff;border:10px solid #fff;box-shadow:0 0 0 2px #1b1730;position:relative;display:flex;align-items:center;justify-content:center;background-image:repeating-linear-gradient(0deg,#1b1730 0 6px,transparent 6px 12px),repeating-linear-gradient(90deg,#1b1730 0 6px,transparent 6px 12px);background-blend-mode:multiply}
+.qris-qr::after{content:'QRIS';position:absolute;background:#fff;color:#1b1730;font-weight:900;font-size:14px;padding:6px 10px;border-radius:6px;letter-spacing:1px}
+.qris-apps{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:8px}
+.qris-app{display:flex;align-items:center;gap:4px;padding:4px 9px;background:var(--bg);border-radius:12px;font-size:10px;font-weight:800;border:1px solid var(--border);color:#1b1730}
+.card-form{display:grid;grid-template-columns:1fr;gap:10px;margin-top:10px}
+.card-form input{padding:11px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px;background:var(--card);color:var(--text);outline:none;font-family:inherit}
+.card-form input:focus{border-color:var(--accent)}
+.card-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.auth-modal{max-width:420px;padding:35px 30px;margin:0 auto}
+.auth-modal h2{text-align:center;margin-bottom:8px;font-size:26px}
+.auth-modal .subtitle{text-align:center;color:var(--text-light);font-size:14px;margin-bottom:25px}
+.tabs{display:flex;gap:4px;background:var(--bg);padding:4px;border-radius:10px;margin-bottom:20px}
+.tabs button{flex:1;padding:11px;border-radius:8px;font-weight:700;font-size:14px;color:var(--text-light);border:none;background:none;cursor:pointer}
+.tabs button.active{background:var(--card);color:var(--accent);box-shadow:var(--shadow)}
+.auth-submit{width:100%;padding:14px;background:linear-gradient(135deg,var(--primary),var(--secondary));color:#f2ece0;border-radius:10px;font-weight:800;font-size:14px;margin-top:10px;border:none;cursor:pointer}
+.user-menu{position:absolute;top:calc(100% + 10px);right:0;background:var(--card);border-radius:12px;box-shadow:var(--shadow-lg);padding:8px;min-width:230px;display:none;z-index:60;border:1px solid var(--border)}
+.user-menu.active{display:block}
+.user-menu-item{display:flex;align-items:center;gap:10px;padding:11px 12px;border-radius:8px;font-size:14px;cursor:pointer;color:var(--text);width:100%;text-align:left;border:none;background:none}
+.user-menu-item:hover{background:var(--bg)}
+.user-menu-item.danger{color:var(--danger)}
+.user-menu-header{padding:10px 12px;border-bottom:1px solid var(--border);margin-bottom:6px}
+.user-menu-header .name{font-weight:700;font-size:14px}
+.user-menu-header .email{font-size:12px;color:var(--text-light)}
+.orders-list{padding:20px 30px}
+.order-card{border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:12px;background:var(--bg)}
+.order-header{display:flex;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px}
+.order-id{font-weight:800;font-size:14px;color:var(--accent)}
+.order-date{font-size:12px;color:var(--text-light)}
+.order-status{padding:4px 10px;border-radius:6px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
+.order-products{font-size:13px;color:var(--text-light);margin-bottom:8px}
+.order-total{font-size:15px;font-weight:800;color:var(--accent)}
+.order-timeline{display:flex;align-items:flex-start;gap:4px;margin:14px 0;padding:8px 0}
+.timeline-step{display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0;min-width:50px}
+.timeline-dot{width:26px;height:26px;border-radius:50%;background:var(--card);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:var(--text-light)}
+.timeline-step.done .timeline-dot{background:var(--success);border-color:var(--success);color:#fff}
+.timeline-step.canceled .timeline-dot{background:var(--danger);border-color:var(--danger);color:#fff}
+.timeline-label{font-size:10px;font-weight:700;color:var(--text-light);text-transform:uppercase;letter-spacing:.4px;text-align:center}
+.timeline-step.done .timeline-label{color:var(--success)}
+.timeline-line{flex:1;height:2px;background:var(--border);margin-top:12px;min-width:12px}
+.timeline-line.done{background:var(--success)}
+.toast-container{position:fixed;top:80px;right:20px;z-index:500;display:flex;flex-direction:column;gap:10px;pointer-events:none}
+.toast{background:var(--card);color:var(--text);padding:14px 20px;border-radius:12px;box-shadow:var(--shadow-lg);display:flex;align-items:center;gap:12px;font-size:14px;font-weight:500;transform:translateX(400px);transition:transform .4s;pointer-events:auto;min-width:280px;border:1px solid var(--border);border-left:4px solid var(--accent)}
+.toast.show{transform:translateX(0)}
+.toast.error{border-left-color:var(--danger)}
+.toast.warning{border-left-color:var(--warning)}
+.toast.success{border-left-color:var(--success)}
+.toast-icon{font-size:20px}
+.scroll-top{position:fixed;bottom:30px;right:30px;width:50px;height:50px;background:linear-gradient(135deg,var(--primary),var(--secondary));color:#f2ece0;border-radius:50%;font-size:20px;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-lg);opacity:0;visibility:hidden;transition:all .3s;z-index:90;border:none;cursor:pointer}
+.scroll-top.show{opacity:1;visibility:visible}
+footer{background:linear-gradient(135deg,#1b1730 0%,#2b2540 100%);color:#c9c3d4;padding:60px 24px 24px;margin-top:50px;border-top:3px solid var(--accent)}
+.footer-grid{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:36px}
+.footer-brand h3{font-size:24px;color:#f2ece0;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.footer-brand p{font-size:14px;line-height:1.75;margin-bottom:18px;opacity:.85}
+.social-icons{display:flex;gap:10px}
+.social-icons a{width:42px;height:42px;background:rgba(255,255,255,.08);border-radius:12px;display:flex;align-items:center;justify-content:center;transition:all .25s;border:1px solid rgba(255,255,255,.1);color:#f2ece0;font-weight:700}
+.social-icons a svg{width:18px;height:18px}
+.social-icons a:hover{background:rgba(255,255,255,.16);transform:translateY(-2px)}
+.footer-col h4{color:#f2ece0;font-size:15px;margin-bottom:16px}
+.footer-col ul{list-style:none;display:flex;flex-direction:column;gap:11px}
+.footer-col a{font-size:13px;opacity:.85;cursor:pointer;transition:all .2s}
+.footer-col a:hover{opacity:1;color:var(--accent-light)}
+.footer-bottom{max-width:1200px;margin:0 auto;padding-top:24px;border-top:1px solid rgba(255,255,255,.1);text-align:center;font-size:13px;opacity:.7}
+.empty-state{grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--text-light)}
+.empty-state-emoji{font-size:70px;margin-bottom:15px;opacity:.5}
+.empty-state h3{font-size:18px;color:var(--text);margin-bottom:8px}
+#adminDashboard{display:none;position:fixed;top:0;left:0;width:100%;height:100vh;background:var(--bg-2);z-index:999999;overflow-y:auto;padding:20px;box-sizing:border-box}
+.admin-container{max-width:1150px;margin:0 auto;background:var(--card);border-radius:12px;padding:30px;box-shadow:0 5px 20px rgba(0,0,0,.15);color:var(--text)}
+.admin-header{display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid var(--border);padding-bottom:20px;margin-bottom:20px;flex-wrap:wrap;gap:10px}
+.admin-header h1{font-size:24px;color:var(--text);margin:0}
+.admin-header-actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn-logout-admin{background:var(--primary-light);color:#fff;padding:10px 18px;border-radius:8px;font-weight:700;border:none;cursor:pointer;font-size:13px}
+.btn-close-admin{background:var(--danger);color:#fff;padding:10px 20px;border-radius:8px;font-weight:700;border:none;cursor:pointer}
+.admin-notif-banner{background:linear-gradient(135deg,rgba(184,144,63,.15),rgba(176,138,92,.22));border:2px solid var(--warning);border-radius:12px;display:flex;align-items:center;gap:14px;padding:14px 20px;margin-bottom:16px;animation:notifGlow 2s infinite;flex-wrap:wrap}
+@keyframes notifGlow{0%,100%{box-shadow:0 0 0 0 rgba(184,144,63,.35)}50%{box-shadow:0 0 0 10px rgba(184,144,63,0)}}
+.admin-notif-icon{font-size:28px;animation:shake 1s infinite}
+@keyframes shake{0%,100%{transform:rotate(0)}25%{transform:rotate(-12deg)}75%{transform:rotate(12deg)}}
+.admin-notif-text{flex:1;min-width:200px;font-size:14px}
+.admin-notif-text strong{color:var(--warning);font-weight:800}
+.admin-notif-btn{padding:9px 20px;background:var(--warning);color:#1b1730;border-radius:8px;font-weight:800;font-size:13px;border:none;cursor:pointer;white-space:nowrap}
+.admin-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:22px}
+.admin-stat{background:linear-gradient(135deg,var(--primary),var(--primary-light));color:#fff;padding:16px;border-radius:10px}
+.admin-stat .label{font-size:11px;text-transform:uppercase;letter-spacing:.8px;opacity:.85;font-weight:700}
+.admin-stat .value{font-size:20px;font-weight:800;margin-top:6px;line-height:1.2}
+.admin-stat.green{background:linear-gradient(135deg,#3f6b58,#4a7a66)}
+.admin-stat.gold{background:linear-gradient(135deg,#8a6d4f,#b08a5c)}
+.admin-stat.red{background:linear-gradient(135deg,#8f3f3f,#a84a4a)}
+.admin-stat.blue{background:linear-gradient(135deg,#4a4180,#6a4d80)}
+.admin-stat.purple{background:linear-gradient(135deg,#5a4d8a,#7a6aa8)}
+.admin-tabs{display:flex;gap:6px;margin-bottom:20px;background:var(--bg);padding:5px;border-radius:10px;flex-wrap:wrap}
+.admin-tab{padding:10px 18px;background:transparent;border:none;color:var(--text-light);font-weight:700;font-size:13px;border-radius:8px;cursor:pointer;position:relative;display:flex;align-items:center;gap:6px}
+.admin-tab.active{background:var(--primary);color:#fff}
+.admin-tab:hover:not(.active){background:var(--border)}
+.admin-tab-content{display:none}
+.admin-tab-content.active{display:block}
+.admin-order-filter{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+.admin-filter-btn{padding:7px 14px;border:1.5px solid var(--border);background:var(--card);color:var(--text);border-radius:8px;font-weight:700;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:5px}
+.admin-filter-btn.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+.admin-filter-btn .count{padding:1px 6px;background:rgba(255,255,255,.25);border-radius:8px;font-size:10px}
+.admin-order-card{border:1px solid var(--border);border-radius:10px;padding:18px;margin-bottom:12px;background:var(--bg)}
+.admin-order-card.new-order{border-left:4px solid var(--warning);background:linear-gradient(90deg,rgba(184,144,63,.06),var(--bg))}
+.admin-order-header{display:flex;justify-content:space-between;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:8px}
+.admin-order-id{font-weight:800;color:var(--accent);font-size:14px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.admin-order-date{font-size:12px;color:var(--text-light);margin-top:3px}
+.admin-order-actions{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.admin-btn-delete-order{padding:7px 12px;background:var(--danger);color:#fff;border:none;border-radius:7px;font-weight:700;font-size:12px;cursor:pointer}
+.admin-order-body{font-size:13px;color:var(--text-light);line-height:1.7}
+.admin-order-body strong{color:var(--text)}
+.admin-product-table{width:100%;border-collapse:collapse;font-size:13px;margin-top:10px}
+.admin-product-table th{text-align:left;padding:10px;background:var(--bg);color:var(--text-light);font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.5px;border-bottom:2px solid var(--border);white-space:nowrap}
+.admin-product-table td{padding:10px;border-bottom:1px solid var(--border);vertical-align:middle;color:var(--text)}
+.admin-product-table img{width:40px;height:40px;object-fit:cover;border-radius:6px}
+.admin-btn-edit{padding:5px 10px;background:var(--accent);color:#1b1730;border-radius:5px;font-size:11px;font-weight:800;border:none;cursor:pointer;margin-right:4px}
+.admin-btn-del{padding:5px 10px;background:var(--danger);color:#fff;border-radius:5px;font-size:11px;font-weight:800;border:none;cursor:pointer}
+.admin-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.admin-form-grid .full{grid-column:1/-1}
+.admin-form-grid label{display:block;font-size:12px;font-weight:700;color:var(--text-light);margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px}
+.admin-form-grid input,.admin-form-grid textarea,.admin-form-grid select{width:100%;padding:10px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;outline:none;background:var(--card);color:var(--text)}
+.admin-form-grid textarea{resize:vertical;min-height:70px}
+.admin-btn-save{padding:11px 22px;background:var(--success);color:#fff;border-radius:8px;font-weight:800;font-size:13px;border:none;cursor:pointer}
+.admin-btn-reset{padding:11px 22px;background:#888;color:#fff;border-radius:8px;font-weight:800;font-size:13px;border:none;cursor:pointer;margin-left:8px}
+.admin-form-section{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:16px 18px;margin-bottom:14px}
+.admin-form-section h4{font-size:12px;color:var(--text);margin-bottom:12px;text-transform:uppercase;letter-spacing:.8px;font-weight:800}
+.admin-btn-add-spec{padding:8px 16px;background:var(--primary-light);color:#fff;border-radius:7px;font-weight:700;font-size:12px;border:none;cursor:pointer;margin-bottom:10px}
+.specs-list{display:flex;flex-direction:column;gap:8px}
+.spec-row-input{display:grid;grid-template-columns:1fr 1.5fr 40px;gap:8px;align-items:center;padding:8px;background:var(--card);border-radius:8px;border:1px solid var(--border)}
+.spec-row-input input{padding:9px 12px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;outline:none;width:100%;background:var(--card);color:var(--text)}
+.spec-remove{background:rgba(168,74,74,.15);color:var(--danger);border:none;border-radius:6px;width:36px;height:36px;font-weight:800;cursor:pointer;font-size:14px}
+.img-tabs{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap}
+.img-tab{padding:8px 14px;border:1.5px solid var(--border);border-radius:8px;background:var(--card);font-size:12px;font-weight:700;cursor:pointer;color:var(--text-light)}
+.img-tab.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+.img-mode-section input{padding:10px;border:1.5px solid var(--border);border-radius:8px;width:100%;font-size:13px;outline:none;background:var(--card);color:var(--text)}
+.img-mode-section input[type="file"]{padding:12px;border:2px dashed var(--accent);background:var(--card);cursor:pointer}
+#imgPreview{width:140px;height:140px;margin:12px auto 0;border:2px dashed var(--border);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:68px;overflow:hidden;background:var(--bg);position:relative}
+#imgPreview img{width:100%;height:100%;object-fit:cover}
+.video-admin-form{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:18px;margin-bottom:14px}
+.video-admin-form label{display:block;font-size:12px;font-weight:700;color:var(--text-light);margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px;margin-top:10px}
+.video-admin-form input[type="text"],.video-admin-form input[type="url"],.video-admin-form input[type="number"],.video-admin-form textarea,.video-admin-form select{width:100%;padding:10px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;outline:none;background:var(--card);color:var(--text);font-family:inherit}
+.video-admin-form input[type="file"]{width:100%;padding:12px;border:2px dashed var(--accent);border-radius:8px;background:var(--card);cursor:pointer;font-size:13px}
+.video-admin-form textarea{resize:vertical;min-height:60px}
+.video-admin-card{border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px;background:var(--bg);display:flex;gap:16px;flex-wrap:wrap}
+.video-admin-card .va-preview{flex:0 0 220px;max-width:100%}
+.video-admin-card .va-preview video,.video-admin-card .va-preview .no-video{width:100%;aspect-ratio:16/9;border-radius:8px;background:#000;object-fit:cover}
+.video-admin-card .va-preview .no-video{display:flex;align-items:center;justify-content:center;color:#888;font-size:12px;flex-direction:column;gap:6px}
+.video-admin-card .va-info{flex:1;min-width:200px}
+.video-admin-card .va-info .va-title{font-weight:800;font-size:15px;margin-bottom:6px;color:var(--text)}
+.video-admin-card .va-info .va-desc{font-size:12px;color:var(--text-light);margin-bottom:8px;line-height:1.5}
+.video-admin-card .va-info .va-meta{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.video-admin-card .va-info .va-badge{padding:3px 8px;border-radius:6px;font-size:10px;font-weight:800}
+.va-badge.active{background:rgba(74,122,102,.18);color:var(--success)}
+.va-badge.inactive{background:rgba(168,74,74,.18);color:var(--danger)}
+.va-badge.type{background:rgba(176,138,92,.2);color:var(--accent)}
+.video-admin-card .va-actions{display:flex;gap:6px;flex-wrap:wrap}
+.va-btn{padding:7px 13px;border-radius:7px;font-size:11px;font-weight:800;border:none;cursor:pointer}
+.va-btn-edit{background:var(--accent);color:#1b1730}
+.va-btn-del{background:var(--danger);color:#fff}
+.va-btn-toggle{background:var(--primary);color:#fff}
+.va-btn-toggle.on{background:var(--success)}
+#vPreview{width:100%;max-width:340px;aspect-ratio:16/9;border-radius:10px;background:#000;margin-top:12px;display:none}
+.voucher-admin-card{border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:10px;background:var(--bg);display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.voucher-admin-card.inactive{opacity:.6}
+.voucher-admin-code{font-family:'Courier New',monospace;font-weight:800;font-size:16px;color:var(--accent);letter-spacing:1.5px}
+.voucher-admin-info{flex:1;min-width:180px}
+.voucher-admin-info .v-title{font-weight:800;font-size:14px;margin-bottom:4px;color:var(--text)}
+.voucher-admin-info .v-meta{font-size:11px;color:var(--text-light)}
+.voucher-admin-actions{display:flex;gap:6px;flex-wrap:wrap}
+.admin-login-overlay{display:none;position:fixed;inset:0;background:linear-gradient(135deg,rgba(16,14,23,.97),rgba(43,37,64,.97));z-index:999998;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(10px)}
+.admin-login-overlay.active{display:flex}
+.admin-login-box{background:var(--card);border-radius:18px;padding:36px 32px;max-width:420px;width:100%;box-shadow:0 30px 80px rgba(0,0,0,.55);text-align:center;color:var(--text);border:1px solid var(--border)}
+.admin-login-icon{width:72px;height:72px;background:linear-gradient(135deg,var(--primary),var(--secondary));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:34px;color:#fff;margin:0 auto 18px}
+.admin-login-box h2{font-size:24px;color:var(--text);margin-bottom:8px;font-weight:800}
+.admin-login-box p{font-size:13px;color:var(--text-light);margin-bottom:24px;line-height:1.5}
+.admin-login-box input[type="password"]{width:100%;padding:14px 18px;border:2px solid var(--border);border-radius:10px;font-size:16px;outline:none;text-align:center;letter-spacing:3px;font-weight:700;background:var(--bg);color:var(--text)}
+.admin-login-box input[type="password"]:focus{border-color:var(--accent);box-shadow:0 0 0 4px rgba(176,138,92,.18)}
+.admin-login-btn{width:100%;padding:14px;background:linear-gradient(135deg,var(--primary),var(--secondary));color:#fff;border:none;border-radius:10px;font-weight:800;font-size:15px;margin-top:14px;cursor:pointer}
+.admin-pass-error{color:var(--danger);font-size:12px;font-weight:700;margin-top:10px;min-height:18px}
+.admin-login-cancel{margin-top:14px;background:none;border:none;color:var(--text-light);font-size:13px;cursor:pointer;text-decoration:underline}
+.users-table{width:100%;border-collapse:collapse;font-size:13px;margin-top:10px}
+.users-table th{text-align:left;padding:10px;background:var(--bg);color:var(--text-light);font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.5px;border-bottom:2px solid var(--border);white-space:nowrap}
+.users-table td{padding:10px;border-bottom:1px solid var(--border);vertical-align:middle;color:var(--text)}
+.users-table .pw-cell{font-family:'Courier New',monospace;font-weight:700;color:var(--danger);background:rgba(168,74,74,.08);padding:4px 8px;border-radius:5px;font-size:12px;cursor:pointer}
+@media(max-width:1024px){.features-top{grid-template-columns:repeat(2,1fr)}.ad-row-3{grid-template-columns:1fr}}
+@media(max-width:900px){.product-detail,.checkout-grid{grid-template-columns:1fr}.footer-grid{grid-template-columns:1fr 1fr}.ad-float{display:none!important}.admin-form-grid{grid-template-columns:1fr}.voucher-cards-grid{grid-template-columns:1fr}}
+@media(max-width:640px){.topbar-right{display:none}header{padding:12px;gap:10px}.logo{font-size:20px}.search-wrapper{order:3;min-width:100%;max-width:100%}.features-top{margin:15px;grid-template-columns:1fr;gap:10px}.hero{height:280px;margin:0 15px 15px}.slide{padding:30px}.slide-content h2{font-size:26px}.slide-emoji{font-size:100px;right:20px}.products-grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;padding-left:15px;padding-right:15px}.product-img{height:160px;font-size:60px}.ad-row,.ad-full-banner{padding:0 15px;margin:15px 0}.cart-sidebar{width:100%}.footer-grid{grid-template-columns:1fr;gap:25px}.video-admin-card{flex-direction:column}.video-admin-card .va-preview{flex:0 0 auto}.admin-stats{grid-template-columns:1fr 1fr}.admin-notif-banner{font-size:13px}.admin-notif-btn{padding:8px 14px;font-size:12px}.voucher-page-header{padding:20px}.voucher-page-header h2{font-size:22px}.voucher-stats{gap:16px}.voucher-stat .num{font-size:22px}.payment-tabs{gap:4px}.payment-tab{padding:7px 10px;font-size:11px}#videoAdsContainer{padding:0 15px}.ad-video{max-width:100%}.promo-section{padding:0 15px}.promo-scroll{grid-template-columns:1fr}}
+</style>
+</head>
+<body class="has-top-ad has-sticky">
+
+<div class="admin-login-overlay" id="adminLoginOverlay">
+  <div class="admin-login-box">
+    <div class="admin-login-icon">🔐</div>
+    <h2>Akses Dashboard Admin</h2>
+    <p>Dashboard hanya bisa diakses via URL <code>?fatur</code></p>
+    <form onsubmit="verifyAdminPassword(event)">
+      <input type="password" id="adminPassInput" placeholder="••••••••" autocomplete="current-password" required>
+      <button type="submit" class="admin-login-btn">🔓 Masuk Dashboard</button>
+      <div id="adminPassError" class="admin-pass-error"></div>
+    </form>
+    <button type="button" class="admin-login-cancel" onclick="closeAdminLogin()">Batal &amp; Kembali ke Toko</button>
+  </div>
+</div>
+
+<div class="ad-sticky-top" id="topStickyAd">
+  <span class="ad-sticky-tag">IKLAN</span><span style="font-size:16px">🎉</span><span style="font-weight:700">Promo 12.12 — Diskon hingga 70%!</span><span style="opacity:.8;font-size:11px">Berakhir dalam 2 hari</span>
+  <button class="ad-sticky-top-btn" onclick="filterByNav('promo')">Belanja →</button><button class="ad-x" onclick="closeTopSticky()">✕</button>
+</div>
+
+<div class="topbar">
+  <div class="topbar-left"><span>🚚 Gratis ongkir min. Rp 120.000</span><span>📞 085702845908</span></div>
+  <div class="topbar-right"><a href="#" onclick="openHelp(); return false;">Bantuan</a><a href="#" onclick="openAbout(); return false;">Tentang Kami</a><a href="#" onclick="openOrders(); return false;">Lacak Pesanan</a></div>
+</div>
+
+<header>
+  <div class="logo" onclick="scrollToTop()"><div class="logo-mark">7</div> Toko Online 7</div>
+  <div class="search-wrapper">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="searchInput" placeholder="Cari produk, brand, kategori..." autocomplete="off">
+    <button class="clear-search" id="clearSearch">✕</button>
+    <div class="search-suggestions" id="searchSuggestions"></div>
+  </div>
+  <div class="header-actions">
+    <button class="icon-btn" id="themeToggle">🌙</button>
+    <button class="icon-btn" onclick="toggleWishlistView()">❤️<span class="badge hidden" id="wishlistBadge">0</span></button>
+    <button class="icon-btn" onclick="toggleCart()">🛒<span class="badge hidden" id="cartBadge">0</span></button>
+    <button class="icon-btn" id="userBtn">👤</button>
+    <div class="user-menu" id="userMenu"></div>
+  </div>
+</header>
+
+<nav class="main-nav" id="mainNav">
+  <button class="active" data-nav="semua">🏠 Beranda</button>
+  <button data-nav="elektronik">📱 Elektronik</button>
+  <button data-nav="fashion">👕 Fashion</button>
+  <button data-nav="aksesoris">⌚ Aksesoris</button>
+  <button data-nav="makanan">☕ Makanan</button>
+  <button data-nav="kesehatan">💊 Kesehatan</button>
+  <button data-nav="olahraga">⚽ Olahraga</button>
+  <button data-nav="promo">🔥 Promo</button>
+  <button data-nav="voucher">🎫 Voucher <span class="nav-voucher-count" id="navVoucherCount" style="display:none">0</span></button>
+</nav>
+
+<div class="features-top">
+  <div class="feature-top-card"><div class="feature-top-icon">🚚</div><div class="feature-top-text"><h4>Gratis Ongkir</h4><p>Min. belanja Rp 120.000 ke seluruh Indonesia</p></div></div>
+  <div class="feature-top-card"><div class="feature-top-icon">💳</div><div class="feature-top-text"><h4>Pembayaran Aman</h4><p>E-wallet, transfer bank, QRIS, kartu & COD</p></div></div>
+  <div class="feature-top-card"><div class="feature-top-icon">↩️</div><div class="feature-top-text"><h4>Garansi 30 Hari</h4><p>Pengembalian gratis jika produk rusak</p></div></div>
+  <div class="feature-top-card"><div class="feature-top-icon">🎧</div><div class="feature-top-text"><h4>Support 24/7</h4><p>Tim CS siap membantu kapan saja</p></div></div>
+</div>
+
+<div class="hero" id="hero">
+  <div class="slide slide-1 active"><div class="slide-content"><div class="eyebrow">Luxury Collection 2025</div><h2>Diskon Hingga 50%</h2><p>Koleksi pilihan dengan kualitas premium.</p><button onclick="filterByNav('elektronik')">Belanja Sekarang →</button></div><div class="slide-emoji">📱</div></div>
+  <div class="slide slide-2"><div class="slide-content"><div class="eyebrow">Fashion Edit</div><h2>Koleksi Terbaru</h2><p>Tampil stylish setiap hari dengan koleksi musim ini.</p><button onclick="filterByNav('fashion')">Lihat Koleksi →</button></div><div class="slide-emoji">👗</div></div>
+  <div class="slide slide-3"><div class="slide-content"><div class="eyebrow">Free Delivery</div><h2>Gratis Ongkir</h2><p>Belanja min. Rp 120.000 dan nikmati gratis pengiriman.</p><button onclick="filterByNav('semua')">Mulai Belanja →</button></div><div class="slide-emoji">🚚</div></div>
+  <div class="slider-dots" id="sliderDots"><span class="active" data-slide="0"></span><span data-slide="1"></span><span data-slide="2"></span></div>
+</div>
+
+<div class="promo-section" id="promoSection">
+  <div class="section-header" style="padding-left:0;padding-right:0">
+    <div class="section-title">🔥 Promo Spesial</div>
+    <button class="view-all" onclick="filterByNav('promo')">Lihat Semua →</button>
+  </div>
+  <div class="promo-scroll" id="promoScroll"></div>
+</div>
+
+<div class="ad-full-banner">
+  <div class="ad-card ad-canva" onclick="openAdLink('https://www.canva.com/pro/')">
+    <button class="ad-x" onclick="event.stopPropagation();this.closest('.ad-full-banner').remove()">✕</button><span class="ad-tag">IKLAN</span>
+    <div class="ad-canva-logo">C</div><div class="ad-canva-info"><h3>Canva Pro — Desain Seperti Pro</h3><p>Gratis 30 hari! Akses 100M+ template dan tools AI canggih.</p></div><button class="ad-canva-btn">Coba Gratis →</button>
+  </div>
+</div>
+
+<div id="videoAdsContainer"></div>
+
+<div class="section-header"><div class="section-title" id="sectionTitle">Produk Terbaru</div><button class="view-all" onclick="filterByNav('semua')">Lihat Semua →</button></div>
+<div class="controls">
+  <div class="filter-chips" id="filterChips">
+    <button class="chip active" data-cat="semua">Semua</button><button class="chip" data-cat="elektronik">Elektronik</button><button class="chip" data-cat="fashion">Fashion</button><button class="chip" data-cat="aksesoris">Aksesoris</button><button class="chip" data-cat="makanan">Makanan</button><button class="chip" data-cat="kesehatan">Kesehatan</button><button class="chip" data-cat="olahraga">Olahraga</button>
+  </div>
+  <select class="sort-select" id="sortSelect"><option value="default">Urutkan: Default</option><option value="price-asc">Harga: Termurah</option><option value="price-desc">Harga: Termahal</option><option value="rating">Rating Tertinggi</option><option value="name">Nama A-Z</option></select>
+</div>
+<div class="products-grid" id="productsGrid"></div>
+
+<div class="shopping-banner">
+  <div class="shopping-banner-content"><div class="eyebrow">Banner Berbelanja</div><h2>Belanja Lebih Hemat, Kualitas Lebih Baik</h2><p>Diskon hingga 70% + gratis ongkir + cashback 20%.</p><button class="shopping-banner-btn" onclick="filterByNav('promo')">Belanja Sekarang →</button></div>
+  <div class="shopping-banner-stats"><div class="sb-stat"><div class="num">10K+</div><div class="label">Produk</div></div><div class="sb-stat"><div class="num">1M+</div><div class="label">Pelanggan</div></div><div class="sb-stat"><div class="num">4.9★</div><div class="label">Rating</div></div></div>
+</div>
+
+<div class="ad-row">
+  <div class="ad-row-3">
+    <div class="ad-card ad-ai" onclick="openAdLink('https://chat.openai.com/')">
+      <button class="ad-x" onclick="event.stopPropagation();this.closest('.ad-card').remove()">✕</button><span class="ad-tag" style="background:rgba(255,255,255,.25)">IKLAN</span>
+      <h3>ChatGPT</h3><p>Tulis artikel, caption &amp; copywriting 10x lebih cepat.</p><button class="ad-ai-btn">Buka ChatGPT →</button>
+    </div>
+    <div class="ad-card ad-hosting" onclick="openAdLink('https://www.hostinger.co.id/')">
+      <button class="ad-x" onclick="event.stopPropagation();this.closest('.ad-card').remove()">✕</button><span class="ad-tag" style="background:rgba(255,255,255,.25)">IKLAN</span>
+      <h3>Domain + Hosting</h3><div class="price-tag">80% OFF</div><p>Diskon pertama. Gratis domain .com + SSL.</p><button class="ad-hosting-btn">Buka Hostinger →</button>
+    </div>
+    <div class="ad-card ad-adobe" onclick="openAdLink('https://www.adobe.com/creativecloud.html')">
+      <button class="ad-x" onclick="event.stopPropagation();this.closest('.ad-card').remove()">✕</button><span class="ad-tag" style="background:rgba(255,255,255,.25)">IKLAN</span>
+      <h3>Diskon 40% Pelajar</h3><p>Akses 20+ aplikasi premium: Photoshop, Illustrator, dll.</p><button class="ad-adobe-btn">Buka Adobe →</button>
+    </div>
+  </div>
+</div>
+
+<div class="ad-float" id="floatAd1" onclick="openAdLink('https://chat.openai.com/')" style="top:120px;left:20px;--rot:-2deg">
+  <div class="ad-mini">
+    <button class="ad-x" onclick="event.stopPropagation();closeFloatAd('floatAd1')">✕</button>
+    <div class="ad-mini-visual" style="background:linear-gradient(135deg,#4a4180,#6a4d80);color:#fff">✨</div>
+    <div class="ad-mini-content"><div class="ad-mini-badge" style="background:#4a4180;color:#fff">IKLAN</div><h4>ChatGPT</h4><p>Tulis konten 10x lebih cepat!</p><button class="ad-mini-btn" style="background:#4a4180">Buka →</button></div>
+  </div>
+</div>
+<div class="ad-float" id="floatAd2" onclick="openAdLink('https://www.canva.com/pro/')" style="top:300px;right:20px;--rot:2deg">
+  <div class="ad-mini">
+    <button class="ad-x" onclick="event.stopPropagation();closeFloatAd('floatAd2')">✕</button>
+    <div class="ad-mini-visual" style="background:linear-gradient(135deg,#00c4cc,#7d2ae8);color:#fff;font-weight:800">C</div>
+    <div class="ad-mini-content"><div class="ad-mini-badge" style="background:#7d2ae8;color:#fff">IKLAN</div><h4>Canva Pro</h4><p>Desain seperti pro!</p><button class="ad-mini-btn" style="background:#7d2ae8">Coba →</button></div>
+  </div>
+</div>
+<div class="ad-float" id="floatAd3" onclick="openAdLink('https://shopee.co.id/flash-sale')" style="bottom:200px;right:20px;--rot:-1deg">
+  <div class="ad-mini">
+    <button class="ad-x" onclick="event.stopPropagation();closeFloatAd('floatAd3')">✕</button>
+    <div class="ad-mini-visual" style="background:linear-gradient(135deg,#b8903f,#d4a854);color:#fff">🛍️</div>
+    <div class="ad-mini-content"><div class="ad-mini-badge" style="background:#b8903f;color:#1b1730">IKLAN</div><h4>Flash Sale</h4><p>Diskon hingga 70%!</p><button class="ad-mini-btn" style="background:#b8903f;color:#1b1730">Belanja →</button></div>
+  </div>
+</div>
+
+<div class="ad-sticky" id="stickyBottom">
+  <span class="ad-sticky-tag">IKLAN</span><span style="font-size:20px">🎁</span><div class="ad-sticky-text"><strong>Belum punya akun? Daftar sekarang!</strong><p>Langsung dapat voucher Rp 25.000 + gratis ongkir</p></div><button class="ad-sticky-btn" onclick="openAuth('register')">Daftar Gratis</button><button class="ad-x" onclick="closeStickyBottom()">✕</button>
+</div>
+
+<div class="modal-overlay" id="cartOverlay" onclick="if(event.target===this) toggleCart(false)"></div>
+<aside class="cart-sidebar" id="cartSidebar">
+  <div class="cart-header"><h3>🛒 Keranjang <span id="cartItemCount" style="font-size:13px;color:var(--text-light);font-weight:normal;">(0 item)</span></h3><button class="icon-btn" onclick="toggleCart(false)">✕</button></div>
+  <div class="cart-items" id="cartItems"></div>
+  <div class="cart-footer" id="cartFooter" style="display:none;">
+    <div class="free-ship-notice" id="freeShipNotice" style="display:none;"><span>🎉</span> Selamat! Kamu dapat GRATIS ONGKIR</div>
+    <div class="free-ship-notice" id="almostFreeShip" style="display:none;background:rgba(184,144,63,.15);color:var(--warning);"><span>📦</span> <span id="almostText"></span></div>
+    <div class="cart-summary-row"><span>Subtotal</span><span id="cartSubtotal">Rp 0</span></div>
+    <div class="cart-summary-row"><span>Ongkir</span><span id="cartShipping">Rp 0</span></div>
+    <div class="cart-total-row"><span>Total</span><span class="total-value" id="cartTotal">Rp 0</span></div>
+    <button class="btn-checkout" onclick="openCheckout()">Lanjut ke Checkout →</button>
+  </div>
+</aside>
+
+<div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this) closeModal()"><div class="modal-content" id="modalContent"></div></div>
+<div class="toast-container" id="toastContainer"></div>
+<button class="scroll-top" id="scrollTop" onclick="scrollToTop()">↑</button>
+
+<div id="adminDashboard">
+  <div class="admin-container">
+    <div class="admin-header">
+      <h1>⚙️ Dashboard Admin — Toko Online 7</h1>
+      <div class="admin-header-actions">
+        <button class="btn-logout-admin" onclick="logoutAdmin()">🚪 Logout Admin</button>
+        <button class="btn-close-admin" onclick="closeAdminPanel()">Tutup</button>
+      </div>
+    </div>
+
+    <div id="adminNotifBanner" class="admin-notif-banner" style="display:none">
+      <div class="admin-notif-icon">🔔</div>
+      <div class="admin-notif-text"><strong id="adminNotifCount">0 pesanan baru</strong> menunggu untuk diproses!</div>
+      <button class="admin-notif-btn" onclick="filterAdminOrders('pending')">Lihat Pesanan →</button>
+    </div>
+
+    <div class="admin-stats" id="adminStats"></div>
+
+    <div class="admin-tabs">
+      <button class="admin-tab active" data-tab="orders" onclick="adminTab('orders', this)">🛒 Pesanan <span id="tabOrderBadge"></span></button>
+      <button class="admin-tab" data-tab="products" onclick="adminTab('products', this)">📦 Produk</button>
+      <button class="admin-tab" data-tab="add" onclick="adminTab('add', this)">➕ Tambah Produk</button>
+      <button class="admin-tab" data-tab="promos" onclick="adminTab('promos', this)">🔥 Promo</button>
+      <button class="admin-tab" data-tab="videos" onclick="adminTab('videos', this)">🎬 Video Ads</button>
+      <button class="admin-tab" data-tab="vouchers" onclick="adminTab('vouchers', this)">🎫 Voucher</button>
+      <button class="admin-tab" data-tab="users" onclick="adminTab('users', this)">👥 Pengguna</button>
+    </div>
+
+    <div id="adminTab-orders" class="admin-tab-content active">
+      <div class="admin-order-filter" id="adminOrderFilter"></div>
+      <div id="adminOrdersList"></div>
+    </div>
+
+    <div id="adminTab-products" class="admin-tab-content">
+      <h3 style="margin-bottom:15px">📦 Daftar Produk</h3>
+      <div style="overflow-x:auto">
+        <table class="admin-product-table">
+          <thead><tr><th>Foto</th><th>Nama</th><th>Kategori</th><th>Badge</th><th>Harga</th><th>Diskon</th><th>Stok</th><th>Aksi</th></tr></thead>
+          <tbody id="adminProductsBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="adminTab-add" class="admin-tab-content">
+      <h3 style="margin-bottom:15px" id="formTitle">➕ Tambah Produk</h3>
+      <form onsubmit="submitNewProduct(event)" id="productForm">
+        <input type="hidden" id="editProductId">
+        <div class="admin-form-section"><h4>📝 Info Produk</h4>
+          <div class="admin-form-grid">
+            <div class="full"><label>Nama Produk *</label><input type="text" id="npName" required placeholder="Contoh: Kemeja Flanel Premium"></div>
+            <div><label>Kategori *</label><select id="npCat" required><option value="">Pilih...</option><option value="elektronik">Elektronik</option><option value="fashion">Fashion</option><option value="aksesoris">Aksesoris</option><option value="makanan">Makanan</option><option value="kesehatan">Kesehatan</option><option value="olahraga">Olahraga</option></select></div>
+            <div><label>Brand</label><input type="text" id="npBrand" placeholder="UrbanStyle"></div>
+            <div class="full"><label>🏷️ Badge</label>
+              <select id="npBadge"><option value="">— Tidak ada —</option><option value="new">🆕 Barang Baru</option><option value="hot">🔥 Hot</option><option value="trend">📈 Trending</option><option value="sale">💰 Sale</option><option value="best">⭐ Best Seller</option><option value="limited">💎 Limited Edition</option></select>
+            </div>
+          </div>
+        </div>
+        
+        <div class="admin-form-section"><h4>💰 Harga &amp; Stok</h4>
+          <div class="admin-form-grid">
+            <div><label>Harga Lama (Rp)</label><input type="number" id="npOldPrice" min="0" placeholder="15000" oninput="calcDiscountPrice()"></div>
+            <div><label>Diskon (%)</label><input type="number" id="npDiscount" min="0" max="100" placeholder="10" oninput="calcDiscountPrice()"></div>
+            <div><label>Harga Jual Dasar (Rp) *</label><input type="number" id="npPrice" required min="0" placeholder="Otomatis / Manual"></div>
+            <div><label>Stok *</label><input type="number" id="npStock" required min="0" value="50"></div>
+            <div><label>Rating</label><input type="number" id="npRating" min="0" max="5" step="0.1" value="4.8"></div>
+          </div>
+        </div>
+
+        <div class="admin-form-section"><h4>🎨 Variasi Produk (Harga Spesifik)</h4>
+          <div class="admin-form-grid">
+            <div class="full"><label>Warna (pisahkan koma)</label><input type="text" id="npColors" placeholder="Hitam, Putih, Navy" oninput="renderAdminColorInputs()"></div>
+            <div class="full"><label>Ukuran (pisahkan koma)</label><input type="text" id="npSizes" placeholder="M, L, XL" oninput="renderAdminSizeInputs()"></div>
+          </div>
+          <div id="adminColorPriceContainer" style="display:flex;flex-direction:column;gap:10px;margin-top:10px;"></div>
+          <div id="adminSizePriceContainer" style="display:flex;flex-direction:column;gap:10px;margin-top:10px;"></div>
+          <small style="display:block;color:#888;margin-top:6px;font-size:11px">*Kosongkan harga varian jika ingin memakai Harga Jual Dasar. Diskon otomatis diterapkan ke semua varian.</small>
+        </div>
+
+        <div class="admin-form-section"><h4>🔧 Spesifikasi</h4>
+          <button type="button" class="admin-btn-add-spec" onclick="addSpecRow()">+ Tambah Spesifikasi</button>
+          <div id="specsList" class="specs-list"></div>
+        </div>
+        
+        <div class="admin-form-section"><h4>🖼️ Gambar Produk</h4>
+          <div class="img-tabs">
+            <button type="button" class="img-tab active" data-mode="file" onclick="setImgMode('file')">📁 Upload File</button>
+            <button type="button" class="img-tab" data-mode="url" onclick="setImgMode('url')">🔗 URL</button>
+            <button type="button" class="img-tab" data-mode="emoji" onclick="setImgMode('emoji')">😀 Emoji</button>
+          </div>
+          <div id="imgMode-file" class="img-mode-section"><input type="file" accept="image/*" id="npImageFile" onchange="handleImageUpload(event)"></div>
+          <div id="imgMode-url" class="img-mode-section" style="display:none"><input type="url" id="npImage" placeholder="https://..." oninput="updateImagePreview()"></div>
+          <div id="imgMode-emoji" class="img-mode-section" style="display:none"><input type="text" id="npEmoji" maxlength="4" value="📦" oninput="updateImagePreview()"></div>
+          <div id="imgPreview"><span>📦</span></div>
+        </div>
+        
+        <div class="admin-form-section"><h4>📄 Deskripsi</h4>
+          <textarea id="npDesc" placeholder="Deskripsi produk..." style="width:100%;padding:10px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;outline:none;min-height:80px;background:var(--card);color:var(--text)"></textarea>
+        </div>
+        <button type="submit" class="admin-btn-save" id="adminSaveBtn">💾 Simpan Produk</button>
+        <button type="button" class="admin-btn-reset" onclick="resetProductForm()">↻ Reset Form</button>
+      </form>
+    </div>
+
+    <div id="adminTab-promos" class="admin-tab-content">
+      <h3 style="margin-bottom:15px">🔥 Kelola Promo (tampil di beranda & halaman Promo)</h3>
+      <div id="adminPromoList"></div>
+      <hr style="margin:20px 0;border:none;border-top:2px solid var(--border)">
+      <h4 style="margin-bottom:12px;font-size:14px;text-transform:uppercase;letter-spacing:.5px;color:var(--accent)" id="promoFormTitle">➕ Tambah Promo Baru</h4>
+      <form class="video-admin-form" id="promoForm" onsubmit="submitPromo(event)">
+        <input type="hidden" id="prEditId">
+        <label>Judul Promo *</label><input type="text" id="prTitle" required placeholder="Flash Sale Akhir Tahun">
+        <label>Deskripsi</label><textarea id="prDesc" placeholder="Keterangan singkat promo..."></textarea>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div><label>Emoji</label><input type="text" id="prEmoji" maxlength="4" value="🔥" placeholder="🔥"></div>
+          <div><label>Teks Diskon (tampilan)</label><input type="text" id="prDiscountText" placeholder="50%"></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div><label>Nilai Voucher (Rp) *</label><input type="number" id="prValue" required min="1000" value="25000"></div>
+          <div><label>Min. Belanja (Rp)</label><input type="number" id="prMin" min="0" value="100000"></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div><label>Kode Voucher (kosongkan = otomatis)</label><input type="text" id="prCode" placeholder="PROMO-XXXX"></div>
+          <div><label>Berlaku (hari)</label><input type="number" id="prExpiry" min="1" value="30"></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div><label>Kategori Target</label><select id="prCategory"><option value="semua">Semua Kategori</option><option value="elektronik">Elektronik</option><option value="fashion">Fashion</option><option value="aksesoris">Aksesoris</option><option value="makanan">Makanan</option><option value="kesehatan">Kesehatan</option><option value="olahraga">Olahraga</option></select></div>
+          <div><label>Warna Banner</label><select id="prColor"><option value="purple">Ungu Premium</option><option value="rose">Rose</option><option value="gold">Gold</option><option value="green">Hijau</option><option value="blue">Biru</option><option value="red">Merah</option><option value="violet">Violet</option></select></div>
+        </div>
+        <label>Status</label>
+        <select id="prActive"><option value="1">✅ Aktif</option><option value="0">⛔ Nonaktif</option></select>
+        <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">
+          <button type="submit" class="admin-btn-save">💾 Simpan Promo</button>
+          <button type="button" class="admin-btn-reset" onclick="resetPromoForm()">↻ Reset</button>
+        </div>
+      </form>
+    </div>
+
+    <div id="adminTab-videos" class="admin-tab-content">
+      <h3 style="margin-bottom:15px">🎬 Kelola Video Iklan (16:9, Maks 2 Menit)</h3>
+      <p style="font-size:12px;color:var(--text-light);margin-bottom:12px">ℹ️ Video di-upload menggunakan Firebase (disarankan ukuran kecil agar cepat).</p>
+      <div id="adminVideoList"></div>
+      <hr style="margin:20px 0;border:none;border-top:2px solid var(--border)">
+      <h4 style="margin-bottom:12px;font-size:14px;text-transform:uppercase;letter-spacing:.5px;color:var(--accent)" id="videoFormTitle">➕ Tambah Video Iklan Baru</h4>
+      <form class="video-admin-form" id="videoForm" onsubmit="submitVideoAd(event)">
+        <input type="hidden" id="vEditId">
+        <label>Judul Video *</label><input type="text" id="vTitle" required placeholder="Promo Spesial 12.12">
+        <label>Deskripsi</label><textarea id="vDesc" placeholder="Deskripsi singkat video iklan..."></textarea>
+        <label>Upload Video File * (MP4/WebM, maks 2 menit)</label>
+        <input type="file" accept="video/*" id="vFile" onchange="handleVideoUpload(event)">
+        <video id="vPreview" controls></video>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px">
+          <div><label>Nilai Voucher (Rp)</label><input type="number" id="vVoucherValue" min="0" value="15000"></div>
+          <div><label>Min. Belanja (Rp)</label><input type="number" id="vVoucherMin" min="0" value="50000"></div>
+        </div>
+        <label>Kode Voucher (kosongkan = otomatis)</label><input type="text" id="vVoucherCode" placeholder="VIDEO-XXXX">
+        <label>Status</label>
+        <select id="vActive"><option value="1">✅ Aktif</option><option value="0">⛔ Nonaktif</option></select>
+        <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">
+          <button type="submit" class="admin-btn-save">💾 Simpan Video</button>
+          <button type="button" class="admin-btn-reset" onclick="resetVideoForm()">↻ Reset</button>
+        </div>
+      </form>
+    </div>
+
+    <div id="adminTab-vouchers" class="admin-tab-content">
+      <h3 style="margin-bottom:15px">🎫 Kelola Voucher Publik</h3>
+      <div id="adminVoucherList"></div>
+      <hr style="margin:20px 0;border:none;border-top:2px solid var(--border)">
+      <h4 style="margin-bottom:12px;font-size:14px;text-transform:uppercase;letter-spacing:.5px;color:var(--accent)" id="voucherFormTitle">➕ Tambah Voucher Baru (Manual)</h4>
+      <form class="video-admin-form" id="voucherForm" onsubmit="submitVoucher(event)">
+        <input type="hidden" id="vEditId">
+        <label>Judul Voucher *</label><input type="text" id="vchTitle" required placeholder="Diskon Spesial Akhir Tahun">
+        <label>Kode Voucher *</label><input type="text" id="vchCode" required placeholder="TOKO7HEMAT">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div><label>Nilai Voucher (Rp) *</label><input type="number" id="vchValue" required min="1000" value="25000"></div>
+          <div><label>Min. Belanja (Rp)</label><input type="number" id="vchMin" min="0" value="100000"></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div><label>Berlaku (hari)</label><input type="number" id="vchExpiry" min="1" value="30"></div>
+          <div><label>Status</label><select id="vchActive"><option value="1">✅ Aktif</option><option value="0">⛔ Nonaktif</option></select></div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">
+          <button type="submit" class="admin-btn-save">💾 Simpan Voucher</button>
+          <button type="button" class="admin-btn-reset" onclick="resetVoucherForm()">↻ Reset</button>
+        </div>
+      </form>
+    </div>
+
+    <div id="adminTab-users" class="admin-tab-content">
+      <h3 style="margin-bottom:15px">👥 Data Pengguna Terdaftar</h3>
+      <p style="font-size:12px;color:var(--text-light);margin-bottom:12px">ℹ️ Menampilkan semua pengguna yang mendaftar beserta email dan password. Klik password untuk copy.</p>
+      <div style="overflow-x:auto">
+        <table class="users-table">
+          <thead><tr><th>#</th><th>Nama</th><th>Email</th><th>Password</th><th>No. HP</th><th>Alamat</th><th>Terdaftar</th><th>Aksi</th></tr></thead>
+          <tbody id="adminUsersBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <h3>🛍️ Toko Online 7</h3>
+      <p>Platform belanja online premium dengan ribuan produk berkualitas. Ikuti kami di media sosial untuk promo terbaru!</p>
+      <div class="social-icons">
+        <a href="https://x.com/TokoOnline_7" target="_blank" title="X (Twitter)"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+        <a href="https://www.instagram.com/ecommerce__7?lqvp=MWZ4NnZ3bzNmbGI1Nw==" target="_blank" title="Instagram"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg></a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Belanja</h4>
+      <ul>
+        <li><a onclick="filterByNav('semua')">Semua Produk</a></li>
+        <li><a onclick="filterByNav('promo')">Promo</a></li>
+        <li><a onclick="filterByNav('voucher')">Voucher</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Bantuan</h4>
+      <ul>
+        <li><a onclick="openHelp()">Pusat Bantuan</a></li>
+        <li><a onclick="openOrders()">Lacak Pesanan</a></li>
+        <li><a onclick="openAbout()">Tentang Kami</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Ikuti Kami</h4>
+      <ul>
+        <li><a href="https://x.com/TokoOnline_7" target="_blank">X (Twitter)</a></li>
+        <li><a href="https://www.instagram.com/ecommerce__7?lqvp=MWZ4NnZ3bzNmbGI1Nw==" target="_blank">Instagram</a></li>
+        <li><a onclick="openOrders()">Pesanan Saya</a></li>
+        <li style="font-size:13px; opacity:0.85; margin-top:5px; color:var(--text-light);">📍 UnakiPride - Indonesia</li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    &copy; 2025 Toko Online 7. All rights reserved.
+  </div>
+</footer>
+
+<script type="module">
+// Firebase SDK imports (v10.8.0)
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { getFirestore, collection, onSnapshot, doc, setDoc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyC_lWaj5W7aktX4Zp7Pezy9XLECFefXBBo",
+  authDomain: "toko-online-7.firebaseapp.com",
+  projectId: "toko-online-7",
+  storageBucket: "toko-online-7.firebasestorage.app",
+  messagingSenderId: "34014860140",
+  appId: "1:34014860140:web:87799d5ddc6e63cd995949",
+  measurementId: "G-LR4V70YPHW"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// ---------- STORAGE KEYS (Local Storage for session/cart only) ----------
+const LS = {
+  cart:'tk7_cart', wishlist:'tk7_wishlist', theme:'tk7_theme', adminAuth:'tk7_admin_auth', currentUser:'tk7_current'
+};
+const ADMIN_PASS = 'fatur';
+
+// ---------- STATE ----------
+window.products = [];
+window.promos = [];
+window.vouchers = [];
+window.users = [];
+window.orders = [];
+window.videoAds = [];
+window.claimedVideoVouchers = [];
+window.cart = [];
+window.wishlist = [];
+
+window.currentUser = null;
+window.currentFilter = 'semua';
+window.currentSort = 'default';
+window.searchTerm = '';
+window.selectedVoucher = null;
+window.selectedPayment = null;
+window.selectedPaymentMethod = null;
+window.adminOrderFilter = 'all';
+window.editProductImageData = null;
+
+// ---------- UTIL ----------
+window.uid = function(prefix='id'){ return prefix + '_' + Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+window.rupiah = function(n){ return 'Rp ' + (Number(n)||0).toLocaleString('id-ID'); }
+window.esc = function(s){ return String(s||'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+window.showToast = function(msg, type='info'){
+  const c = document.getElementById('toastContainer');
+  const icons = { info:'ℹ️', success:'✅', error:'❌', warning:'⚠️' };
+  const div = document.createElement('div');
+  div.className = 'toast ' + (type!=='info'?type:'');
+  div.innerHTML = `<span class="toast-icon">${icons[type]||icons.info}</span><span>${esc(msg)}</span>`;
+  c.appendChild(div);
+  requestAnimationFrame(()=>div.classList.add('show'));
+  setTimeout(()=>{ div.classList.remove('show'); setTimeout(()=>div.remove(), 400); }, 3000);
+}
+window.openAdLink = function(url){ window.open(url, '_blank'); }
+window.closeFloatAd = function(id){ document.getElementById(id)?.classList.add('hidden'); }
+window.closeTopSticky = function(){ document.getElementById('topStickyAd')?.classList.add('hidden'); document.body.classList.remove('has-top-ad'); }
+window.closeStickyBottom = function(){ document.getElementById('stickyBottom')?.classList.add('hidden'); document.body.classList.remove('has-sticky'); }
+window.scrollToTop = function(){ window.scrollTo({top:0, behavior:'smooth'}); }
+window.closeModal = function(){ document.getElementById('modalOverlay').classList.remove('active'); document.getElementById('modalContent').innerHTML=''; }
+
+// ---------- LS HELPERS ----------
+window.loadLS = function(key, def) {
+  try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : def; }
+  catch(e){ return def; }
+}
+window.saveLS = function(key, val) {
+  try { localStorage.setItem(key, JSON.stringify(val)); }
+  catch(e){ console.warn('LS full', e); }
+}
+window.saveCart = function(){ saveLS(LS.cart, cart); }
+window.saveWishlist = function(){ saveLS(LS.wishlist, wishlist); }
+
+window.loadAllLocal = function() {
+  cart = loadLS(LS.cart, []);
+  wishlist = loadLS(LS.wishlist, []);
+}
+
+// ---------- FIREBASE SYNC LISTENERS ----------
+window.listenFirebase = function() {
+    // Products
+    onSnapshot(collection(db, "products"), (snapshot) => {
+        products = [];
+        snapshot.forEach(doc => products.push({id: doc.id, ...doc.data()}));
+        renderProducts();
+        renderAdminProducts();
+        renderAdminStats();
+    }, error => console.error("Firebase Products Error:", error));
+    
+    // Promos
+    onSnapshot(collection(db, "promos"), (snapshot) => {
+        promos = [];
+        snapshot.forEach(doc => promos.push({id: doc.id, ...doc.data()}));
+        renderPromoSection();
+        renderAdminPromos();
+    }, error => console.error("Firebase Promos Error:", error));
+    
+    // Vouchers
+    onSnapshot(collection(db, "vouchers"), (snapshot) => {
+        vouchers = [];
+        snapshot.forEach(doc => vouchers.push({id: doc.id, ...doc.data()}));
+        updateNavVoucherCount();
+        if(currentFilter === 'voucher') renderVoucherPage();
+        renderAdminVouchers();
+    }, error => console.error("Firebase Vouchers Error:", error));
+    
+    // Users
+    onSnapshot(collection(db, "users"), (snapshot) => {
+        users = [];
+        snapshot.forEach(doc => users.push({id: doc.id, ...doc.data()}));
+        renderAdminUsers();
+        renderAdminStats();
+        // Update current user data if exists
+        if (currentUser) {
+            const u = users.find(x => x.id === currentUser.id);
+            if (u) { currentUser = u; renderUserMenu(); updateNavVoucherCount(); }
+        }
+    }, error => console.error("Firebase Users Error:", error));
+    
+    // Orders
+    onSnapshot(collection(db, "orders"), (snapshot) => {
+        orders = [];
+        snapshot.forEach(doc => orders.push({id: doc.id, ...doc.data()}));
+        renderAdminOrders();
+        renderAdminStats();
+        renderAdminNotif();
+    }, error => console.error("Firebase Orders Error:", error));
+    
+    // Videos
+    onSnapshot(collection(db, "videos"), (snapshot) => {
+        videoAds = [];
+        snapshot.forEach(doc => videoAds.push({id: doc.id, ...doc.data()}));
+        renderVideoAds();
+        renderAdminVideos();
+        renderAdminStats();
+    }, error => console.error("Firebase Videos Error:", error));
+}
+
+// ---------- PRODUCT HELPERS ----------
+window.getFinalPrice = function(p, colorName, sizeName){
+  let basePrice = Number(p.price) || 0;
+  let disc = Number(p.discount) || 0;
+
+  if (colorName) {
+    const cl = (p.colors||[]).find(c => c.name === colorName);
+    if (cl) {
+      if (cl.price) basePrice = Number(cl.price);
+      if (cl.discount !== undefined) disc = Number(cl.discount);
+    }
+  }
+  if (sizeName) {
+    const sz = (p.sizes||[]).find(s => s.name === sizeName);
+    if (sz) {
+      if (sz.price) basePrice = Number(sz.price);
+      if (sz.discount !== undefined) disc = Number(sz.discount);
+    }
+  }
+  return basePrice * (1 - disc/100);
+}
+window.getOldPriceForVariant = function(p, colorName, sizeName){
+  if (colorName) {
+    const cl = (p.colors||[]).find(c => c.name === colorName);
+    if (cl && cl.oldPrice) return Number(cl.oldPrice);
+  }
+  if (sizeName) {
+    const sz = (p.sizes||[]).find(s => s.name === sizeName);
+    if (sz && sz.oldPrice) return Number(sz.oldPrice);
+  }
+  return p.oldPrice ? Number(p.oldPrice) : null;
+}
+
+// ---------- RENDER: PRODUCTS ----------
+window.renderProducts = function(){
+  const grid = document.getElementById('productsGrid');
+  let list = [...products];
+  if (currentFilter === 'promo') {
+    list = list.filter(p => p.badge || (p.oldPrice && p.oldPrice > p.price));
+  } else if (currentFilter !== 'semua') {
+    list = list.filter(p => p.category === currentFilter);
+  }
+  if (searchTerm) {
+    const q = searchTerm.toLowerCase();
+    list = list.filter(p => (p.name||'').toLowerCase().includes(q) || (p.brand||'').toLowerCase().includes(q) || (p.category||'').toLowerCase().includes(q));
+  }
+  if (currentSort === 'price-asc') list.sort((a,b)=>getFinalPrice(a)-getFinalPrice(b));
+  else if (currentSort === 'price-desc') list.sort((a,b)=>getFinalPrice(b)-getFinalPrice(a));
+  else if (currentSort === 'rating') list.sort((a,b)=>(b.rating||0)-(a.rating||0));
+  else if (currentSort === 'name') list.sort((a,b)=>(a.name||'').localeCompare(b.name||''));
+  else list.sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
+
+  if (list.length === 0) {
+    grid.innerHTML = `<div class="empty-state"><div class="empty-state-emoji">📦</div><h3>Belum ada produk</h3><p>Produk akan muncul di sini setelah admin menambahkan.</p></div>`;
+    return;
+  }
+
+  let cards = '';
+  for (const p of list) {
+    const inWish = wishlist.includes(p.id);
+    const badgeMap = { new:['🆕 Barang Baru','badge-new'], hot:['🔥 Hot','badge-hot'], trend:['📈 Trending','badge-trend'], sale:['💰 Sale','badge-sale'], best:['⭐ Best Seller','badge-best'], limited:['💎 Limited','badge-limited'] };
+    const b = p.badge && badgeMap[p.badge] ? `<div class="product-badge ${badgeMap[p.badge][1]}">${badgeMap[p.badge][0]}</div>` : '';
+    let imgHtml = `<div class="img-fallback">📦</div>`;
+    if (p.image) {
+        if (p.image.type === 'emoji') imgHtml = `<div class="img-fallback">${esc(p.image.value||'📦')}</div>`;
+        else if (p.image.type === 'url' || p.image.type === 'base64') imgHtml = `<img src="${esc(p.image.value)}" alt="" onerror="this.style.display='none';this.nextElementSibling&&(this.nextElementSibling.style.display='flex')"><div class="img-fallback" style="display:none">📦</div>`;
+    }
+    
+    const displayPrice = getFinalPrice(p, null, null);
+    const oldPrice = getOldPriceForVariant(p, null, null);
+    const oldPriceHtml = (oldPrice && oldPrice > displayPrice) ? `<span class="price-old">${rupiah(oldPrice)}</span>` : '';
+    
+    cards += `
+      <div class="product-card">
+        ${b}
+        <button class="wishlist-btn ${inWish?'active':''}" onclick="event.stopPropagation();toggleWishlistItem('${p.id}')">${inWish?'❤️':'🤍'}</button>
+        <div class="product-img" onclick="openProductDetail('${p.id}')">${imgHtml}</div>
+        <div class="product-info">
+          <div class="product-category">${esc(p.category||'')}</div>
+          <div class="product-name" onclick="openProductDetail('${p.id}')">${esc(p.name)}</div>
+          <div class="product-rating"><span class="stars">★★★★★</span> <span>${(p.rating||0).toFixed(1)}</span></div>
+          <div class="product-price-row">
+            <span class="price-current">${rupiah(displayPrice)}</span>
+            ${oldPriceHtml}
+          </div>
+          <button class="btn-add" onclick="event.stopPropagation();buyNow('${p.id}')">🛍️ Beli</button>
+        </div>
+      </div>`;
+  }
+  grid.innerHTML = cards;
+}
+
+// ---------- PRODUCT DETAIL MODAL ----------
+window.pdSelectedColor = null;
+window.pdSelectedSize = null;
+window.pdQty = 1;
+window.pdProductId = null;
+
+window.openProductDetail = function(id){
+  const p = products.find(x => x.id === id);
+  if (!p) return;
+  pdProductId = id;
+  pdSelectedColor = (p.colors && p.colors.length) ? null : null;
+  pdSelectedSize = (p.sizes && p.sizes.length) ? null : null;
+  pdQty = 1;
+
+  let imgHtml = `<div class="img-fallback">📦</div>`;
+  if (p.image) {
+      if (p.image.type === 'emoji') imgHtml = `<div class="img-fallback">${esc(p.image.value||'📦')}</div>`;
+      else if (p.image.type === 'url' || p.image.type === 'base64') imgHtml = `<img src="${esc(p.image.value)}" alt="">`;
+  }
+  
+  const displayPrice = getFinalPrice(p, null, null);
+  const oldPrice = getOldPriceForVariant(p, null, null);
+  const oldPriceHtml = (oldPrice && oldPrice > displayPrice) ? `<span class="pd-price-old">${rupiah(oldPrice)}</span>` : '';
+  
+  const colorHtml = (p.colors && p.colors.length) ? `
+    <div class="variant-title">Pilih Warna *</div>
+    <div class="color-options">
+      ${p.colors.map(c => `<div class="color-option" data-name="${esc(c.name)}" onclick="selectPDColor('${esc(c.name)}')">${esc(c.name)}</div>`).join('')}
+    </div>` : '';
+  const sizeHtml = (p.sizes && p.sizes.length) ? `
+    <div class="variant-title">Pilih Ukuran *</div>
+    <div class="size-options">
+      ${p.sizes.map(s => `<div class="size-option" data-name="${esc(s.name)}" onclick="selectPDSize('${esc(s.name)}')"><span class="sz-name">${esc(s.name)}</span>${s.price?`<span class="sz-price">${rupiah(getFinalPrice(p, null, s.name))}</span>`:''}</div>`).join('')}
+    </div>` : '';
+  const specsHtml = (p.specs && p.specs.length) ? `
+    <div class="pd-specs"><h4>Spesifikasi</h4>
+      ${p.specs.map(sp => `<div class="spec-row"><span class="spec-label">${esc(sp.label)}</span><span class="spec-value">${esc(sp.value)}</span></div>`).join('')}
+    </div>` : '';
+
+  const html = `
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="product-detail">
+      <div class="pd-image">${imgHtml}</div>
+      <div class="pd-info">
+        <h2>${esc(p.name)}</h2>
+        <div class="product-category" style="font-size:11px;color:var(--accent);text-transform:uppercase;letter-spacing:1.2px;font-weight:800;margin-bottom:8px">${esc(p.category||'')}</div>
+        <div class="pd-price" id="pdPriceBox"><span id="pdCurrentPrice">${rupiah(displayPrice)}</span><span id="pdOldPrice" class="pd-price-old">${oldPrice ? rupiah(oldPrice) : ''}</span></div>
+        <div class="product-rating"><span class="stars">★★★★★</span> <span>${(p.rating||0).toFixed(1)} · Stok ${p.stock||0}</span></div>
+        <div class="pd-desc" style="margin-top:12px">${esc(p.desc||'')}</div>
+        ${colorHtml}
+        ${sizeHtml}
+        ${specsHtml}
+        <div class="qty-section">
+          <label>Jumlah:</label>
+          <div class="qty-selector">
+            <button onclick="changePDQty(-1)">−</button>
+            <span id="pdQtyVal">1</span>
+            <button onclick="changePDQty(1)">+</button>
+          </div>
+        </div>
+        <div class="pd-actions">
+          <button class="btn-primary" onclick="confirmBuyFromDetail()">🛍️ Beli</button>
+          <button class="btn-secondary ${wishlist.includes(id)?'active':''}" onclick="toggleWishlistItem('${id}');this.classList.toggle('active')">${wishlist.includes(id)?'❤️':'🤍'}</button>
+        </div>
+      </div>
+    </div>`;
+  document.getElementById('modalContent').innerHTML = html;
+  document.getElementById('modalOverlay').classList.add('active');
+}
+
+window.selectPDColor = function(name){
+  pdSelectedColor = name;
+  document.querySelectorAll('.color-option').forEach(el => el.classList.toggle('selected', el.dataset.name === name));
+  updatePDPrice();
+}
+window.selectPDSize = function(name){
+  pdSelectedSize = name;
+  document.querySelectorAll('.size-option').forEach(el => el.classList.toggle('selected', el.dataset.name === name));
+  updatePDPrice();
+}
+window.updatePDPrice = function(){
+  const p = products.find(x => x.id === pdProductId);
+  if (!p) return;
+  const price = getFinalPrice(p, pdSelectedColor, pdSelectedSize);
+  const oldP = getOldPriceForVariant(p, pdSelectedColor, pdSelectedSize);
+  
+  const el = document.getElementById('pdCurrentPrice');
+  if (el) el.textContent = rupiah(price);
+  
+  const oldEl = document.getElementById('pdOldPrice');
+  if (oldEl) {
+      if (oldP && oldP > price) oldEl.textContent = rupiah(oldP);
+      else oldEl.textContent = '';
+  }
+}
+window.changePDQty = function(delta){
+  pdQty = Math.max(1, pdQty + delta);
+  const el = document.getElementById('pdQtyVal');
+  if (el) el.textContent = pdQty;
+}
+
+window.buyNow = function(id){
+  const p = products.find(x => x.id === id);
+  if (!p) return;
+  const hasVariants = (p.colors && p.colors.length) || (p.sizes && p.sizes.length);
+  if (hasVariants) {
+    openProductDetail(id); // Force open detail to select variant
+  } else {
+    addToCart(id, 1, null, null);
+    showToast('✅ Ditambahkan ke keranjang', 'success');
+    toggleCart(true);
+  }
+}
+
+window.confirmBuyFromDetail = function(){
+  const p = products.find(x => x.id === pdProductId);
+  if (!p) return;
+  if (p.colors && p.colors.length && !pdSelectedColor){
+    showToast('⚠️ Pilih warna terlebih dahulu!', 'warning');
+    return;
+  }
+  if (p.sizes && p.sizes.length && !pdSelectedSize){
+    showToast('⚠️ Pilih ukuran terlebih dahulu!', 'warning');
+    return;
+  }
+  addToCart(pdProductId, pdQty, pdSelectedColor, pdSelectedSize);
+  showToast('✅ Ditambahkan ke keranjang', 'success');
+  closeModal();
+  toggleCart(true);
+}
+
+// ---------- CART ----------
+window.addToCart = function(productId, qty, color, size){
+  const p = products.find(x => x.id === productId);
+  if (!p) return;
+  const price = getFinalPrice(p, color, size);
+  const existing = cart.find(it => it.productId === productId && it.color === color && it.size === size);
+  if (existing) {
+    existing.qty += qty;
+  } else {
+    cart.push({ id: uid('cart'), productId, qty, color, size, price });
+  }
+  saveCart();
+  renderCart();
+  updateBadges();
+}
+window.updateCartQty = function(cartId, delta){
+  const it = cart.find(x => x.id === cartId);
+  if (!it) return;
+  it.qty += delta;
+  if (it.qty <= 0) cart = cart.filter(x => x.id !== cartId);
+  saveCart();
+  renderCart();
+  updateBadges();
+}
+window.removeCartItem = function(cartId){
+  cart = cart.filter(x => x.id !== cartId);
+  saveCart();
+  renderCart();
+  updateBadges();
+}
+window.renderCart = function(){
+  const wrap = document.getElementById('cartItems');
+  const footer = document.getElementById('cartFooter');
+  document.getElementById('cartItemCount').textContent = `(${cart.reduce((s,i)=>s+i.qty,0)} item)`;
+  if (cart.length === 0) {
+    wrap.innerHTML = `<div class="empty-cart"><div class="empty-cart-emoji">🛒</div><p>Keranjang masih kosong</p><p style="font-size:12px">Yuk mulai belanja!</p></div>`;
+    footer.style.display = 'none';
+    return;
+  }
+  footer.style.display = 'block';
+  let items = '';
+  let subtotal = 0;
+  for (const it of cart){
+    const p = products.find(x => x.id === it.productId);
+    if (!p) continue;
+    subtotal += it.price * it.qty;
+    let imgHtml = `<div class="img-fallback" style="font-size:32px">📦</div>`;
+    if (p.image) {
+        if (p.image.type === 'emoji') imgHtml = `<div class="img-fallback" style="font-size:32px">${esc(p.image.value||'📦')}</div>`;
+        else if (p.image.type === 'url' || p.image.type === 'base64') imgHtml = `<img src="${esc(p.image.value)}" alt="">`;
+    }
+    const varText = [it.color, it.size].filter(Boolean).join(' / ');
+    items += `
+      <div class="cart-item">
+        <div class="cart-item-img">${imgHtml}</div>
+        <div class="cart-item-info">
+          <div class="cart-item-name">${esc(p.name)}</div>
+          ${varText?`<div class="cart-item-variant">${esc(varText)}</div>`:''}
+          <div class="cart-item-price">${rupiah(it.price * it.qty)}</div>
+          <div class="cart-item-controls">
+            <div class="mini-qty">
+              <button onclick="updateCartQty('${it.id}',-1)">−</button>
+              <span>${it.qty}</span>
+              <button onclick="updateCartQty('${it.id}',1)">+</button>
+            </div>
+            <button class="remove-btn" onclick="removeCartItem('${it.id}')">Hapus</button>
+          </div>
+        </div>
+      </div>`;
+  }
+  wrap.innerHTML = items;
+  const shipping = subtotal >= 500000 ? 0 : 20000;
+  const total = subtotal + shipping;
+  document.getElementById('cartSubtotal').textContent = rupiah(subtotal);
+  document.getElementById('cartShipping').textContent = shipping === 0 ? 'GRATIS' : rupiah(shipping);
+  document.getElementById('cartTotal').textContent = rupiah(total);
+  document.getElementById('freeShipNotice').style.display = shipping === 0 ? 'flex' : 'none';
+  if (shipping > 0) {
+    const remaining = 500000 - subtotal;
+    document.getElementById('almostFreeShip').style.display = 'flex';
+    document.getElementById('almostText').textContent = `Belanja ${rupiah(remaining)} lagi untuk gratis ongkir!`;
+  } else {
+    document.getElementById('almostFreeShip').style.display = 'none';
+  }
+}
+window.toggleCart = function(force){
+  const sb = document.getElementById('cartSidebar');
+  const ov = document.getElementById('cartOverlay');
+  const open = force !== undefined ? force : !sb.classList.contains('active');
+  sb.classList.toggle('active', open);
+  ov.classList.toggle('active', open);
+}
+window.updateBadges = function(){
+  const cartQty = cart.reduce((s,i)=>s+i.qty,0);
+  const cb = document.getElementById('cartBadge');
+  cb.textContent = cartQty; cb.classList.toggle('hidden', cartQty===0);
+  const wb = document.getElementById('wishlistBadge');
+  wb.textContent = wishlist.length; wb.classList.toggle('hidden', wishlist.length===0);
+}
+
+// ---------- WISHLIST ----------
+window.toggleWishlistItem = function(id){
+  if (wishlist.includes(id)) wishlist = wishlist.filter(x => x !== id);
+  else wishlist.push(id);
+  saveWishlist();
+  updateBadges();
+  renderProducts();
+}
+window.toggleWishlistView = function(){
+  if (wishlist.length === 0) { showToast('Belum ada produk favorit', 'info'); return; }
+  currentFilter = 'semua';
+  searchTerm = '';
+  document.getElementById('searchInput').value = '';
+  const grid = document.getElementById('productsGrid');
+  const list = products.filter(p => wishlist.includes(p.id));
+  document.querySelectorAll('.chip').forEach(c => c.classList.toggle('active', c.dataset.cat === 'semua'));
+  renderFilteredProducts(list);
+}
+window.renderFilteredProducts = function(list){
+  const grid = document.getElementById('productsGrid');
+  if (!list.length) {
+    grid.innerHTML = `<div class="empty-state"><div class="empty-state-emoji">❤️</div><h3>Belum ada produk favorit</h3></div>`;
+    return;
+  }
+  let cards = '';
+  for (const p of list){
+    let imgHtml = `<div class="img-fallback">📦</div>`;
+    if (p.image) {
+        if (p.image.type === 'emoji') imgHtml = `<div class="img-fallback">${esc(p.image.value||'📦')}</div>`;
+        else if (p.image.type === 'url' || p.image.type === 'base64') imgHtml = `<img src="${esc(p.image.value)}" alt="">`;
+    }
+    const displayPrice = getFinalPrice(p, null, null);
+    cards += `
+      <div class="product-card">
+        <button class="wishlist-btn active" onclick="event.stopPropagation();toggleWishlistItem('${p.id}');toggleWishlistView()">❤️</button>
+        <div class="product-img" onclick="openProductDetail('${p.id}')">${imgHtml}</div>
+        <div class="product-info">
+          <div class="product-category">${esc(p.category||'')}</div>
+          <div class="product-name">${esc(p.name)}</div>
+          <div class="product-price-row"><span class="price-current">${rupiah(displayPrice)}</span></div>
+          <button class="btn-add" onclick="event.stopPropagation();buyNow('${p.id}')">🛍️ Beli</button>
+        </div>
+      </div>`;
+  }
+  grid.innerHTML = cards;
+}
+
+// ---------- NAV / FILTER ----------
+window.filterByNav = function(cat){
+  currentFilter = cat;
+  searchTerm = '';
+  document.getElementById('searchInput').value = '';
+  document.querySelectorAll('#mainNav button').forEach(b => b.classList.toggle('active', b.dataset.nav === cat));
+  if (cat === 'promo') {
+    renderPromoPage();
+  } else if (cat === 'voucher') {
+    renderVoucherPage();
+  } else {
+    document.getElementById('sectionTitle').textContent =
+      cat === 'semua' ? 'Produk Terbaru' : ('Kategori: ' + cat.charAt(0).toUpperCase() + cat.slice(1));
+    document.querySelectorAll('.chip').forEach(c => c.classList.toggle('active', c.dataset.cat === cat));
+    renderProducts();
+  }
+  scrollToTop();
+}
+
+// ---------- PROMO SECTION ----------
+window.renderPromoSection = function(){
+  const wrap = document.getElementById('promoScroll');
+  const active = promos.filter(p => p.active !== false);
+  if (!active.length){
+    wrap.innerHTML = `<div class="promo-empty"><div class="emoji">🔥</div><p>Belum ada promo aktif. Admin bisa menambahkan di dashboard.</p></div>`;
+    return;
+  }
+  wrap.innerHTML = active.slice(0,6).map(p => {
+    const colors = { purple:'#2b2540,#463f60', rose:'#7d5a63,#9e7a82', gold:'#b08a5c,#d3b489', green:'#4a7a66,#5e947e', blue:'#1e4d7b,#2a7fa8', red:'#a84a4a,#c26a6a', violet:'#5a4d8a,#7a6aa8' };
+    const bg = colors[p.color] || colors.purple;
+    const claimed = vouchers.some(v => v.promoId === p.id && v.claimedBy === (currentUser?.id || 'guest'));
+    return `<div class="promo-card" style="background:linear-gradient(135deg,${bg})">
+      <span class="promo-emoji">${esc(p.emoji||'🔥')}</span>
+      <span class="promo-badge">PROMO</span>
+      <h3>${esc(p.title)}</h3>
+      <p>${esc(p.desc||'')}</p>
+      ${p.discountText?`<div class="promo-discount">${esc(p.discountText)}</div>`:''}
+      <div class="promo-actions">
+        <button class="promo-btn claim" onclick="claimPromoVoucher('${p.id}')" ${claimed?'disabled':''}>${claimed?'✅ Sudah Diklaim':'🎫 Klaim Voucher'}</button>
+        <button class="promo-btn shop" onclick="filterByNav('${p.category==='semua'?'semua':p.category}')">Belanja →</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+window.renderPromoPage = function(){
+  const grid = document.getElementById('productsGrid');
+  const active = promos.filter(p => p.active !== false);
+  let promoHtml = `
+    <div class="promo-wrap">
+      <div class="promo-page-header">
+        <h2>🔥 Promo Spesial</h2>
+        <p>Klaim voucher promo dan hemat belanja Anda.</p>
+      </div>
+      <div class="promo-scroll">
+        ${active.length ? active.map(p => {
+          const colors = { purple:'#2b2540,#463f60', rose:'#7d5a63,#9e7a82', gold:'#b08a5c,#d3b489', green:'#4a7a66,#5e947e', blue:'#1e4d7b,#2a7fa8', red:'#a84a4a,#c26a6a', violet:'#5a4d8a,#7a6aa8' };
+          const bg = colors[p.color] || colors.purple;
+          const claimed = vouchers.some(v => v.promoId === p.id && v.claimedBy === (currentUser?.id || 'guest'));
+          return `<div class="promo-card" style="background:linear-gradient(135deg,${bg})">
+            <span class="promo-emoji">${esc(p.emoji||'🔥')}</span>
+            <span class="promo-badge">PROMO</span>
+            <h3>${esc(p.title)}</h3>
+            <p>${esc(p.desc||'')}</p>
+            ${p.discountText?`<div class="promo-discount">${esc(p.discountText)}</div>`:''}
+            <div class="promo-actions">
+              <button class="promo-btn claim" onclick="claimPromoVoucher('${p.id}')" ${claimed?'disabled':''}>${claimed?'✅ Sudah Diklaim':'🎫 Klaim Voucher'}</button>
+            </div>
+          </div>`;
+        }).join('') : `<div class="promo-empty"><div class="emoji">🔥</div><p>Belum ada promo aktif.</p></div>`}
+      </div>
+    </div>`;
+  grid.innerHTML = promoHtml;
+  document.getElementById('sectionTitle').textContent = 'Halaman Promo';
+}
+
+// ---------- VOUCHERS ----------
+window.renderVoucherPage = function(){
+  const grid = document.getElementById('productsGrid');
+  const mine = vouchers.filter(v => v.claimedBy === (currentUser?.id || 'guest'));
+  const available = promos.filter(p => p.active !== false);
+  let html = `
+    <div class="voucher-page-wrap">
+      <div class="voucher-page-header">
+        <div>
+          <h2>🎫 Voucher Saya</h2>
+          <p>Kumpulkan voucher dan hemat belanja Anda.</p>
+        </div>
+        <div class="voucher-stats">
+          <div class="voucher-stat"><div class="num">${mine.filter(v=>!v.used).length}</div><div class="lbl">Aktif</div></div>
+          <div class="voucher-stat"><div class="num">${available.length}</div><div class="lbl">Tersedia</div></div>
+        </div>
+      </div>
+      <div class="voucher-tabs">
+        <button class="voucher-tab active" onclick="switchVoucherTab('mine', this)">🎫 Voucher Saya (${mine.length})</button>
+        <button class="voucher-tab" onclick="switchVoucherTab('available', this)">🎁 Klaim Baru (${available.length})</button>
+      </div>
+      <div class="voucher-cards-grid" id="voucherCardsGrid">
+        ${renderVoucherCards(mine)}
+      </div>
+    </div>`;
+  grid.innerHTML = html;
+  document.getElementById('sectionTitle').textContent = 'Voucher';
+}
+window.renderVoucherCards = function(vouchersList){
+  if (!vouchersList.length){
+    return `<div class="voucher-empty"><div class="emoji">🎫</div><h3>Belum ada voucher</h3><p>Klaim voucher dari promo yang tersedia.</p></div>`;
+  }
+  return vouchersList.map(v => {
+    const expired = v.expiry && new Date(v.expiry) < new Date();
+    const status = v.used ? 'used' : (expired ? 'expired' : 'active');
+    const statusText = v.used ? 'Terpakai' : (expired ? 'Expired' : 'Aktif');
+    return `<div class="voucher-card ${expired?'expired':''}">
+      <div class="voucher-card-top">
+        <span class="v-source">🎫 Voucher</span>
+        <span class="voucher-card-status ${status}">${statusText}</span>
+        <div class="v-value">${rupiah(v.value)}</div>
+        <div class="v-min">Min. belanja ${rupiah(v.min)}</div>
+      </div>
+      <div class="voucher-card-body">
+        <div class="voucher-card-title">${esc(v.title)}</div>
+        <div class="voucher-card-desc">${esc(v.desc||'')}</div>
+        <div class="voucher-card-code" onclick="copyVoucherCode('${esc(v.code)}')">${esc(v.code)}<span class="copy-hint">Klik untuk copy</span></div>
+        ${v.expiry?`<div class="voucher-expiry ${expired?'warn':''}">⏰ Berlaku s/d ${new Date(v.expiry).toLocaleDateString('id-ID')}</div>`:''}
+      </div>
+    </div>`;
+  }).join('');
+}
+window.switchVoucherTab = function(tab, btn){
+  document.querySelectorAll('.voucher-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const grid = document.getElementById('voucherCardsGrid');
+  if (tab === 'mine') {
+    const mine = vouchers.filter(v => v.claimedBy === (currentUser?.id || 'guest'));
+    grid.innerHTML = renderVoucherCards(mine);
+  } else {
+    const active = promos.filter(p => p.active !== false);
+    if (!active.length) {
+      grid.innerHTML = `<div class="voucher-empty"><div class="emoji">🎁</div><h3>Belum ada promo</h3><p>Tunggu promo dari admin.</p></div>`;
+      return;
+    }
+    grid.innerHTML = active.map(p => {
+      const claimed = vouchers.some(v => v.promoId === p.id && v.claimedBy === (currentUser?.id || 'guest'));
+      return `<div class="voucher-card">
+        <div class="voucher-card-top">
+          <span class="v-source">🎁 Promo</span>
+          <div class="v-value">${rupiah(p.value)}</div>
+          <div class="v-min">Min. belanja ${rupiah(p.min)}</div>
+        </div>
+        <div class="voucher-card-body">
+          <div class="voucher-card-title">${esc(p.title)}</div>
+          <div class="voucher-card-desc">${esc(p.desc||'')}</div>
+          <button class="voucher-card-btn claim" onclick="claimPromoVoucher('${p.id}')" ${claimed?'disabled':''}>${claimed?'✅ Sudah Diklaim':'🎫 Klaim Voucher'}</button>
+        </div>
+      </div>`;
+    }).join('');
+  }
+}
+window.copyVoucherCode = function(code){
+  navigator.clipboard?.writeText(code).then(() => showToast('📋 Kode disalin: ' + code, 'success')).catch(()=>showToast('Kode: ' + code, 'info'));
+}
+window.claimPromoVoucher = async function(promoId){
+  const p = promos.find(x => x.id === promoId);
+  if (!p) return;
+  const claimer = currentUser?.id || 'guest';
+  if (vouchers.some(v => v.promoId === promoId && v.claimedBy === claimer)) {
+    showToast('Voucher sudah pernah diklaim', 'warning');
+    return;
+  }
+  try {
+    const code = p.code || ('PROMO-' + Math.random().toString(36).slice(2,8).toUpperCase());
+    const expiry = p.expiryDays ? new Date(Date.now() + p.expiryDays*86400000).toISOString() : null;
+    const newId = uid('v');
+    await setDoc(doc(db, "vouchers", newId), { promoId, title:p.title, desc:p.desc||'', value:Number(p.value)||0, min:Number(p.min)||0, code, expiry, claimedBy:claimer, used:false, createdAt:Date.now() });
+    showToast('🎉 Voucher berhasil diklaim!', 'success');
+  } catch(e) {
+    showToast('Gagal klaim voucher: ' + e.message, 'error');
+  }
+}
+window.updateNavVoucherCount = function(){
+  const mine = vouchers.filter(v => v.claimedBy === (currentUser?.id || 'guest') && !v.used);
+  const badge = document.getElementById('navVoucherCount');
+  if (mine.length) { badge.style.display = 'inline-block'; badge.textContent = mine.length; }
+  else badge.style.display = 'none';
+}
+
+// ---------- HERO SLIDER ----------
+let sliderIndex = 0;
+window.startSlider = function(){
+  const slides = document.querySelectorAll('.slide');
+  const dots = document.querySelectorAll('#sliderDots span');
+  if (!slides.length) return;
+  dots.forEach((d,i) => d.onclick = () => setSlide(i));
+  setInterval(() => setSlide((sliderIndex + 1) % slides.length), 5000);
+  function setSlide(i){
+    sliderIndex = i;
+    slides.forEach((s,idx) => s.classList.toggle('active', idx===i));
+    dots.forEach((d,idx) => d.classList.toggle('active', idx===i));
+  }
+}
+
+// ---------- THEME ----------
+window.initTheme = function(){
+  const saved = loadLS(LS.theme, 'light');
+  if (saved === 'dark') document.body.classList.add('dark');
+  updateThemeIcon();
+  document.getElementById('themeToggle').onclick = () => {
+    document.body.classList.toggle('dark');
+    saveLS(LS.theme, document.body.classList.contains('dark') ? 'dark' : 'light');
+    updateThemeIcon();
+  };
+}
+window.updateThemeIcon = function(){ document.getElementById('themeToggle').textContent = document.body.classList.contains('dark') ? '☀️' : '🌙'; }
+
+// ---------- AUTH ----------
+window.openAuth = function(mode='login'){
+  const html = `
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="auth-modal">
+      <h2>${mode==='login'?'🔐 Masuk':'📝 Daftar'}</h2>
+      <p class="subtitle">${mode==='login'?'Masuk ke akun Anda':'Buat akun baru untuk mulai belanja'}</p>
+      <div class="tabs">
+        <button type="button" class="${mode==='login'?'active':''}" onclick="openAuth('login')">Masuk</button>
+        <button type="button" class="${mode==='register'?'active':''}" onclick="openAuth('register')">Daftar</button>
+      </div>
+      ${mode==='register'?`
+        <div class="form-group"><label>Nama Lengkap</label><input type="text" id="authName" placeholder="Nama Anda"></div>
+        <div class="form-group"><label>No. HP</label><input type="tel" id="authPhone" placeholder="08xxxxxxxxxx"></div>
+      `:''}
+      <div class="form-group"><label>Email</label><input type="email" id="authEmail" placeholder="email@contoh.com"></div>
+      <div class="form-group"><label>Password</label><input type="password" id="authPassword" placeholder="••••••••"></div>
+      <button type="button" class="auth-submit" onclick="submitAuth('${mode}')">${mode==='login'?'🔓 Masuk':'✅ Daftar'}</button>
+    </div>`;
+  document.getElementById('modalContent').innerHTML = html;
+  document.getElementById('modalOverlay').classList.add('active');
+}
+window.submitAuth = async function(mode){
+  const email = document.getElementById('authEmail').value.trim().toLowerCase();
+  const password = document.getElementById('authPassword').value;
+  if (!email || !password) { showToast('Isi email & password', 'warning'); return; }
+  
+  try {
+    if (mode === 'login') {
+      const u = users.find(x => x.email === email && x.password === password);
+      if (!u) { showToast('❌ Email atau password salah', 'error'); return; }
+      currentUser = u;
+      saveLS(LS.currentUser, u.id);
+      closeModal();
+      renderUserMenu();
+      showToast('✅ Selamat datang, ' + u.name + '!', 'success');
+      updateNavVoucherCount();
+    } else {
+      const name = document.getElementById('authName').value.trim();
+      const phone = document.getElementById('authPhone').value.trim();
+      if (!name) { showToast('Isi nama', 'warning'); return; }
+      if (users.some(x => x.email === email)) { showToast('❌ Email sudah terdaftar', 'error'); return; }
+      
+      const newId = uid('u');
+      const newUser = { name, email, password, phone, address:'', createdAt: Date.now() };
+      await setDoc(doc(db, "users", newId), newUser);
+      currentUser = { id: newId, ...newUser };
+      saveLS(LS.currentUser, newId);
+      closeModal();
+      renderUserMenu();
+      showToast('🎉 Berhasil daftar, ' + name + '!', 'success');
+    }
+  } catch (error) {
+    console.error("Auth Error:", error);
+    showToast('❌ Terjadi kesalahan sistem. Cek Rules Firebase.', 'error');
+  }
+}
+window.renderUserMenu = function(){
+  const menu = document.getElementById('userMenu');
+  if (currentUser) {
+    menu.innerHTML = `
+      <div class="user-menu-header"><div class="name">${esc(currentUser.name)}</div><div class="email">${esc(currentUser.email)}</div></div>
+      <button class="user-menu-item" onclick="openOrders(); toggleUserMenu(false)">📦 Pesanan Saya</button>
+      <button class="user-menu-item" onclick="openAuth('login'); toggleUserMenu(false); showToast('Gunakan akun lain','info')">🔄 Ganti Akun</button>
+      <button class="user-menu-item danger" onclick="logoutUser()">🚪 Keluar</button>`;
+  } else {
+    menu.innerHTML = `
+      <button class="user-menu-item" onclick="openAuth('login'); toggleUserMenu(false)">🔐 Masuk</button>
+      <button class="user-menu-item" onclick="openAuth('register'); toggleUserMenu(false)">📝 Daftar</button>`;
+  }
+}
+window.toggleUserMenu = function(force){
+  const menu = document.getElementById('userMenu');
+  const open = force !== undefined ? force : !menu.classList.contains('active');
+  menu.classList.toggle('active', open);
+}
+window.logoutUser = function(){
+  currentUser = null;
+  localStorage.removeItem(LS.currentUser);
+  renderUserMenu();
+  showToast('Anda telah keluar', 'info');
+  updateNavVoucherCount();
+}
+
+// ---------- CHECKOUT ----------
+window.openCheckout = function(){
+  if (cart.length === 0) { showToast('Keranjang kosong', 'warning'); return; }
+  if (!currentUser) {
+    showToast('Silakan masuk/daftar dulu untuk checkout', 'warning');
+    openAuth('login');
+    return;
+  }
+  toggleCart(false);
+  const mine = vouchers.filter(v => v.claimedBy === (currentUser?.id || 'guest') && !v.used);
+  let subtotal = 0;
+  cart.forEach(it => subtotal += it.price * it.qty);
+  const shipping = subtotal >= 500000 ? 0 : 20000;
+  const html = `
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="checkout-grid">
+      <div>
+        <h3 style="margin-bottom:15px">🚚 Alamat & Pembayaran</h3>
+        <div class="form-group"><label>Nama Penerima</label><input type="text" id="coName" value="${esc(currentUser.name)}"></div>
+        <div class="form-group"><label>No. HP</label><input type="tel" id="coPhone" value="${esc(currentUser.phone||'')}"></div>
+        <div class="form-group"><label>Alamat Lengkap</label><textarea id="coAddress">${esc(currentUser.address||'')}</textarea></div>
+        <div class="checkout-section-title">💳 Metode Pembayaran</div>
+        <div class="payment-tabs">
+          <button class="payment-tab active" onclick="switchPaymentGroup('ewallet', this)">📱 E-Wallet</button>
+          <button class="payment-tab" onclick="switchPaymentGroup('bank', this)">🏦 Bank</button>
+          <button class="payment-tab" onclick="switchPaymentGroup('qris', this)">📷 QRIS</button>
+          <button class="payment-tab" onclick="switchPaymentGroup('cod', this)">💵 COD</button>
+        </div>
+        <div class="payment-group active" id="pg-ewallet">
+          <div class="pay-option" onclick="selectPay('GoPay', this)"><div class="pay-logo" style="background:#00aa13">GO</div><div class="pay-info"><div class="pay-name">GoPay</div><div class="pay-detail">Saldo / instan</div></div><div class="pay-check">✓</div></div>
+          <div class="pay-option" onclick="selectPay('OVO', this)"><div class="pay-logo" style="background:#4c3494">OVO</div><div class="pay-info"><div class="pay-name">OVO</div><div class="pay-detail">Saldo / instan</div></div><div class="pay-check">✓</div></div>
+          <div class="pay-option" onclick="selectPay('Dana', this)"><div class="pay-logo" style="background:#108ee9">DANA</div><div class="pay-info"><div class="pay-name">DANA</div><div class="pay-detail">Saldo / instan</div></div><div class="pay-check">✓</div></div>
+        </div>
+        <div class="payment-group" id="pg-bank">
+          <div class="pay-option" onclick="selectPay('BCA', this)"><div class="pay-logo" style="background:#0060af">BCA</div><div class="pay-info"><div class="pay-name">BCA</div><div class="pay-detail">Virtual Account</div></div><div class="pay-check">✓</div></div>
+          <div class="pay-option" onclick="selectPay('Mandiri', this)"><div class="pay-logo" style="background:#003d79">MDR</div><div class="pay-info"><div class="pay-name">Mandiri</div><div class="pay-detail">Virtual Account</div></div><div class="pay-check">✓</div></div>
+          <div class="pay-option" onclick="selectPay('BRI', this)"><div class="pay-logo" style="background:#00529c">BRI</div><div class="pay-info"><div class="pay-name">BRI</div><div class="pay-detail">Virtual Account</div></div><div class="pay-check">✓</div></div>
+        </div>
+        <div class="payment-group" id="pg-qris">
+          <div class="qris-box">
+            <div class="qris-qr"></div>
+            <p style="font-size:12px;color:#1b1730;margin-top:8px">Scan QRIS dengan aplikasi apapun</p>
+            <div class="qris-apps"><span class="qris-app">GoPay</span><span class="qris-app">OVO</span><span class="qris-app">DANA</span><span class="qris-app">ShopeePay</span></div>
+          </div>
+        </div>
+        <div class="payment-group" id="pg-cod">
+          <div class="pay-option" onclick="selectPay('COD', this)"><div class="pay-logo" style="background:#b8903f">COD</div><div class="pay-info"><div class="pay-name">Bayar di Tempat</div><div class="pay-detail">Bayar saat barang diterima</div></div><div class="pay-check">✓</div></div>
+        </div>
+      </div>
+      <div class="order-summary">
+        <h4>📋 Ringkasan Pesanan</h4>
+        <div class="summary-item"><span>Subtotal</span><span>${rupiah(subtotal)}</span></div>
+        <div class="summary-item"><span>Ongkir</span><span>${shipping===0?'GRATIS':rupiah(shipping)}</span></div>
+        ${mine.length?`
+          <div class="voucher-picker">
+            <div class="voucher-picker-header"><h5>🎫 Pakai Voucher</h5></div>
+            ${mine.map(v => `<div class="voucher-option" onclick="pickVoucher('${v.id}', this)" data-min="${v.min}"><input type="radio" name="voc"><div class="v-info"><div class="v-title">${esc(v.title)}</div><div class="v-detail">Min. ${rupiah(v.min)}</div></div><div class="v-value">-${rupiah(v.value)}</div></div>`).join('')}
+          </div>`:''}
+        <div class="summary-item discount" id="coDiscount" style="display:none"><span>Diskon Voucher</span><span>-Rp 0</span></div>
+        <div class="summary-item total"><span>Total</span><span id="coTotal">${rupiah(subtotal + shipping)}</span></div>
+        <button class="btn-checkout" style="margin-top:15px" onclick="submitCheckout()">✅ Buat Pesanan</button>
+      </div>
+    </div>`;
+  document.getElementById('modalContent').innerHTML = html;
+  document.getElementById('modalOverlay').classList.add('active');
+  selectedVoucher = null;
+  selectedPaymentMethod = null;
+  window._coSubtotal = subtotal;
+  window._coShipping = shipping;
+}
+window.switchPaymentGroup = function(g, btn){
+  document.querySelectorAll('.payment-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.payment-group').forEach(p => p.classList.remove('active'));
+  document.getElementById('pg-'+g).classList.add('active');
+}
+window.selectPay = function(name, el){
+  document.querySelectorAll('.pay-option').forEach(p => p.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedPaymentMethod = name;
+}
+window.pickVoucher = function(vid, el){
+  document.querySelectorAll('.voucher-option').forEach(v => v.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedVoucher = vouchers.find(v => v.id === vid);
+  const subtotal = window._coSubtotal;
+  const shipping = window._coShipping;
+  const disc = selectedVoucher.min <= subtotal ? selectedVoucher.value : 0;
+  const total = subtotal + shipping - disc;
+  const dEl = document.getElementById('coDiscount');
+  dEl.style.display = 'flex';
+  dEl.querySelector('span:last-child').textContent = '-Rp ' + disc.toLocaleString('id-ID');
+  document.getElementById('coTotal').textContent = rupiah(total);
+  window._coDisc = disc;
+}
+window.submitCheckout = async function(){
+  if (!selectedPaymentMethod) { showToast('Pilih metode pembayaran', 'warning'); return; }
+  const name = document.getElementById('coName').value.trim();
+  const phone = document.getElementById('coPhone').value.trim();
+  const address = document.getElementById('coAddress').value.trim();
+  if (!name || !phone || !address) { showToast('Lengkapi data pengiriman', 'warning'); return; }
+  
+  try {
+    const subtotal = window._coSubtotal;
+    const shipping = window._coShipping;
+    const disc = window._coDisc || 0;
+    const total = subtotal + shipping - disc;
+    const orderId = 'ORD-' + Date.now().toString(36).toUpperCase();
+    const order = {
+      id: orderId,
+      userId: currentUser.id,
+      userName: currentUser.name,
+      userEmail: currentUser.email,
+      items: cart.map(it => {
+        const p = products.find(x => x.id === it.productId);
+        return { name: p?.name || '?', qty: it.qty, price: it.price, color: it.color, size: it.size };
+      }),
+      subtotal, shipping, discount: disc, total,
+      payment: selectedPaymentMethod,
+      address: { name, phone, address },
+      status: 'pending',
+      createdAt: Date.now()
+    };
+    
+    await setDoc(doc(db, "orders", orderId), order);
+    
+    if (selectedVoucher) {
+      await updateDoc(doc(db, "vouchers", selectedVoucher.id), { used: true });
+    }
+    cart = [];
+    saveCart();
+    renderCart();
+    updateBadges();
+    closeModal();
+    showToast('🎉 Pesanan berhasil dibuat! ID: ' + orderId, 'success');
+    updateNavVoucherCount();
+  } catch(e) {
+    console.error("Checkout Error:", e);
+    showToast('Gagal membuat pesanan: ' + e.message, 'error');
+  }
+}
+
+// ---------- ORDERS ----------
+window.openOrders = function(){
+  if (!currentUser) { showToast('Masuk dulu untuk lihat pesanan', 'warning'); openAuth('login'); return; }
+  const mine = orders.filter(o => o.userId === currentUser.id).sort((a,b)=>b.createdAt-a.createdAt);
+  let html = `<button class="modal-close" onclick="closeModal()">✕</button><div class="orders-list"><h2 style="margin-bottom:15px">📦 Pesanan Saya</h2>`;
+  if (!mine.length) {
+    html += `<div class="empty-state"><div class="empty-state-emoji">📦</div><h3>Belum ada pesanan</h3><p>Mulai belanja untuk melihat pesanan di sini.</p></div>`;
+  } else {
+    mine.forEach(o => {
+      const statusColor = { pending:'var(--warning)', process:'var(--accent)', shipping:'#1e4d7b', done:'var(--success)', canceled:'var(--danger)' };
+      html += `<div class="order-card">
+        <div class="order-header">
+          <div><div class="order-id">${esc(o.id)}</div><div class="order-date">${new Date(o.createdAt).toLocaleString('id-ID')}</div></div>
+          <span class="order-status" style="background:${statusColor[o.status]||'var(--text-light)'};color:#fff">${o.status.toUpperCase()}</span>
+        </div>
+        <div class="order-products">${o.items.map(it => `${it.qty}x ${esc(it.name)}${it.color?' ('+esc(it.color)+')':''}${it.size?' '+esc(it.size):''}`).join(', ')}</div>
+        <div class="order-total">Total: ${rupiah(o.total)}</div>
+      </div>`;
+    });
+  }
+  html += '</div>';
+  document.getElementById('modalContent').innerHTML = html;
+  document.getElementById('modalOverlay').classList.add('active');
+}
+
+// ---------- SEARCH ----------
+window.setupSearch = function(){
+  const input = document.getElementById('searchInput');
+  const clear = document.getElementById('clearSearch');
+  const sugg = document.getElementById('searchSuggestions');
+  input.addEventListener('input', () => {
+    const q = input.value.trim().toLowerCase();
+    clear.style.display = q ? 'block' : 'none';
+    if (!q) { sugg.classList.remove('active'); renderProducts(); return; }
+    const matches = products.filter(p => (p.name||'').toLowerCase().includes(q) || (p.brand||'').toLowerCase().includes(q) || (p.category||'').toLowerCase().includes(q)).slice(0, 6);
+    if (!matches.length) { sugg.innerHTML = `<div style="padding:15px;text-align:center;color:var(--text-light);font-size:13px">Tidak ada hasil</div>`; sugg.classList.add('active'); return; }
+    sugg.innerHTML = matches.map(p => `<div class="suggestion-item" onclick="openProductDetail('${p.id}');document.getElementById('searchSuggestions').classList.remove('active')"><div class="sug-img">📦</div><div class="sug-info"><div class="sug-name">${esc(p.name)}</div><div class="sug-price">${rupiah(p.price)}</div></div></div>`).join('');
+    sugg.classList.add('active');
+  });
+  clear.addEventListener('click', () => { input.value=''; clear.style.display='none'; sugg.classList.remove('active'); searchTerm=''; renderProducts(); });
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.search-wrapper')) sugg.classList.remove('active');
+  });
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') { searchTerm = input.value.trim(); sugg.classList.remove('active'); renderProducts(); }
+  });
+}
+
+// =========================================================
+// ADMIN PANEL
+// =========================================================
+window.checkAdminUrl = function(){
+  if (window.location.search.includes('fatur')) {
+    if (sessionStorage.getItem(LS.adminAuth) === '1') openAdminDashboard();
+    else document.getElementById('adminLoginOverlay').classList.add('active');
+  }
+}
+window.verifyAdminPassword = function(e){
+  e.preventDefault();
+  const v = document.getElementById('adminPassInput').value;
+  if (v === ADMIN_PASS) {
+    sessionStorage.setItem(LS.adminAuth, '1');
+    document.getElementById('adminPassInput').value = '';
+    document.getElementById('adminPassError').textContent = '';
+    document.getElementById('adminLoginOverlay').classList.remove('active');
+    openAdminDashboard();
+  } else {
+    document.getElementById('adminPassError').textContent = '❌ Password salah';
+  }
+}
+window.closeAdminLogin = function(){
+  document.getElementById('adminLoginOverlay').classList.remove('active');
+}
+window.openAdminDashboard = function(){
+  document.getElementById('adminDashboard').style.display = 'block';
+  document.body.style.overflow = 'hidden';
+  renderAdminAll();
+}
+window.closeAdminPanel = function(){
+  document.getElementById('adminDashboard').style.display = 'none';
+  document.body.style.overflow = '';
+}
+window.logoutAdmin = function(){
+  sessionStorage.removeItem(LS.adminAuth);
+  closeAdminPanel();
+  showToast('Logout admin', 'info');
+  if (window.location.search.includes('fatur')) {
+    window.location.href = window.location.origin + window.location.pathname;
+  }
+}
+window.adminTab = function(name, btn){
+  document.querySelectorAll('.admin-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.admin-tab-content').forEach(c => c.classList.remove('active'));
+  document.getElementById('adminTab-' + name).classList.add('active');
+  if (name === 'products') renderAdminProducts();
+  if (name === 'orders') renderAdminOrders();
+  if (name === 'promos') renderAdminPromos();
+  if (name === 'videos') renderAdminVideos();
+  if (name === 'vouchers') renderAdminVouchers();
+  if (name === 'users') renderAdminUsers();
+}
+
+window.renderAdminAll = function(){
+  renderAdminStats();
+  renderAdminOrders();
+  renderAdminProducts();
+  renderAdminPromos();
+  renderAdminVideos();
+  renderAdminVouchers();
+  renderAdminUsers();
+  renderAdminNotif();
+}
+window.renderAdminStats = function(){
+  const totalRevenue = orders.filter(o => o.status === 'done').reduce((s,o) => s + o.total, 0);
+  const pending = orders.filter(o => o.status === 'pending').length;
+  document.getElementById('adminStats').innerHTML = `
+    <div class="admin-stat"><div class="label">Total Produk</div><div class="value">${products.length}</div></div>
+    <div class="admin-stat green"><div class="label">Total Pesanan</div><div class="value">${orders.length}</div></div>
+    <div class="admin-stat gold"><div class="label">Pendapatan</div><div class="value">${rupiah(totalRevenue)}</div></div>
+    <div class="admin-stat red"><div class="label">Pending</div><div class="value">${pending}</div></div>
+    <div class="admin-stat blue"><div class="label">Pengguna</div><div class="value">${users.length}</div></div>
+    <div class="admin-stat purple"><div class="label">Video Ads</div><div class="value">${videoAds.length}</div></div>`;
+}
+window.renderAdminNotif = function(){
+  const pending = orders.filter(o => o.status === 'pending').length;
+  const b = document.getElementById('adminNotifBanner');
+  if (pending > 0) {
+    b.style.display = 'flex';
+    document.getElementById('adminNotifCount').textContent = pending + ' pesanan baru';
+  } else b.style.display = 'none';
+  document.getElementById('tabOrderBadge').textContent = pending > 0 ? `(${pending})` : '';
+}
+window.renderAdminOrders = function(){
+  const filters = ['all','pending','process','shipping','done','canceled'];
+  const labels = { all:'Semua', pending:'Baru', process:'Diproses', shipping:'Dikirim', done:'Selesai', canceled:'Batal' };
+  document.getElementById('adminOrderFilter').innerHTML = filters.map(f => {
+    const cnt = f === 'all' ? orders.length : orders.filter(o => o.status === f).length;
+    return `<button class="admin-filter-btn ${adminOrderFilter===f?'active':''}" onclick="filterAdminOrders('${f}')">${labels[f]} <span class="count">${cnt}</span></button>`;
+  }).join('');
+  const list = adminOrderFilter === 'all' ? orders : orders.filter(o => o.status === adminOrderFilter);
+  const sorted = [...list].sort((a,b)=>b.createdAt-a.createdAt);
+  if (!sorted.length) {
+    document.getElementById('adminOrdersList').innerHTML = `<p style="text-align:center;padding:30px;color:var(--text-light)">Belum ada pesanan</p>`;
+    return;
+  }
+  document.getElementById('adminOrdersList').innerHTML = sorted.map(o => `
+    <div class="admin-order-card ${o.status==='pending'?'new-order':''}">
+      <div class="admin-order-header">
+        <div><div class="admin-order-id">${esc(o.id)}</div><div class="admin-order-date">${new Date(o.createdAt).toLocaleString('id-ID')}</div></div>
+        <div class="admin-order-actions">
+          <select onchange="updateOrderStatus('${o.id}', this.value)" style="padding:6px 10px;border-radius:6px;border:1px solid var(--border);background:var(--card);color:var(--text);font-weight:700">
+            ${['pending','process','shipping','done','canceled'].map(s => `<option value="${s}" ${o.status===s?'selected':''}>${s}</option>`).join('')}
+          </select>
+          <button class="admin-btn-delete-order" onclick="deleteOrder('${o.id}')">Hapus</button>
+        </div>
+      </div>
+      <div class="admin-order-body">
+        <div><strong>${esc(o.userName)}</strong> — ${esc(o.userEmail)}</div>
+        <div>📍 ${esc(o.address.address)}, ${esc(o.address.name)} / ${esc(o.address.phone)}</div>
+        <div>💳 ${esc(o.payment)}</div>
+        <div>📦 ${o.items.map(it => `${it.qty}x ${esc(it.name)}${it.color?' ('+esc(it.color)+')':''}${it.size?' '+esc(it.size):''}`).join(', ')}</div>
+        <div><strong>Total: ${rupiah(o.total)}</strong></div>
+      </div>
+    </div>`).join('');
+}
+window.filterAdminOrders = function(f){ adminOrderFilter = f; renderAdminOrders(); }
+window.updateOrderStatus = async function(oid, status){
+  try { await updateDoc(doc(db, "orders", oid), { status: status }); showToast('Status pesanan diperbarui', 'success'); }
+  catch(e) { showToast('Gagal update: ' + e.message, 'error'); }
+}
+window.deleteOrder = async function(oid){
+  if (!confirm('Hapus pesanan ini?')) return;
+  try { await deleteDoc(doc(db, "orders", oid)); showToast('Pesanan dihapus', 'success'); }
+  catch(e) { showToast('Gagal hapus: ' + e.message, 'error'); }
+}
+
+window.renderAdminProducts = function(){
+  const body = document.getElementById('adminProductsBody');
+  if (!products.length) {
+    body.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:30px;color:var(--text-light)">Belum ada produk. Tambah di tab ➕</td></tr>`;
+    return;
+  }
+  body.innerHTML = products.map(p => {
+    const img = p.image?.type === 'emoji' ? `<div style="width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-size:20px;background:var(--bg);border-radius:6px">${esc(p.image.value||'📦')}</div>` : `<div style="width:40px;height:40px;background:var(--bg);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:20px">🖼️</div>`;
+    return `<tr>
+      <td>${img}</td>
+      <td>${esc(p.name)}</td>
+      <td>${esc(p.category||'')}</td>
+      <td>${p.badge||'-'}</td>
+      <td>${rupiah(p.price)}</td>
+      <td>${p.discount||0}%</td>
+      <td>${p.stock||0}</td>
+      <td>
+        <button class="admin-btn-edit" onclick="editProduct('${p.id}')">Edit</button>
+        <button class="admin-btn-del" onclick="deleteProduct('${p.id}')">Hapus</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+window.calcDiscountPrice = function(){
+  const oldP = parseFloat(document.getElementById('npOldPrice').value) || 0;
+  const disc = parseFloat(document.getElementById('npDiscount').value) || 0;
+  if (oldP > 0 && disc > 0 && disc <= 100) {
+    document.getElementById('npPrice').value = Math.round(oldP * (1 - disc/100));
+  }
+}
+window.selectedImgMode = 'file';
+window.setImgMode = function(mode){
+  selectedImgMode = mode;
+  document.querySelectorAll('.img-tab').forEach(t => t.classList.toggle('active', t.dataset.mode === mode));
+  document.getElementById('imgMode-file').style.display = mode === 'file' ? 'block' : 'none';
+  document.getElementById('imgMode-url').style.display = mode === 'url' ? 'block' : 'none';
+  document.getElementById('imgMode-emoji').style.display = mode === 'emoji' ? 'block' : 'none';
+  updateImagePreview();
+}
+window.uploadedImgBlob = null;
+window.handleImageUpload = function(e){
+  const f = e.target.files[0];
+  if (!f) return;
+  if (f.size > 500*1024) { showToast('Gambar maksimal 500KB untuk Firebase', 'warning'); e.target.value=''; return; } 
+  uploadedImgBlob = f;
+  const reader = new FileReader();
+  reader.onload = () => {
+    document.getElementById('imgPreview').innerHTML = `<img src="${reader.result}">`;
+  };
+  reader.readAsDataURL(f);
+}
+window.updateImagePreview = function(){
+  const preview = document.getElementById('imgPreview');
+  if (selectedImgMode === 'url') {
+    const v = document.getElementById('npImage').value;
+    if (v) preview.innerHTML = `<img src="${esc(v)}" onerror="this.parentElement.innerHTML='📦'">`;
+    else preview.innerHTML = '📦';
+  } else if (selectedImgMode === 'emoji') {
+    preview.innerHTML = esc(document.getElementById('npEmoji').value || '📦');
+  }
+}
+window.renderAdminColorInputs = function(){
+  const colors = document.getElementById('npColors').value.split(',').map(s=>s.trim()).filter(Boolean);
+  const c = document.getElementById('adminColorPriceContainer');
+  c.innerHTML = colors.map(col => `<div style="display:flex;gap:6px;align-items:center;background:var(--card);padding:6px 10px;border-radius:8px;border:1px solid var(--border);flex-wrap:wrap"><span style="font-weight:700;font-size:12px;min-width:40px">${esc(col)}</span><input type="number" placeholder="Harga Lama" data-color-old="${esc(col)}" style="padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:12px;width:90px;background:var(--card);color:var(--text)"><input type="number" placeholder="Disk %" data-color-disc="${esc(col)}" style="padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:12px;width:70px;background:var(--card);color:var(--text)"><input type="number" placeholder="Harga Akhir" data-color-price="${esc(col)}" style="padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:12px;width:90px;background:var(--bg);color:var(--text)" readonly></div>`).join('');
+  
+  c.querySelectorAll('input').forEach(inp => {
+      inp.addEventListener('input', function() {
+          const row = this.parentElement;
+          const oldV = parseFloat(row.querySelector('[data-color-old]').value) || 0;
+          const discV = parseFloat(row.querySelector('[data-color-disc]').value) || 0;
+          row.querySelector('[data-color-price]').value = oldV > 0 ? Math.round(oldV * (1 - discV/100)) : '';
+      });
+  });
+}
+window.renderAdminSizeInputs = function(){
+  const sizes = document.getElementById('npSizes').value.split(',').map(s=>s.trim()).filter(Boolean);
+  const c = document.getElementById('adminSizePriceContainer');
+  c.innerHTML = sizes.map(sz => `<div style="display:flex;gap:6px;align-items:center;background:var(--card);padding:6px 10px;border-radius:8px;border:1px solid var(--border);flex-wrap:wrap"><span style="font-weight:700;font-size:12px;min-width:40px">${esc(sz)}</span><input type="number" placeholder="Harga Lama" data-size-old="${esc(sz)}" style="padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:12px;width:90px;background:var(--card);color:var(--text)"><input type="number" placeholder="Disk %" data-size-disc="${esc(sz)}" style="padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:12px;width:70px;background:var(--card);color:var(--text)"><input type="number" placeholder="Harga Akhir" data-size-price="${esc(sz)}" style="padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:12px;width:90px;background:var(--bg);color:var(--text)" readonly></div>`).join('');
+  
+  c.querySelectorAll('input').forEach(inp => {
+      inp.addEventListener('input', function() {
+          const row = this.parentElement;
+          const oldV = parseFloat(row.querySelector('[data-size-old]').value) || 0;
+          const discV = parseFloat(row.querySelector('[data-size-disc]').value) || 0;
+          row.querySelector('[data-size-price]').value = oldV > 0 ? Math.round(oldV * (1 - discV/100)) : '';
+      });
+  });
+}
+window.addSpecRow = function(label='', value=''){
+  const list = document.getElementById('specsList');
+  const div = document.createElement('div');
+  div.className = 'spec-row-input';
+  div.innerHTML = `<input type="text" placeholder="Label (mis: Bahan)" value="${esc(label)}"><input type="text" placeholder="Nilai (mis: Katun)" value="${esc(value)}"><button type="button" class="spec-remove" onclick="this.parentElement.remove()">✕</button>`;
+  list.appendChild(div);
+}
+window.submitNewProduct = async function(e){
+  e.preventDefault();
+  const id = document.getElementById('editProductId').value;
+  const name = document.getElementById('npName').value.trim();
+  const category = document.getElementById('npCat').value;
+  const brand = document.getElementById('npBrand').value.trim();
+  const badge = document.getElementById('npBadge').value;
+  const price = parseFloat(document.getElementById('npPrice').value) || 0;
+  const oldPrice = parseFloat(document.getElementById('npOldPrice').value) || 0;
+  const discount = parseFloat(document.getElementById('npDiscount').value) || 0;
+  const stock = parseFloat(document.getElementById('npStock').value) || 0;
+  const rating = parseFloat(document.getElementById('npRating').value) || 4.8;
+  const desc = document.getElementById('npDesc').value.trim();
+  if (!name || !category || price <= 0) { showToast('Lengkapi nama, kategori, harga', 'warning'); return; }
+
+  const colors = document.getElementById('npColors').value.split(',').map(s=>s.trim()).filter(Boolean).map(col => {
+    const oInp = document.querySelector(`#adminColorPriceContainer input[data-color-old="${CSS.escape(col)}"]`);
+    const dInp = document.querySelector(`#adminColorPriceContainer input[data-color-disc="${CSS.escape(col)}"]`);
+    const pInp = document.querySelector(`#adminColorPriceContainer input[data-color-price="${CSS.escape(col)}"]`);
+    return { name: col, oldPrice: oInp?.value ? Number(oInp.value) : null, discount: dInp?.value ? Number(dInp.value) : 0, price: pInp?.value ? Number(pInp.value) : null };
+  });
+  const sizes = document.getElementById('npSizes').value.split(',').map(s=>s.trim()).filter(Boolean).map(sz => {
+    const oInp = document.querySelector(`#adminSizePriceContainer input[data-size-old="${CSS.escape(sz)}"]`);
+    const dInp = document.querySelector(`#adminSizePriceContainer input[data-size-disc="${CSS.escape(sz)}"]`);
+    const pInp = document.querySelector(`#adminSizePriceContainer input[data-size-price="${CSS.escape(sz)}"]`);
+    return { name: sz, oldPrice: oInp?.value ? Number(oInp.value) : null, discount: dInp?.value ? Number(dInp.value) : 0, price: pInp?.value ? Number(pInp.value) : null };
+  });
+  const specs = [];
+  document.querySelectorAll('#specsList .spec-row-input').forEach(row => {
+    const ins = row.querySelectorAll('input');
+    if (ins[0].value.trim() && ins[1].value.trim()) specs.push({ label: ins[0].value.trim(), value: ins[1].value.trim() });
+  });
+
+  let imageData = null;
+  if (selectedImgMode === 'file' && uploadedImgBlob) {
+    const reader = new FileReader();
+    imageData = await new Promise((resolve) => {
+        reader.onload = (e) => resolve({ type: 'base64', value: e.target.result });
+        reader.readAsDataURL(uploadedImgBlob);
+    });
+  } else if (selectedImgMode === 'url') {
+    const v = document.getElementById('npImage').value.trim();
+    if (v) imageData = { type: 'url', value: v };
+  } else if (selectedImgMode === 'emoji') {
+    imageData = { type: 'emoji', value: document.getElementById('npEmoji').value || '📦' };
+  }
+
+  const productData = {
+    name, category, brand, badge, price, oldPrice, discount, stock, rating, desc, colors, sizes, specs,
+    image: imageData || { type:'emoji', value:'📦' }
+  };
+
+  try {
+    if (id) {
+      await updateDoc(doc(db, "products", id), productData);
+    } else {
+      const newId = uid('p');
+      productData.createdAt = Date.now();
+      await setDoc(doc(db, "products", newId), productData);
+    }
+    resetProductForm();
+    showToast('💾 Produk disimpan!', 'success');
+  } catch(err) {
+    showToast('❌ Gagal menyimpan: ' + err.message, 'error');
+  }
+}
+window.editProduct = function(id){
+  const p = products.find(x => x.id === id);
+  if (!p) return;
+  adminTab('add', document.querySelector('[data-tab="add"]'));
+  document.getElementById('formTitle').textContent = '✏️ Edit Produk';
+  document.getElementById('editProductId').value = id;
+  document.getElementById('npName').value = p.name || '';
+  document.getElementById('npCat').value = p.category || '';
+  document.getElementById('npBrand').value = p.brand || '';
+  document.getElementById('npBadge').value = p.badge || '';
+  document.getElementById('npPrice').value = p.price || '';
+  document.getElementById('npOldPrice').value = p.oldPrice || '';
+  document.getElementById('npDiscount').value = p.discount || '';
+  document.getElementById('npStock').value = p.stock || '';
+  document.getElementById('npRating').value = p.rating || 4.8;
+  document.getElementById('npDesc').value = p.desc || '';
+  document.getElementById('npColors').value = (p.colors||[]).map(c=>c.name).join(', ');
+  document.getElementById('npSizes').value = (p.sizes||[]).map(s=>s.name).join(', ');
+  renderAdminColorInputs();
+  renderAdminSizeInputs();
+  (p.colors||[]).forEach(c => { 
+    if (c.oldPrice) { const inp = document.querySelector(`#adminColorPriceContainer input[data-color-old="${CSS.escape(c.name)}"]`); if (inp) inp.value = c.oldPrice; }
+    if (c.discount) { const inp = document.querySelector(`#adminColorPriceContainer input[data-color-disc="${CSS.escape(c.name)}"]`); if (inp) inp.value = c.discount; }
+    if (c.price) { const inp = document.querySelector(`#adminColorPriceContainer input[data-color-price="${CSS.escape(c.name)}"]`); if (inp) inp.value = c.price; }
+  });
+  (p.sizes||[]).forEach(s => { 
+    if (s.oldPrice) { const inp = document.querySelector(`#adminSizePriceContainer input[data-size-old="${CSS.escape(s.name)}"]`); if (inp) inp.value = s.oldPrice; }
+    if (s.discount) { const inp = document.querySelector(`#adminSizePriceContainer input[data-size-disc="${CSS.escape(s.name)}"]`); if (inp) inp.value = s.discount; }
+    if (s.price) { const inp = document.querySelector(`#adminSizePriceContainer input[data-size-price="${CSS.escape(s.name)}"]`); if (inp) inp.value = s.price; }
+  });
+  document.getElementById('specsList').innerHTML = '';
+  (p.specs||[]).forEach(sp => addSpecRow(sp.label, sp.value));
+  uploadedImgBlob = null;
+  if (p.image) {
+    if (p.image.type === 'base64') { setImgMode('file'); document.getElementById('imgPreview').innerHTML = `<img src="${p.image.value}">`; }
+    else if (p.image.type === 'url') { setImgMode('url'); document.getElementById('npImage').value = p.image.value; updateImagePreview(); }
+    else { setImgMode('emoji'); document.getElementById('npEmoji').value = p.image.value; updateImagePreview(); }
+  }
+}
+window.deleteProduct = async function(id){
+  if (!confirm('Hapus produk ini?')) return;
+  try { await deleteDoc(doc(db, "products", id)); showToast('Produk dihapus', 'success'); }
+  catch(e) { showToast('Gagal hapus: ' + e.message, 'error'); }
+}
+window.resetProductForm = function(){
+  document.getElementById('productForm').reset();
+  document.getElementById('editProductId').value = '';
+  document.getElementById('formTitle').textContent = '➕ Tambah Produk';
+  document.getElementById('specsList').innerHTML = '';
+  document.getElementById('adminColorPriceContainer').innerHTML = '';
+  document.getElementById('adminSizePriceContainer').innerHTML = '';
+  document.getElementById('imgPreview').innerHTML = '📦';
+  uploadedImgBlob = null;
+  setImgMode('file');
+}
+
+// ---------- ADMIN PROMOS ----------
+window.renderAdminPromos = function(){
+  const list = document.getElementById('adminPromoList');
+  if (!promos.length) { list.innerHTML = `<p style="color:var(--text-light);padding:10px">Belum ada promo</p>`; return; }
+  list.innerHTML = promos.map(p => `
+    <div class="voucher-admin-card ${p.active===false?'inactive':''}">
+      <div class="voucher-admin-info">
+        <div class="v-title">${esc(p.emoji||'🔥')} ${esc(p.title)} ${p.active===false?'(nonaktif)':''}</div>
+        <div class="v-meta">Voucher: ${rupiah(p.value)} · Min. ${rupiah(p.min)} · Kode: ${esc(p.code||'auto')} · ${esc(p.category||'semua')}</div>
+      </div>
+      <div class="voucher-admin-actions">
+        <button class="admin-btn-edit" onclick="editPromo('${p.id}')">Edit</button>
+        <button class="admin-btn-del" onclick="deletePromo('${p.id}')">Hapus</button>
+      </div>
+    </div>`).join('');
+}
+window.submitPromo = async function(e){
+  e.preventDefault();
+  const editId = document.getElementById('prEditId').value;
+  const data = {
+    title: document.getElementById('prTitle').value.trim(),
+    desc: document.getElementById('prDesc').value.trim(),
+    emoji: document.getElementById('prEmoji').value || '🔥',
+    discountText: document.getElementById('prDiscountText').value.trim(),
+    value: Number(document.getElementById('prValue').value) || 25000,
+    min: Number(document.getElementById('prMin').value) || 100000,
+    code: document.getElementById('prCode').value.trim() || ('PROMO-' + Math.random().toString(36).slice(2,8).toUpperCase()),
+    expiryDays: Number(document.getElementById('prExpiry').value) || 30,
+    category: document.getElementById('prCategory').value,
+    color: document.getElementById('prColor').value,
+    active: document.getElementById('prActive').value === '1'
+  };
+  try {
+    if (editId) {
+      await updateDoc(doc(db, "promos", editId), data);
+    } else {
+      const newId = uid('pr');
+      data.createdAt = Date.now();
+      await setDoc(doc(db, "promos", newId), data);
+    }
+    resetPromoForm();
+    showToast('💾 Promo disimpan', 'success');
+  } catch(e) { showToast('Gagal simpan: ' + e.message, 'error'); }
+}
+window.editPromo = function(id){
+  const p = promos.find(x => x.id === id);
+  if (!p) return;
+  document.getElementById('promoFormTitle').textContent = '✏️ Edit Promo';
+  document.getElementById('prEditId').value = id;
+  document.getElementById('prTitle').value = p.title;
+  document.getElementById('prDesc').value = p.desc || '';
+  document.getElementById('prEmoji').value = p.emoji || '🔥';
+  document.getElementById('prDiscountText').value = p.discountText || '';
+  document.getElementById('prValue').value = p.value;
+  document.getElementById('prMin').value = p.min;
+  document.getElementById('prCode').value = p.code || '';
+  document.getElementById('prExpiry').value = p.expiryDays || 30;
+  document.getElementById('prCategory').value = p.category || 'semua';
+  document.getElementById('prColor').value = p.color || 'purple';
+  document.getElementById('prActive').value = p.active === false ? '0' : '1';
+}
+window.deletePromo = async function(id){
+  if (!confirm('Hapus promo?')) return;
+  try { await deleteDoc(doc(db, "promos", id)); showToast('Promo dihapus', 'success'); }
+  catch(e) { showToast('Gagal hapus: ' + e.message, 'error'); }
+}
+window.resetPromoForm = function(){
+  document.getElementById('promoForm').reset();
+  document.getElementById('prEditId').value = '';
+  document.getElementById('promoFormTitle').textContent = '➕ Tambah Promo Baru';
+}
+
+// ---------- ADMIN VIDEOS ----------
+window.renderAdminVideos = function(){
+  const list = document.getElementById('adminVideoList');
+  if (!videoAds.length) { list.innerHTML = `<p style="color:var(--text-light);padding:10px">Belum ada video. Upload di bawah.</p>`; return; }
+  list.innerHTML = videoAds.map(v => `
+    <div class="video-admin-card">
+      <div class="va-preview">
+        <video src="${esc(v.url)}" controls></video>
+      </div>
+      <div class="va-info">
+        <div class="va-title">${esc(v.title)}</div>
+        <div class="va-desc">${esc(v.desc||'')}</div>
+        <div class="va-meta">
+          <span class="va-badge ${v.active?'active':'inactive'}">${v.active?'Aktif':'Nonaktif'}</span>
+          <span class="va-badge type">🎫 ${rupiah(v.voucherValue||0)}</span>
+        </div>
+        <div class="va-actions">
+          <button class="va-btn va-btn-edit" onclick="editVideo('${v.id}')">Edit</button>
+          <button class="va-btn va-btn-toggle ${v.active?'on':''}" onclick="toggleVideo('${v.id}')">${v.active?'Nonaktifkan':'Aktifkan'}</button>
+          <button class="va-btn va-btn-del" onclick="deleteVideo('${v.id}')">Hapus</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+window.uploadedVideoBase64 = null;
+window.handleVideoUpload = function(e){
+  const f = e.target.files[0];
+  if (!f) return;
+  if (f.size > 800*1024) { showToast('Video maksimal 800KB untuk Firebase', 'warning'); e.target.value=''; return; }
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    uploadedVideoBase64 = e.target.result;
+    const preview = document.getElementById('vPreview');
+    preview.src = uploadedVideoBase64;
+    preview.style.display = 'block';
+  };
+  reader.readAsDataURL(f);
+}
+window.submitVideoAd = async function(e){
+  e.preventDefault();
+  const editId = document.getElementById('vEditId').value;
+  const title = document.getElementById('vTitle').value.trim();
+  const desc = document.getElementById('vDesc').value.trim();
+  const voucherValue = Number(document.getElementById('vVoucherValue').value) || 0;
+  const voucherMin = Number(document.getElementById('vVoucherMin').value) || 0;
+  const voucherCode = document.getElementById('vVoucherCode').value.trim() || ('VIDEO-' + Math.random().toString(36).slice(2,8).toUpperCase());
+  const active = document.getElementById('vActive').value === '1';
+  if (!title) { showToast('Isi judul', 'warning'); return; }
+
+  let videoUrl = null;
+  if (uploadedVideoBase64) {
+      videoUrl = uploadedVideoBase64;
+  } else if (!editId) {
+      showToast('Upload video file dulu', 'warning'); return;
+  }
+
+  const data = { title, desc, voucherValue, voucherMin, voucherCode, active };
+  if (videoUrl) data.url = videoUrl;
+
+  try {
+    if (editId) {
+      await updateDoc(doc(db, "videos", editId), data);
+    } else {
+      const newId = uid('v');
+      data.createdAt = Date.now();
+      await setDoc(doc(db, "videos", newId), data);
+    }
+    resetVideoForm();
+    showToast('💾 Video disimpan', 'success');
+  } catch(err) { showToast('Gagal simpan: ' + err.message, 'error'); }
+}
+window.editVideo = function(id){
+  const v = videoAds.find(x => x.id === id);
+  if (!v) return;
+  document.getElementById('videoFormTitle').textContent = '✏️ Edit Video';
+  document.getElementById('vEditId').value = id;
+  document.getElementById('vTitle').value = v.title;
+  document.getElementById('vDesc').value = v.desc || '';
+  document.getElementById('vVoucherValue').value = v.voucherValue || 0;
+  document.getElementById('vVoucherMin').value = v.voucherMin || 0;
+  document.getElementById('vVoucherCode').value = v.voucherCode || '';
+  document.getElementById('vActive').value = v.active ? '1' : '0';
+  document.getElementById('vFile').value = '';
+  uploadedVideoBase64 = null;
+  const preview = document.getElementById('vPreview');
+  if(v.url) { preview.src = v.url; preview.style.display = 'block'; }
+  else preview.style.display = 'none';
+}
+window.deleteVideo = async function(id){
+  if (!confirm('Hapus video?')) return;
+  try { await deleteDoc(doc(db, "videos", id)); showToast('Video dihapus', 'success'); }
+  catch(e) { showToast('Gagal hapus: ' + e.message, 'error'); }
+}
+window.toggleVideo = async function(id){
+  const v = videoAds.find(x => x.id === id);
+  if (!v) return;
+  try { await updateDoc(doc(db, "videos", id), { active: !v.active }); }
+  catch(e) { showToast('Gagal toggle: ' + e.message, 'error'); }
+}
+window.resetVideoForm = function(){
+  document.getElementById('videoForm').reset();
+  document.getElementById('vEditId').value = '';
+  document.getElementById('videoFormTitle').textContent = '➕ Tambah Video Iklan Baru';
+  document.getElementById('vPreview').style.display = 'none';
+  uploadedVideoBase64 = null;
+}
+
+// ---------- VIDEO ADS RENDER (public) ----------
+window.renderVideoAds = function(){
+  const container = document.getElementById('videoAdsContainer');
+  container.innerHTML = '';
+  const active = videoAds.filter(v => v.active);
+  if (!active.length) return;
+  for (const v of active) {
+    const claimed = claimedVideoVouchers.includes((currentUser?.id||'guest') + '_' + v.id);
+    const div = document.createElement('div');
+    div.className = 'ad-video';
+    div.innerHTML = `
+      <div class="ad-video-stage">
+        <span class="ad-video-live">IKLAN</span>
+        <video src="${esc(v.url)}" controls playsinline></video>
+      </div>
+      <div class="ad-video-info">
+        <div class="info-text">
+          <div class="eyebrow">VIDEO IKLAN</div>
+          <h3>${esc(v.title)}</h3>
+          <p>${esc(v.desc||'')}</p>
+          <div class="ad-video-voucher">🎫 Voucher ${rupiah(v.voucherValue)} · Min. ${rupiah(v.voucherMin)}</div>
+        </div>
+        <button class="ad-video-btn ${claimed?'claimed':''}" onclick="claimVideoVoucher('${v.id}')" ${claimed?'disabled':''}>${claimed?'✅ Sudah Diklaim':'🎫 Klaim Voucher'}</button>
+      </div>`;
+    container.appendChild(div);
+  }
+}
+window.claimVideoVoucher = async function(vid){
+  const v = videoAds.find(x => x.id === vid);
+  if (!v) return;
+  const key = (currentUser?.id||'guest') + '_' + vid;
+  if (claimedVideoVouchers.includes(key)) { showToast('Sudah pernah diklaim', 'warning'); return; }
+  claimedVideoVouchers.push(key);
+  try {
+    const newId = uid('v');
+    await setDoc(doc(db, "vouchers", newId), {
+      title: 'Voucher Video: ' + v.title, desc: 'Dari video iklan',
+      value: v.voucherValue, min: v.voucherMin, code: v.voucherCode,
+      expiry: new Date(Date.now() + 30*86400000).toISOString(),
+      claimedBy: currentUser?.id || 'guest', used: false, createdAt: Date.now()
+    });
+    showToast('🎉 Voucher video diklaim!', 'success');
+    updateNavVoucherCount();
+    renderVideoAds();
+  } catch(e) { showToast('Gagal klaim: ' + e.message, 'error'); }
+}
+
+// ---------- ADMIN VOUCHERS (MANUAL CREATION) ----------
+window.renderAdminVouchers = function(){
+  const list = document.getElementById('adminVoucherList');
+  if (!vouchers.length) { list.innerHTML = `<p style="color:var(--text-light);padding:10px">Belum ada voucher</p>`; return; }
+  list.innerHTML = vouchers.map(v => {
+    const user = users.find(u => u.id === v.claimedBy);
+    return `<div class="voucher-admin-card">
+      <div class="voucher-admin-info">
+        <div class="v-title">${esc(v.title)}</div>
+        <div class="v-meta">${esc(v.code)} · ${rupiah(v.value)} · Klaim: ${user?esc(user.name):'guest'} · ${v.used?'TERPAKAI':'AKTIF'}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+window.submitVoucher = async function(e){
+    e.preventDefault();
+    const title = document.getElementById('vchTitle').value.trim();
+    const code = document.getElementById('vchCode').value.trim();
+    const value = Number(document.getElementById('vchValue').value) || 0;
+    const min = Number(document.getElementById('vchMin').value) || 0;
+    const expiryDays = Number(document.getElementById('vchExpiry').value) || 30;
+    const active = document.getElementById('vchActive').value === '1';
+
+    if(!title || !code) { showToast('Lengkapi judul dan kode', 'warning'); return; }
+
+    const data = {
+        title, code, value, min, expiryDays, active, claimedBy: 'guest', used: false,
+        expiry: new Date(Date.now() + expiryDays*86400000).toISOString(),
+        createdAt: Date.now()
+    };
+    try {
+      const newId = uid('v');
+      await setDoc(doc(db, "vouchers", newId), data);
+      resetVoucherForm();
+      showToast('💾 Voucher ditambahkan', 'success');
+    } catch(e) { showToast('Gagal tambah voucher: ' + e.message, 'error'); }
+}
+window.resetVoucherForm = function(){
+    document.getElementById('voucherForm').reset();
+}
+
+// ---------- ADMIN USERS ----------
+window.renderAdminUsers = function(){
+  const body = document.getElementById('adminUsersBody');
+  if (!users.length) { body.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:30px;color:var(--text-light)">Belum ada pengguna terdaftar</td></tr>`; return; }
+  body.innerHTML = users.map((u, i) => `<tr>
+    <td>${i+1}</td>
+    <td>${esc(u.name)}</td>
+    <td>${esc(u.email)}</td>
+    <td><span class="pw-cell" onclick="copyText('${esc(u.password)}')" title="Klik untuk copy">${esc(u.password)}</span></td>
+    <td>${esc(u.phone||'-')}</td>
+    <td>${esc(u.address||'-')}</td>
+    <td>${new Date(u.createdAt).toLocaleDateString('id-ID')}</td>
+    <td><button class="admin-btn-del" onclick="deleteUser('${u.id}')">Hapus</button></td>
+  </tr>`).join('');
+}
+window.copyText = function(t){
+  navigator.clipboard?.writeText(t).then(()=>showToast('📋 Disalin', 'success')).catch(()=>showToast(t, 'info'));
+}
+window.deleteUser = async function(id){
+  if (!confirm('Hapus pengguna?')) return;
+  try { await deleteDoc(doc(db, "users", id)); showToast('Pengguna dihapus', 'success'); }
+  catch(e) { showToast('Gagal hapus: ' + e.message, 'error'); }
+}
+
+// ---------- MODALS ----------
+window.openHelp = function(){ showModal('❓ Bantuan', '<p>Butuh bantuan? Hubungi CS kami di <strong>085702845908</strong> atau email <strong>cs@tokoonline7.com</strong>. Kami siap membantu 24/7.</p>'); }
+window.openAbout = function(){ showModal('ℹ️ Tentang Kami', '<p>Toko Online 7 adalah toko online premium dengan produk berkualitas. Kami berkomitmen memberikan pengalaman belanja terbaik dengan harga terjangkau.</p>'); }
+window.showModal = function(title, content){
+  document.getElementById('modalContent').innerHTML = `<button class="modal-close" onclick="closeModal()">✕</button><div style="padding:30px"><h2 style="margin-bottom:15px">${title}</h2>${content}</div>`;
+  document.getElementById('modalOverlay').classList.add('active');
+}
+
+// ---------- INIT ----------
+async function init(){
+  loadAllLocal();
+  const savedUserId = loadLS(LS.currentUser, null);
+  if (savedUserId) {
+    currentUser = { id: savedUserId, name: 'Loading...', email: '', phone: '', address: '' }; 
+  }
+  
+  initTheme();
+  setupSearch();
+  renderUserMenu();
+  
+  document.getElementById('userBtn').onclick = () => toggleUserMenu();
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('#userBtn') && !e.target.closest('#userMenu')) toggleUserMenu(false);
+  });
+  
+  document.querySelectorAll('#mainNav button').forEach(b => b.onclick = () => filterByNav(b.dataset.nav));
+  document.querySelectorAll('.chip').forEach(c => c.onclick = () => {
+    document.querySelectorAll('.chip').forEach(x => x.classList.remove('active'));
+    c.classList.add('active');
+    currentFilter = c.dataset.cat;
+    renderProducts();
+  });
+  document.getElementById('sortSelect').onchange = (e) => { currentSort = e.target.value; renderProducts(); };
+  
+  startSlider();
+  updateBadges();
+  renderCart();
+  
+  listenFirebase(); // START FIREBASE SYNC
+  
+  checkAdminUrl();
+  
+  window.addEventListener('scroll', () => {
+    document.getElementById('scrollTop').classList.toggle('show', window.scrollY > 300);
+  });
+}
+document.addEventListener('DOMContentLoaded', init);
+
+</script>
+</body>
+</html>

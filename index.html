@@ -749,6 +749,20 @@ body.has-sticky .ai-panel{bottom:170px}
 .card-net.disabled{opacity:.35;filter:grayscale(.7);cursor:not-allowed}
 .card-net.disabled:hover{border-color:var(--border)}
 @media(max-width:640px){.card-types{grid-template-columns:1fr}}
+
+/* ===== Video: file + link ===== */
+.ad-video-stage iframe,.va-preview iframe,.vlink-preview iframe{width:100%;height:100%;border:0;display:block;background:#000}
+.va-preview iframe{aspect-ratio:16/9;border-radius:8px}
+.vid-none{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;width:100%;height:100%;min-height:120px;aspect-ratio:16/9;background:#000;color:#aaa;font-size:13px;text-align:center;padding:10px;border-radius:8px}
+.vid-open{color:var(--accent-light);font-weight:800;font-size:12px;text-decoration:underline}
+.vsrc-tabs{display:flex;gap:6px;margin:6px 0 10px}
+.vsrc-tab{padding:9px 14px;border:1.5px solid var(--border);border-radius:8px;background:var(--card);color:var(--text-light);font-weight:700;font-size:12px;cursor:pointer}
+.vsrc-tab.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+.vhint{font-size:11px;color:var(--text-light);line-height:1.5;margin-top:6px}
+.vlink-preview{display:none;width:100%;max-width:340px;aspect-ratio:16/9;margin-top:12px;border-radius:10px;overflow:hidden;background:#000}
+.vprog{height:8px;background:var(--border);border-radius:6px;overflow:hidden;margin-top:10px;display:none}
+.vprog i{display:block;height:100%;width:0;background:var(--accent);transition:width .2s}
+.ad-video-stage.tall{aspect-ratio:auto;height:640px;max-width:360px;margin:0 auto}
 </style>
 </head>
 <body class="has-top-ad has-sticky">
@@ -927,6 +941,13 @@ body.has-sticky .ai-panel{bottom:170px}
       <button class="admin-notif-btn" onclick="filterAdminOrders('pending')">Lihat Pesanan →</button>
     </div>
 
+    <div id="fbPanel" style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:10px 14px;margin-bottom:14px">
+      <div style="font-size:13px"><b>☁️ Firebase</b> · <span id="fbBadge" style="font-weight:800;color:var(--text-light)">menghubungkan…</span><div id="fbMsg" style="font-size:11px;color:var(--text-light);margin-top:2px"></div></div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <button type="button" class="va-btn va-btn-edit" onclick="window.fbUploadAll && window.fbUploadAll()">⬆ Upload data ke Firebase</button>
+        <button type="button" class="va-btn va-btn-edit" onclick="window.fbPullAll && window.fbPullAll()">⬇ Ambil dari Firebase</button>
+      </div>
+    </div>
     <div class="admin-stats" id="adminStats"></div>
 
     <div class="admin-tabs">
@@ -1057,7 +1078,7 @@ body.has-sticky .ai-panel{bottom:170px}
 
     <div id="adminTab-videos" class="admin-tab-content">
       <h3 style="margin-bottom:15px">🎬 Kelola Video Iklan (16:9, Maks 2 Menit)</h3>
-      <p style="font-size:12px;color:var(--text-light);margin-bottom:12px">ℹ️ Video disimpan lokal di browser (disarankan ukuran kecil agar cepat).</p>
+      <p style="font-size:12px;color:var(--text-light);margin-bottom:12px">ℹ️ Upload file dari perangkat atau tempel link video dari mana saja. Video langsung bisa diputar.</p>
       <div id="adminVideoList"></div>
       <hr style="margin:20px 0;border:none;border-top:2px solid var(--border)">
       <h4 style="margin-bottom:12px;font-size:14px;text-transform:uppercase;letter-spacing:.5px;color:var(--accent)" id="videoFormTitle">➕ Tambah Video Iklan Baru</h4>
@@ -1065,9 +1086,22 @@ body.has-sticky .ai-panel{bottom:170px}
         <input type="hidden" id="vEditId">
         <label>Judul Video *</label><input type="text" id="vTitle" required placeholder="Promo Spesial 12.12">
         <label>Deskripsi</label><textarea id="vDesc" placeholder="Deskripsi singkat video iklan..."></textarea>
-        <label>Upload Video File * (MP4/WebM, maks 2 menit)</label>
-        <input type="file" accept="video/*" id="vFile" onchange="handleVideoUpload(event)">
+        <label>Sumber Video *</label>
+        <div class="vsrc-tabs">
+          <button type="button" class="vsrc-tab active" data-m="file" onclick="setVideoMode('file')">📁 Upload File</button>
+          <button type="button" class="vsrc-tab" data-m="link" onclick="setVideoMode('link')">🔗 Link Video</button>
+        </div>
+        <div id="vModeFile">
+          <input type="file" accept="video/*,.mp4,.webm,.mov,.m4v,.ogv" id="vFile" onchange="handleVideoUpload(event)">
+          <div class="vhint">Format MP4 / WebM / MOV. Jika Firebase Storage aktif, video diunggah ke cloud sehingga tampil di semua perangkat. Jika tidak aktif, video disimpan di browser ini saja.</div>
+        </div>
+        <div id="vModeLink" style="display:none">
+          <input type="text" id="vUrl" placeholder="https://… link YouTube, Vimeo, Google Drive, TikTok, Facebook, Instagram, Dropbox, atau link .mp4" oninput="handleVideoLink()">
+          <div class="vhint">Bisa dari mana saja. Link YouTube/Vimeo/Drive/TikTok/Facebook/Instagram otomatis jadi pemutar. Untuk Google Drive, file harus dibagikan "Siapa saja yang memiliki link".</div>
+        </div>
         <video id="vPreview" controls></video>
+        <div id="vLinkPreview" class="vlink-preview"></div>
+        <div class="vprog" id="vProg"><i></i></div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px">
           <div><label>Nilai Voucher (Rp)</label><input type="number" id="vVoucherValue" min="0" value="15000"></div>
           <div><label>Min. Belanja (Rp)</label><input type="number" id="vVoucherMin" min="0" value="50000"></div>
@@ -1123,6 +1157,15 @@ body.has-sticky .ai-panel{bottom:170px}
         </div>
         <label>Pesan sambutan tambahan (opsional)</label><input type="text" id="aiWelcome" placeholder="Contoh: Hari ini ada flash sale jam 12.00!">
         <div style="margin-top:10px"><button type="button" class="admin-btn-save" onclick="saveAiCfg()">💾 Simpan Pengaturan AI</button></div>
+        </div>
+        <h4 style="margin:22px 0 8px">🔑 API Key AI (bisa jawab pertanyaan apa saja)</h4>
+        <p style="font-size:12px;color:var(--text-light);line-height:1.6;margin-bottom:10px">Isi API key dari satu atau lebih penyedia AI. Chatbot memakai <b>Provider utama</b> lebih dulu; jika gagal otomatis mencoba provider lain yang key-nya terisi. Tanpa API key, chatbot tetap berjalan dengan otak lokal toko.</p>
+        <div class="video-admin-form">
+          <label>Provider utama</label><select id="aiProvider"></select>
+          <div id="aiKeyRows" style="margin-top:10px"></div>
+          <label style="display:flex;align-items:center;gap:8px;margin-top:12px;cursor:pointer"><input type="checkbox" id="aiUseLLM" style="width:auto"> Pakai AI untuk menjawab semua pertanyaan (pesanan &amp; data rahasia tetap dijawab lokal)</label>
+          <div style="margin-top:10px"><button type="button" class="admin-btn-save" onclick="saveAiCfg()">💾 Simpan API Key &amp; Pengaturan</button></div>
+          <div style="font-size:11px;color:var(--text-light);margin-top:8px;line-height:1.5">⚠️ Key disimpan di browser ini saja (localStorage). Agar semua pengunjung bisa memakai AI dengan aman, pasang key di server Anda lalu isi <code>AI_ENDPOINT</code>.</div>
         </div>
         <h4 style="margin:22px 0 8px">➕ FAQ Kustom</h4>
         <form class="video-admin-form" onsubmit="submitAiFaq(event)">
@@ -1256,12 +1299,12 @@ body.has-sticky .ai-panel{bottom:170px}
       <ul>
         <li><a>📞 08xxxxxxxxxxx</a></li>
       
-        <li><a>📍 UNAKIPRIDE, Indonesia</a></li>
-        <li><a>🕘 Senin–Sabtu, Tidury</a></li>
+        <li><a>📍 UnakiIPride, Semarang</a></li>
+        <li><a>🕘 Senin–Sabtu, TIDUR?</a></li>
       </ul>
     </div>
   </div>
-  <div class="footer-bottom">© 2026 Faren Store 7. Seluruh hak cipta dilindungi.</div>
+  <div class="footer-bottom">© 2026 Faren Store 7. Seluruh hak cipta dilindungi. DiJamin Aman Bro</div>
 </footer>
 
 <!-- ===== ASISTEN AI ===== -->
@@ -1388,7 +1431,7 @@ const state = {
   resiPref: store.get('resiPref', {courier:'auto'}),
   payExtra: store.get('payExtra', {}),
   aiFaq: store.get('aiFaq', []),
-  aiCfg: Object.assign({enabled:true, name:'Faren AI', welcome:''}, store.get('aiCfg', {})),
+  aiCfg: Object.assign({enabled:true, name:'Faren AI', welcome:'', provider:'openai', keys:{}, models:{}, customUrl:'', useLLM:true}, store.get('aiCfg', {})),
   cart:     store.get('cart', []),
   wishlist: store.get('wishlist', []),
   orders:   store.get('orders', []),
@@ -1403,7 +1446,7 @@ const state = {
   adminOrderFilter:'all',
   adminLogged:false
 };
-function save(k){ store.set(k, state[k]); }
+function save(k){ store.set(k, state[k]); if(window.fbPush){ try{ window.fbPush(k); }catch(e){ console.warn(e); } } }
 const blobCache = {};
 
 /* ---------------- TOAST ---------------- */
@@ -2697,24 +2740,81 @@ function closeFloatAd(id){ const el=document.getElementById(id); if(el) el.class
 function closeStickyBottom(){ $('#stickyBottom').classList.add('hidden'); document.body.classList.remove('has-sticky'); }
 function closeTopSticky(){ $('#topStickyAd').classList.add('hidden'); document.body.classList.remove('has-top-ad'); }
 
+/* ---------- VIDEO: file (tersimpan awet) + link dari mana saja ---------- */
+function videoLink(raw){
+  let u = String(raw||'').trim(); if(!u) return null;
+  if(!/^https?:\/\//i.test(u)) u = 'https://'+u;
+  if(location.protocol==='https:' && /^http:\/\//i.test(u)) u = 'https://'+u.slice(7);
+  let m;
+  if((m = u.match(/(?:youtube\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/|live\/)|youtu\.be\/)([\w-]{11})/i)))
+    return {kind:'iframe', src:'https://www.youtube.com/embed/'+m[1]+'?rel=0&playsinline=1'};
+  if((m = u.match(/vimeo\.com\/(?:video\/)?(\d+)/i))) return {kind:'iframe', src:'https://player.vimeo.com/video/'+m[1]};
+  if((m = u.match(/drive\.google\.com\/(?:file\/d\/|open\?id=|uc\?(?:.*&)?id=)([\w-]+)/i))) return {kind:'iframe', src:'https://drive.google.com/file/d/'+m[1]+'/preview'};
+  if((m = u.match(/dailymotion\.com\/video\/(\w+)|dai\.ly\/(\w+)/i))) return {kind:'iframe', src:'https://www.dailymotion.com/embed/video/'+(m[1]||m[2])};
+  if((m = u.match(/tiktok\.com\/.*\/video\/(\d+)/i))) return {kind:'iframe', src:'https://www.tiktok.com/embed/v2/'+m[1], tall:true};
+  if((m = u.match(/instagram\.com\/(?:p|reel|tv)\/([\w-]+)/i))) return {kind:'iframe', src:'https://www.instagram.com/p/'+m[1]+'/embed', tall:true};
+  if(/facebook\.com|fb\.watch/i.test(u)) return {kind:'iframe', src:'https://www.facebook.com/plugins/video.php?show_text=false&href='+encodeURIComponent(u)};
+  if(/dropbox\.com/i.test(u)){
+    try{ const x = new URL(u); x.hostname = 'dl.dropboxusercontent.com'; x.searchParams.delete('dl'); x.searchParams.set('raw','1'); u = x.toString(); }catch(e){}
+  }
+  try{ new URL(u); }catch(e){ return null; }
+  return {kind:'video', src:u};
+}
+function videoSrcInfo(v){
+  if(blobCache[v.id]) return {kind:'video', src:blobCache[v.id]};
+  if(v.url){ const l = videoLink(v.url); if(l) return l; }
+  if(v.dataUrl) return {kind:'video', src:v.dataUrl};
+  return null;
+}
+function videoPlayerHTML(v, admin){
+  const i = videoSrcInfo(v);
+  if(!i) return '<div class="vid-none">🎬<span>Video tidak tersedia'+(v.local?' di perangkat ini':'')+'</span></div>';
+  if(i.kind==='iframe') return '<iframe src="'+esc(i.src)+'" allow="autoplay; fullscreen; picture-in-picture; encrypted-media" allowfullscreen loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>';
+  return '<video src="'+esc(i.src)+'" controls playsinline preload="metadata"'+(admin?' muted':'')+' onerror="videoFail(this)"></video>';
+}
+function videoFail(el){
+  const src = el.getAttribute('src') || '';
+  const d = document.createElement('div'); d.className = 'vid-none';
+  d.innerHTML = '⚠️<span>Video tidak bisa diputar di sini.</span>';
+  if(/^https?:/i.test(src)){ const a = document.createElement('a'); a.href = src; a.target = '_blank'; a.rel = 'noopener'; a.className = 'vid-open'; a.textContent = 'Buka video ↗'; d.appendChild(a); }
+  el.replaceWith(d);
+}
+/* Penyimpanan file video di IndexedDB agar tidak hilang saat halaman dimuat ulang */
+function vidDB(){
+  return new Promise((res,rej)=>{
+    if(!window.indexedDB) return rej(new Error('Penyimpanan browser tidak tersedia'));
+    const r = indexedDB.open('fs7_videos_db', 1);
+    r.onupgradeneeded = ()=>r.result.createObjectStore('files');
+    r.onsuccess = ()=>res(r.result); r.onerror = ()=>rej(r.error);
+  });
+}
+async function vidPut(id, blob){ const db = await vidDB(); return new Promise((res,rej)=>{ const tx = db.transaction('files','readwrite'); tx.objectStore('files').put(blob, id); tx.oncomplete = ()=>res(); tx.onerror = ()=>rej(tx.error); }); }
+async function vidGet(id){ const db = await vidDB(); return new Promise((res,rej)=>{ const q = db.transaction('files','readonly').objectStore('files').get(id); q.onsuccess = ()=>res(q.result||null); q.onerror = ()=>rej(q.error); }); }
+async function vidDel(id){ try{ const db = await vidDB(); await new Promise((res)=>{ const tx = db.transaction('files','readwrite'); tx.objectStore('files').delete(id); tx.oncomplete = ()=>res(); tx.onerror = ()=>res(); }); }catch(e){} }
+async function videoRestoreLocal(){
+  let any = false;
+  for(const v of state.videos){
+    if(v.local && !blobCache[v.id]){
+      try{ const b = await vidGet(v.id); if(b){ blobCache[v.id] = URL.createObjectURL(b); any = true; } }catch(e){}
+    }
+  }
+  if(any){ renderVideoAds(); if(state.adminLogged) renderAdminVideos(); }
+}
 function renderVideoAds(){
   const c = $('#videoAdsContainer');
-  const act = state.videos.filter(v=>Number(v.active)===1);
+  const act = state.videos.filter(v=>Number(v.active)===1 && (state.adminLogged || videoSrcInfo(v)));
   if(!act.length){ c.innerHTML=''; return; }
   c.innerHTML = act.map(v=>{
-    const src = blobCache[v.id] || v.dataUrl || '';
+    const info = videoSrcInfo(v);
     const claimed = myV().some(m=>m.videoId===v.id);
     return '<div class="ad-video">'+
       '<span class="ad-tag" style="z-index:10">IKLAN</span>'+
-      '<div class="ad-video-stage"><div class="ad-video-live">LIVE</div>'+
-        (src ? '<video src="'+src+'" controls playsinline preload="metadata"></video>'
-             : '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#888;font-size:13px">Video tidak tersedia</div>')+
-      '</div>'+
+      '<div class="ad-video-stage'+(info && info.tall ? ' tall' : '')+'"><div class="ad-video-live">LIVE</div>'+videoPlayerHTML(v,false)+'</div>'+
       '<div class="ad-video-info"><div class="info-text">'+
         '<div class="eyebrow">Video Promo</div><h3>'+esc(v.title)+'</h3><p>'+esc(v.desc||'')+'</p>'+
         (Number(v.voucherValue)>0 && !claimed ? '<div class="ad-video-voucher">🎫 Voucher '+rp(v.voucherValue)+' · min '+rp(v.voucherMin)+'</div>' : '')+
       '</div>'+
-      (Number(v.voucherValue)>0 ? '<button class="ad-video-btn '+(claimed?'claimed':'')+'" onclick="'+(claimed?'goMyVouchers()':'claimVideoVoucher(\''+v.id+'\')')+'">'+(claimed?'✅ Sudah Diklaim — Buka Voucher Saya':'🎁 Klaim Voucher')+'</button>' : '')+
+      (Number(v.voucherValue)>0 ? '<button class="ad-video-btn '+(claimed?'claimed':'')+'" onclick="'+(claimed?'goMyVouchers()':'claimVideoVoucher(\\\''+v.id+'\\\')')+'">'+(claimed?'✅ Sudah Diklaim — Buka Voucher Saya':'🎁 Klaim Voucher')+'</button>' : '')+
       '</div></div>';
   }).join('');
 }
@@ -2777,6 +2877,7 @@ function closeAdminLogin(){
 function openAdminPanel(){
   state.adminLogged = true;
   $('#adminDashboard').style.display = 'block';
+  if(window.fbAdminOpened){ try{ window.fbAdminOpened(); }catch(e){ console.warn(e); } }
   document.body.style.overflow = 'hidden';
   renderAdminAll();
   adminTab('orders', document.querySelector('.admin-tab[data-tab="orders"]'));
@@ -3422,31 +3523,46 @@ function deleteVoucher(id){
 }
 
 /* ---------- VIDEO ADMIN ---------- */
-let currentVideoData = '';
+let currentVideoData = '', currentVideoFile = null, videoMode = 'file';
+function setVideoMode(m){
+  videoMode = m;
+  $$('.vsrc-tab').forEach(t=>t.classList.toggle('active', t.dataset.m===m));
+  $('#vModeFile').style.display = m==='file' ? '' : 'none';
+  $('#vModeLink').style.display = m==='link' ? '' : 'none';
+  const pv = $('#vPreview'), lp = $('#vLinkPreview');
+  pv.style.display = (m==='file' && pv.getAttribute('src')) ? 'block' : 'none';
+  lp.style.display = (m==='link' && lp.innerHTML) ? 'block' : 'none';
+}
 function handleVideoUpload(e){
   const f = e.target.files[0]; if(!f) return;
+  currentVideoFile = f;
   const url = URL.createObjectURL(f);
   currentVideoData = url;
   const pv = $('#vPreview');
-  pv.src = url; pv.style.display='block';
+  pv.src = url; pv.style.display = 'block';
+  if(f.size > 300*1024*1024) toast('File sangat besar ('+Math.round(f.size/1048576)+' MB), proses upload bisa lama','warning');
   const vd = document.createElement('video');
   vd.src = url;
-  vd.onloadedmetadata = ()=>{
-    if(vd.duration > 120) toast('Video lebih dari 2 menit, tetap disimpan','warning');
-  };
+  vd.onloadedmetadata = ()=>{ if(vd.duration > 120) toast('Video lebih dari 2 menit, tetap disimpan','warning'); };
+}
+function handleVideoLink(){
+  const raw = $('#vUrl').value, box = $('#vLinkPreview');
+  if(!videoLink(raw)){ box.innerHTML = ''; box.style.display = 'none'; return; }
+  box.style.display = 'block';
+  box.innerHTML = videoPlayerHTML({id:'_preview', url:raw}, false);
 }
 function renderAdminVideos(){
   const box = $('#adminVideoList');
   if(!state.videos.length){ box.innerHTML = '<p style="color:var(--text-light);font-size:13px">Belum ada video iklan.</p>'; return; }
   box.innerHTML = state.videos.map(v=>{
-    const src = blobCache[v.id] || v.dataUrl || '';
     const on = Number(v.active)===1;
+    const srcLabel = v.url ? (/firebasestorage|googleapis/.test(v.url) ? '☁️ Cloud' : '🔗 Link') : (v.local ? '💾 Lokal' : '📁 File');
     return '<div class="video-admin-card">'+
-      '<div class="va-preview">'+(src?'<video src="'+src+'" controls muted></video>':'<div class="no-video">🎬<span>Video tidak tersedia</span></div>')+'</div>'+
+      '<div class="va-preview">'+videoPlayerHTML(v,true)+'</div>'+
       '<div class="va-info">'+
         '<div class="va-title">'+esc(v.title)+'</div>'+
         '<div class="va-desc">'+esc(v.desc||'')+'</div>'+
-        '<div class="va-meta"><span class="va-badge type">Video Ads</span><span class="va-badge '+(on?'active':'inactive')+'">'+(on?'Aktif':'Nonaktif')+'</span>'+
+        '<div class="va-meta"><span class="va-badge type">Video Ads</span><span class="va-badge type">'+srcLabel+'</span><span class="va-badge '+(on?'active':'inactive')+'">'+(on?'Aktif':'Nonaktif')+'</span>'+
         (Number(v.voucherValue)>0?'<span class="va-badge type">Voucher '+rp(v.voucherValue)+'</span>':'')+'</div>'+
         '<div class="va-actions">'+
           '<button class="va-btn va-btn-edit" onclick="editVideo(\''+v.id+'\')">✏ Edit</button>'+
@@ -3458,6 +3574,7 @@ function renderAdminVideos(){
 }
 function editVideo(id){
   const v = state.videos.find(x=>x.id===id); if(!v) return;
+  resetVideoForm();
   $('#videoFormTitle').textContent = '✏️ Edit Video Iklan';
   $('#vEditId').value = v.id;
   $('#vTitle').value = v.title;
@@ -3466,22 +3583,36 @@ function editVideo(id){
   $('#vVoucherMin').value = v.voucherMin||0;
   $('#vVoucherCode').value = v.voucherCode||'';
   $('#vActive').value = Number(v.active)===1?'1':'0';
-  const src = blobCache[v.id] || v.dataUrl || '';
-  if(src){ const pv=$('#vPreview'); pv.src=src; pv.style.display='block'; }
+  if(v.url && !/firebasestorage|googleapis\.com\/download/.test(v.url)){
+    setVideoMode('link'); $('#vUrl').value = v.url; handleVideoLink();
+  } else {
+    setVideoMode('file');
+    const info = videoSrcInfo(v);
+    if(info && info.kind==='video'){ const pv = $('#vPreview'); pv.src = info.src; pv.style.display = 'block'; }
+  }
   $('#adminTab-videos').scrollIntoView({behavior:'smooth'});
 }
 function resetVideoForm(){
   $('#videoForm').reset();
-  $('#vEditId').value='';
+  $('#vEditId').value = '';
   $('#videoFormTitle').textContent = '➕ Tambah Video Iklan Baru';
-  const pv = $('#vPreview'); pv.src=''; pv.style.display='none';
-  currentVideoData='';
+  const pv = $('#vPreview'); pv.removeAttribute('src'); pv.style.display = 'none';
+  const lp = $('#vLinkPreview'); lp.innerHTML = ''; lp.style.display = 'none';
+  const pg = $('#vProg'); if(pg){ pg.style.display = 'none'; pg.firstElementChild.style.width = '0'; }
+  currentVideoData = ''; currentVideoFile = null;
+  setVideoMode('file');
 }
-function submitVideoAd(e){
+async function submitVideoAd(e){
   e.preventDefault();
   const id = $('#vEditId').value;
   const title = $('#vTitle').value.trim();
   if(!title){ toast('Judul video wajib diisi','warning'); return; }
+  const existing = id ? state.videos.find(x=>x.id===id) : null;
+  const link = $('#vUrl').value.trim();
+  const useLink = videoMode==='link' && !!link;
+  const useFile = videoMode==='file' && !!currentVideoFile;
+  if(!existing && !useLink && !useFile){ toast('Pilih file video atau isi link video','warning'); return; }
+  if(videoMode==='link' && link && !videoLink(link)){ toast('Link video tidak valid','warning'); return; }
   const data = {
     title: title,
     desc: $('#vDesc').value.trim(),
@@ -3490,18 +3621,39 @@ function submitVideoAd(e){
     voucherCode: ($('#vVoucherCode').value.trim()||('VIDEO'+uid().slice(0,4).toUpperCase())).toUpperCase(),
     active: Number($('#vActive').value)
   };
-  if(id){
-    const v = state.videos.find(x=>x.id===id);
-    Object.assign(v, data);
-    if(currentVideoData){ blobCache[id] = currentVideoData; v.dataUrl = ''; }
-    toast('Video diperbarui','success');
-  } else {
-    const newId = 'vid'+uid();
-    if(currentVideoData) blobCache[newId] = currentVideoData;
-    state.videos.unshift(Object.assign({id:newId}, data));
-    toast('Video iklan ditambahkan','success');
+  const vid = existing || {id:'vid'+uid()};
+  const btn = $('#videoForm button[type="submit"]'); if(btn) btn.disabled = true;
+  const pg = $('#vProg');
+  try{
+    if(useLink){
+      data.url = link; data.local = false; data.dataUrl = '';
+      delete blobCache[vid.id]; await vidDel(vid.id);
+    } else if(useFile){
+      let cloudUrl = null;
+      if(window.fbUploadVideo){
+        pg.style.display = 'block'; pg.firstElementChild.style.width = '0';
+        try{ cloudUrl = await window.fbUploadVideo(currentVideoFile, vid.id, pct=>{ pg.firstElementChild.style.width = pct+'%'; }); }
+        catch(err){ console.warn('Upload Storage gagal', err); toast('Firebase Storage belum aktif/ditolak, video disimpan di browser ini saja','warning'); }
+        pg.style.display = 'none';
+      }
+      if(cloudUrl){
+        data.url = cloudUrl; data.local = false; data.dataUrl = '';
+        delete blobCache[vid.id]; await vidDel(vid.id);
+      } else {
+        await vidPut(vid.id, currentVideoFile);
+        data.local = true; data.url = ''; data.dataUrl = '';
+        blobCache[vid.id] = URL.createObjectURL(currentVideoFile);
+      }
+    }
+  }catch(err){
+    toast('Gagal menyimpan video: '+(err && err.message ? err.message : err),'error');
+    if(btn) btn.disabled = false; return;
   }
+  Object.assign(vid, data);
+  if(!existing) state.videos.unshift(vid);
+  toast(existing ? 'Video diperbarui' : 'Video iklan ditambahkan','success');
   save('videos'); resetVideoForm(); renderAdminVideos(); renderVideoAds();
+  if(btn) btn.disabled = false;
 }
 function toggleVideo(id){
   const v = state.videos.find(x=>x.id===id); if(!v) return;
@@ -3512,7 +3664,7 @@ function deleteVideo(id){
   const v = state.videos.find(x=>x.id===id); if(!v) return;
   if(!confirm('Hapus video "'+v.title+'"?')) return;
   state.videos = state.videos.filter(x=>x.id!==id);
-  delete blobCache[id];
+  delete blobCache[id]; vidDel(id);
   save('videos'); renderAdminVideos(); renderVideoAds();
   toast('Video dihapus','warning');
 }
@@ -3949,6 +4101,7 @@ function renderAdminAI(){
   $('#aiEnabled').value = cfg.enabled ? '1' : '0';
   $('#aiName').value = cfg.name || 'Faren AI';
   $('#aiWelcome').value = cfg.welcome || '';
+  aiRenderKeyUI();
   $('#aiFaqList').innerHTML = state.aiFaq.length ? state.aiFaq.map(f=>
     '<div class="voucher-admin-card"><div class="voucher-admin-info"><div class="v-title">'+esc(f.keywords)+'</div><div class="v-meta">'+esc(f.answer.length>140?f.answer.slice(0,140)+'…':f.answer)+'</div></div>'+
     '<div class="voucher-admin-actions"><button class="va-btn va-btn-edit" data-id="'+esc(f.id)+'" onclick="editAiFaq(this.dataset.id)">✏ Edit</button>'+
@@ -3956,7 +4109,18 @@ function renderAdminAI(){
     : '<p style="color:var(--text-light);font-size:13px">Belum ada FAQ kustom. AI tetap otomatis menjawab dari data produk, promo, voucher, pembayaran, dan pesanan.</p>';
 }
 function saveAiCfg(){
-  state.aiCfg = {enabled: $('#aiEnabled').value==='1', name: $('#aiName').value.trim()||'Faren AI', welcome: $('#aiWelcome').value.trim()};
+  const keys = {}, models = {};
+  AI_PROVIDERS.forEach(pv=>{
+    const k = $('#aiKey_'+pv.id), m = $('#aiModel_'+pv.id);
+    if(k && k.value.trim()) keys[pv.id] = k.value.trim();
+    if(m && m.value.trim()) models[pv.id] = m.value.trim();
+  });
+  const cu = $('#aiCustomUrl');
+  state.aiCfg = Object.assign({}, state.aiCfg, {
+    enabled: $('#aiEnabled').value==='1', name: $('#aiName').value.trim()||'Faren AI', welcome: $('#aiWelcome').value.trim(),
+    provider: ($('#aiProvider') && $('#aiProvider').value) || 'openai', keys: keys, models: models,
+    customUrl: cu ? cu.value.trim() : (state.aiCfg.customUrl||''), useLLM: $('#aiUseLLM') ? $('#aiUseLLM').checked : true
+  });
   save('aiCfg'); aiApplyCfg(); renderAdminAI();
   toast('Pengaturan AI disimpan','success');
 }
@@ -3978,10 +4142,21 @@ function deleteAiFaq(id){
   if(!confirm('Hapus FAQ ini?')) return;
   state.aiFaq = state.aiFaq.filter(x=>x.id!==id); save('aiFaq'); renderAdminAI();
 }
-function testAI(){
+async function testAI(){
   const q = $('#aiTestQ').value.trim(); if(!q) return;
+  const out = $('#aiTestOut');
+  if(aiHasKey() && !aiLocalOnly(q)){
+    out.innerHTML = '<div class="ai-msg bot" style="max-width:100%">⏳ Memproses lewat API…</div>';
+    try{
+      const r = await aiLLM(q, {throwErr:true});
+      out.innerHTML = '<div class="ai-msg bot" style="max-width:100%">'+aiFmt(r.text)+'</div><div style="font-size:11px;color:var(--text-light);margin-top:4px">✅ Dijawab oleh '+esc(aiProv(r.provider).name)+'</div>';
+    }catch(e){
+      out.innerHTML = '<div class="ai-msg bot" style="max-width:100%;border-color:var(--danger)">❌ '+esc(e.message||'API gagal')+'</div>';
+    }
+    return;
+  }
   const r = aiAnswer(q);
-  $('#aiTestOut').innerHTML = '<div class="ai-msg bot" style="max-width:100%">'+r.html+'</div>';
+  out.innerHTML = '<div class="ai-msg bot" style="max-width:100%">'+r.html+'</div>';
 }
 /* =========================================================
    ASISTEN AI (Faren AI) — membaca data toko secara LIVE:
@@ -4294,6 +4469,123 @@ function aiKnowledgeText(){
     '\nPEMBAYARAN:\n'+kb.pay.filter(m=>Number(m.active)===1).map(m=>m.name+' | '+(m.accNo||'')).join('\n')+
     '\nFAQ:\n'+kb.faq.map(f=>f.keywords+' => '+f.answer).join('\n');
 }
+/* =========================================================
+   API KEY AI — banyak penyedia (ChatGPT, Gemini, DeepSeek, Grok, Claude, dll)
+   ========================================================= */
+const AI_PROVIDERS = [
+  {id:'openai',    name:'ChatGPT (OpenAI)',   type:'openai', url:'https://api.openai.com/v1/chat/completions',       model:'gpt-4o-mini'},
+  {id:'gemini',    name:'Gemini (Google)',    type:'gemini',                                                       model:'gemini-2.5-flash'},
+  {id:'deepseek',  name:'DeepSeek',           type:'openai', url:'https://api.deepseek.com/chat/completions',         model:'deepseek-chat'},
+  {id:'grok',      name:'Grok (xAI)',         type:'openai', url:'https://api.x.ai/v1/chat/completions',              model:'grok-3-mini'},
+  {id:'claude',    name:'Claude (Anthropic)', type:'claude', url:'https://api.anthropic.com/v1/messages',             model:'claude-haiku-5-5'},
+  {id:'groq',      name:'Groq',               type:'openai', url:'https://api.groq.com/openai/v1/chat/completions',   model:'llama-3.3-70b-versatile'},
+  {id:'openrouter',name:'OpenRouter',         type:'openai', url:'https://openrouter.ai/api/v1/chat/completions',     model:'openai/gpt-4o-mini'},
+  {id:'mistral',   name:'Mistral',            type:'openai', url:'https://api.mistral.ai/v1/chat/completions',        model:'mistral-small-latest'},
+  {id:'custom',    name:'Kustom (OpenAI-compatible)', type:'openai', url:'',                                         model:''}
+];
+function aiProv(id){ return AI_PROVIDERS.find(x=>x.id===id); }
+function aiKeyOf(id){ return String(((state.aiCfg.keys)||{})[id]||'').trim(); }
+function aiModelOf(id){ const pv = aiProv(id); return String(((state.aiCfg.models)||{})[id]||'').trim() || (pv ? pv.model : ''); }
+function aiHasKey(){ return state.aiCfg.useLLM!==false && AI_PROVIDERS.some(x=>aiKeyOf(x.id) && (x.id!=='custom' || state.aiCfg.customUrl)); }
+function aiLocalOnly(q){ return /password|kata sandi|sandi admin|data pengguna|data user|dashboard admin|login admin|fs7\s*-?\s*\d{6,10}|\b[a-z]{0,6}\d{8,}\b|lacak|\bresi\b|status pesanan|pesanan saya|tracking|paket saya/i.test(q); }
+function aiFmt(t){ return esc(String(t)).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/`([^`]+)`/g,'<code>$1</code>').replace(/\n/g,'<br>'); }
+function aiSystemPrompt(){
+  return 'Kamu adalah '+(state.aiCfg.name||'Faren AI')+', asisten AI untuk toko online "Faren Store 7". Kamu boleh menjawab pertanyaan APA SAJA (pengetahuan umum, matematika, coding, saran, terjemahan, dan lainnya), tidak terbatas pada toko. Jawab dengan bahasa yang dipakai pengguna (default Bahasa Indonesia), ramah, jelas, dan ringkas. Untuk pertanyaan tentang toko (produk, harga, stok, promo, voucher, pembayaran) gunakan DATA TOKO di bawah dan jangan mengarang. Jangan pernah membagikan password, data pengguna, atau akses dashboard admin.\n\nDATA TOKO:\n'+aiKnowledgeText();
+}
+function aiHistory(q){
+  const h = AI.log.slice(-10).map(m=>({role:m.role==='assistant'?'assistant':'user', content:String(m.content||'').slice(0,2000)}));
+  if(!h.length || h[h.length-1].role!=='user') h.push({role:'user', content:q});
+  while(h.length && h[0].role!=='user') h.shift();
+  return h;
+}
+async function aiCallProvider(id, key, model, q, o){
+  o = o || {};
+  const pv = aiProv(id);
+  const sys = o.system || aiSystemPrompt();
+  const hist = o.history || aiHistory(q);
+  const ctl = new AbortController();
+  const tm = setTimeout(()=>ctl.abort(), 40000);
+  try{
+    let res, data, out;
+    if(pv.type==='gemini'){
+      res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+encodeURIComponent(model)+':generateContent', {
+        method:'POST', signal:ctl.signal,
+        headers:{'Content-Type':'application/json','x-goog-api-key':key},
+        body:JSON.stringify({systemInstruction:{parts:[{text:sys}]}, contents:hist.map(m=>({role:m.role==='assistant'?'model':'user', parts:[{text:m.content}]}))})
+      });
+      data = await res.json().catch(()=>({}));
+      if(!res.ok) throw new Error((data.error && data.error.message) || ('Error '+res.status));
+      const parts = (((data.candidates||[])[0]||{}).content||{}).parts || [];
+      out = parts.map(x=>x.text||'').join('').trim();
+    } else if(pv.type==='claude'){
+      res = await fetch(pv.url, {
+        method:'POST', signal:ctl.signal,
+        headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+        body:JSON.stringify({model:model, max_tokens:1024, system:sys, messages:hist})
+      });
+      data = await res.json().catch(()=>({}));
+      if(!res.ok) throw new Error((data.error && data.error.message) || ('Error '+res.status));
+      out = (data.content||[]).map(x=>x.text||'').join('').trim();
+    } else {
+      const url = id==='custom' ? (o.url || state.aiCfg.customUrl) : pv.url;
+      if(!url) throw new Error('URL API kustom belum diisi');
+      res = await fetch(url, {
+        method:'POST', signal:ctl.signal,
+        headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},
+        body:JSON.stringify({model:model, messages:[{role:'system', content:sys}].concat(hist)})
+      });
+      data = await res.json().catch(()=>({}));
+      if(!res.ok) throw new Error((data.error && (data.error.message || data.error)) || ('Error '+res.status));
+      out = String((((data.choices||[])[0]||{}).message||{}).content || '').trim();
+    }
+    if(!out) throw new Error('Jawaban kosong dari '+pv.name);
+    return out;
+  }catch(e){
+    if(e && e.name==='AbortError') throw new Error(pv.name+': waktu habis, coba lagi');
+    if(e instanceof TypeError) throw new Error('Tidak bisa terhubung ke '+pv.name+'. Cek internet dan API key');
+    throw new Error(pv.name+': '+(e && e.message ? e.message : 'gagal'));
+  }finally{ clearTimeout(tm); }
+}
+async function aiLLM(q, o){
+  const cfg = state.aiCfg;
+  const order = [cfg.provider].concat(AI_PROVIDERS.map(x=>x.id)).filter((v,i,a)=>v && a.indexOf(v)===i).filter(id=>aiProv(id) && aiKeyOf(id) && (id!=='custom' || cfg.customUrl));
+  let lastErr = null;
+  for(const id of order){
+    try{ return {text: await aiCallProvider(id, aiKeyOf(id), aiModelOf(id), q), provider:id}; }
+    catch(e){ lastErr = e; }
+  }
+  if(o && o.throwErr) throw (lastErr || new Error('Belum ada API key yang diisi'));
+  return null;
+}
+function aiRenderKeyUI(){
+  const sel = $('#aiProvider'), rows = $('#aiKeyRows'); if(!sel || !rows) return;
+  const cfg = state.aiCfg;
+  sel.innerHTML = AI_PROVIDERS.map(x=>'<option value="'+x.id+'">'+esc(x.name)+'</option>').join('');
+  sel.value = cfg.provider || 'openai';
+  rows.innerHTML = AI_PROVIDERS.map(x=>
+    '<div style="border:1px solid var(--border);border-radius:10px;padding:10px;margin-bottom:8px;background:var(--bg)">'+
+      '<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px"><b style="font-size:13px">'+esc(x.name)+'</b>'+
+        '<span style="font-size:11px;font-weight:800;color:'+(aiKeyOf(x.id)?'var(--success)':'var(--text-light)')+'">'+(aiKeyOf(x.id)?'● key terisi':'○ kosong')+'</span></div>'+
+      (x.id==='custom' ? '<input type="text" id="aiCustomUrl" placeholder="https://contoh.com/v1/chat/completions" value="'+esc(cfg.customUrl||'')+'" style="margin-bottom:6px">' : '')+
+      '<div style="display:grid;grid-template-columns:1.6fr 1fr auto;gap:6px">'+
+        '<input type="password" id="aiKey_'+x.id+'" autocomplete="off" placeholder="API key" value="'+esc(aiKeyOf(x.id))+'">'+
+        '<input type="text" id="aiModel_'+x.id+'" placeholder="'+esc(x.model||'nama model')+'" value="'+esc((cfg.models||{})[x.id]||'')+'">'+
+        '<button type="button" class="va-btn va-btn-edit" onclick="aiTestProvider(\''+x.id+'\')">Tes</button>'+
+      '</div><div id="aiTest_'+x.id+'" style="font-size:11px;margin-top:5px"></div></div>').join('');
+  const u = $('#aiUseLLM'); if(u) u.checked = cfg.useLLM!==false;
+}
+async function aiTestProvider(id){
+  const key = ($('#aiKey_'+id)||{}).value, box = $('#aiTest_'+id);
+  if(!key || !key.trim()){ box.innerHTML = '<span style="color:var(--danger)">Isi API key dulu</span>'; return; }
+  const model = (($('#aiModel_'+id)||{}).value || '').trim() || aiProv(id).model;
+  const cu = $('#aiCustomUrl');
+  box.innerHTML = '⏳ Menguji…';
+  try{
+    const r = await aiCallProvider(id, key.trim(), model, 'tes', {system:'Jawab singkat.', history:[{role:'user', content:'Balas satu kata saja: OK'}], url: cu ? cu.value.trim() : ''});
+    box.innerHTML = '<span style="color:var(--success)">✅ Berhasil: '+esc(r.slice(0,60))+'</span>';
+  }catch(e){ box.innerHTML = '<span style="color:var(--danger)">❌ '+esc(e.message)+'</span>'; }
+}
+
 async function aiRemote(q){
   if(!AI_ENDPOINT) return null;
   try{
@@ -4310,6 +4602,9 @@ async function aiSend(){
   $('#aiBody').appendChild(typing); $('#aiBody').scrollTop = 1e6;
   let res;
   try{ res = aiAnswer(q); }catch(e){ console.error(e); res = {html:'Maaf, terjadi kendala saat memproses pertanyaanmu. Coba lagi ya 🙏', chips:aiChipsDefault()}; }
+  if(aiHasKey() && !aiLocalOnly(q)){
+    try{ const llm = await aiLLM(q); if(llm){ res = {html:aiFmt(llm.text), chips:[]}; res.miss = false; } }catch(e){ console.error(e); }
+  }
   if(res.miss){ const rem = await aiRemote(q); if(rem) res = {html:esc(rem).replace(/\n/g,'<br>'), chips:aiChipsDefault()}; }
   setTimeout(()=>{ typing.remove(); aiAddMsg('bot', res.html, res.chips); AI.log.push({role:'assistant', content:String(res.html).replace(/<[^>]+>/g,' ')}); }, 380);
 }
@@ -4324,6 +4619,7 @@ document.addEventListener('keydown', function(e){
 (function init(){
   if(store.get('dark', false)) document.body.classList.add('dark');
   bootExtras();
+  videoRestoreLocal();
   aiApplyCfg();
   renderHomePromos();
   renderProducts();
@@ -4339,6 +4635,231 @@ document.addEventListener('keydown', function(e){
   });
   save('products');
 })();
+</script>
+<script type="module">
+/* =========================================================
+   FIREBASE (Firestore) — sinkronisasi data toko antar perangkat
+   - Katalog (produk, promo, voucher, metode bayar, video, FAQ AI): ditulis admin, dibaca semua pengunjung
+   - Pesanan: tiap pesanan 1 dokumen di koleksi "orders"
+   - Tidak disinkronkan: akun pengguna, pengaturan AI & API key (tetap lokal demi keamanan)
+   ========================================================= */
+import { initializeApp } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-app.js";
+import { getFirestore, doc, getDoc, setDoc, deleteDoc, collection, onSnapshot, query, where, writeBatch } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-firestore.js";
+import { getAnalytics, isSupported } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-analytics.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyC_lWaj5W7aktX4Zp7Pezy9XLECFefXBBo",
+  authDomain: "toko-online-7.firebaseapp.com",
+  projectId: "toko-online-7",
+  storageBucket: "toko-online-7.firebasestorage.app",
+  messagingSenderId: "34014860140",
+  appId: "1:34014860140:web:87799d5ddc6e63cd995949",
+  measurementId: "G-LR4V70YPHW"
+};
+
+const SYNC_KEYS = ['products','promos','vouchers','payMethods','payExtra','videos','aiFaq'];
+const CHUNK = 250000;           // karakter per dokumen (batas Firestore 1 MiB)
+const MAX_JSON = 6000000;       // batas total per kunci
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+try{ isSupported().then(ok=>{ if(ok) getAnalytics(app); }).catch(()=>{}); }catch(e){}
+
+const lastJson = {}, localV = {}, cloudState = {}, timers = {};
+const lastOrderJson = {};
+let firstOrderSnap = true;
+
+function setStatus(kind, msg){
+  const b = document.getElementById('fbBadge'), m = document.getElementById('fbMsg');
+  const map = {ok:['✅ terhubung','var(--success)'], wait:['⏳ menghubungkan…','var(--text-light)'], err:['❌ gagal','var(--danger)']};
+  const x = map[kind] || map.wait;
+  if(b){ b.textContent = x[0]; b.style.color = x[1]; }
+  if(m) m.textContent = msg || '';
+}
+function explain(err){
+  const c = (err && err.code) || '';
+  if(c==='permission-denied') return 'Akses ditolak. Atur Firestore Rules (lihat firestore.rules).';
+  if(c==='unavailable') return 'Tidak bisa menjangkau Firebase. Cek koneksi internet.';
+  if(c==='failed-precondition' || c==='not-found') return 'Database Firestore belum dibuat. Buat di Firebase Console → Build → Firestore Database.';
+  return (err && err.message) || 'Terjadi kesalahan';
+}
+function fail(err){ console.warn('Firebase:', err); setStatus('err', explain(err)); }
+
+/* ---------- Katalog: dipecah jadi potongan agar muat di batas dokumen ---------- */
+function splitChunks(str){ const a = []; for(let i=0;i<str.length;i+=CHUNK) a.push(str.slice(i,i+CHUNK)); return a.length ? a : ['']; }
+
+async function pushKey(k){
+  if(!state.adminLogged) return;
+  const json = JSON.stringify(state[k]);
+  if(lastJson[k]===json) return;
+  if(json.length > MAX_JSON){ toast('Data "'+k+'" terlalu besar untuk disinkronkan (gambar/video terlalu berat). Pakai URL gambar.','warning'); return; }
+  const parts = splitChunks(json), v = Date.now();
+  try{
+    const batch = writeBatch(db);
+    parts.forEach((str,i)=>batch.set(doc(db,'store',k+'~'+i), {s:str, v:v}));
+    batch.set(doc(db,'store',k), {n:parts.length, v:v, size:json.length});
+    await batch.commit();
+    lastJson[k] = json; localV[k] = v; cloudState[k] = 'present';
+    setStatus('ok','Data tersimpan ke Firebase');
+  }catch(e){ fail(e); }
+}
+async function fetchKey(k, meta){
+  const snaps = await Promise.all(Array.from({length:meta.n}, (_,i)=>getDoc(doc(db,'store',k+'~'+i))));
+  if(snaps.some(x=>!x.exists() || x.data().v!==meta.v)) return false;   // belum konsisten, tunggu snapshot berikutnya
+  applyRemote(k, snaps.map(x=>x.data().s).join(''), meta.v);
+  return true;
+}
+function refreshAfterRemote(){
+  try{
+    if(typeof renderHomePromos==='function') renderHomePromos();
+    renderProducts(); renderVideoAds(); refreshVoucherViews(); renderCart(); updateBadges();
+    if(typeof aiApplyCfg==='function') aiApplyCfg();
+    const ae = document.activeElement;
+    if(state.adminLogged && !(ae && /INPUT|TEXTAREA|SELECT/.test(ae.tagName) && ae.closest('#adminDashboard'))) renderAdminAll();
+  }catch(e){ console.warn(e); }
+}
+function applyRemote(k, json, v){
+  if(lastJson[k]===json){ localV[k] = v; return; }
+  let val; try{ val = JSON.parse(json); }catch(e){ return; }
+  lastJson[k] = json; localV[k] = v;
+  state[k] = val; store.set(k, val);
+  refreshAfterRemote();
+}
+function listenKey(k){
+  onSnapshot(doc(db,'store',k), async snap=>{
+    setStatus('ok','Tersambung ke proyek toko-online-7');
+    if(!snap.exists()){
+      cloudState[k] = 'missing';
+      if(state.adminLogged) pushKey(k);        // admin pertama kali: unggah data lokal sebagai data awal
+      return;
+    }
+    cloudState[k] = 'present';
+    const meta = snap.data();
+    if(meta.v===localV[k]) return;
+    try{ await fetchKey(k, meta); }catch(e){ fail(e); }
+  }, fail);
+}
+
+/* ---------- Pesanan: 1 dokumen per pesanan ---------- */
+function pushOrders(){
+  const cur = new Set(state.orders.map(o=>o.id));
+  state.orders.forEach(o=>{
+    const j = JSON.stringify(o);
+    if(lastOrderJson[o.id]===j) return;
+    lastOrderJson[o.id] = j;
+    setDoc(doc(db,'orders',String(o.id)), {oid:String(o.id), user:o.user||'guest', json:j, u:Date.now()})
+      .then(()=>setStatus('ok','Pesanan tersimpan ke Firebase')).catch(fail);
+  });
+  if(state.adminLogged){
+    Object.keys(lastOrderJson).forEach(id=>{
+      if(!cur.has(id)){ delete lastOrderJson[id]; deleteDoc(doc(db,'orders',id)).catch(fail); }
+    });
+  }
+}
+function mergeOrders(snap){
+  let changed = false, fresh = 0;
+  snap.docChanges().forEach(ch=>{
+    const id = ch.doc.id;
+    if(ch.type==='removed'){
+      if(state.adminLogged){ const i = state.orders.findIndex(o=>o.id===id); if(i>-1){ state.orders.splice(i,1); changed = true; } }
+      delete lastOrderJson[id]; return;
+    }
+    const d = ch.doc.data();
+    if(lastOrderJson[id]===d.json) return;
+    let o; try{ o = JSON.parse(d.json); }catch(e){ return; }
+    lastOrderJson[id] = d.json;
+    const i = state.orders.findIndex(x=>x.id===id);
+    if(i>-1) state.orders[i] = o; else { state.orders.push(o); if(!firstOrderSnap) fresh++; }
+    changed = true;
+  });
+  if(changed){
+    state.orders.sort((a,b)=>new Date(b.date)-new Date(a.date));
+    store.set('orders', state.orders);
+    try{
+      updateBadges();
+      if(state.adminLogged){ renderAdminStats(); renderAdminOrders(); }
+      if(fresh>0 && state.adminLogged) toast(fresh+' pesanan baru masuk 🔔','success');
+    }catch(e){ console.warn(e); }
+  }
+  firstOrderSnap = false;
+}
+let orderUnsubs = [], orderSig = '';
+function orderSignature(){
+  if(state.adminLogged) return 'admin';
+  const ids = state.orders.slice(0,60).map(o=>o.id);
+  return (state.user ? state.user.email : '')+'|'+ids.join(',');
+}
+function resubscribeOrders(){
+  const sig = orderSignature();
+  if(sig===orderSig) return;
+  orderSig = sig;
+  orderUnsubs.forEach(u=>{ try{ u(); }catch(e){} }); orderUnsubs = [];
+  firstOrderSnap = true;
+  if(state.adminLogged){
+    orderUnsubs.push(onSnapshot(collection(db,'orders'), mergeOrders, fail));
+    return;
+  }
+  const ids = state.orders.slice(0,60).map(o=>String(o.id));
+  for(let i=0;i<ids.length;i+=30){
+    orderUnsubs.push(onSnapshot(query(collection(db,'orders'), where('oid','in',ids.slice(i,i+30))), mergeOrders, fail));
+  }
+  if(state.user && state.user.email){
+    orderUnsubs.push(onSnapshot(query(collection(db,'orders'), where('user','==',state.user.email)), mergeOrders, fail));
+  }
+}
+
+/* ---------- Hook dari aplikasi ---------- */
+window.fbPush = function(k){
+  if(k==='orders'){ clearTimeout(timers.orders); timers.orders = setTimeout(()=>{ pushOrders(); resubscribeOrders(); }, 200); return; }
+  if(SYNC_KEYS.indexOf(k)<0 || !state.adminLogged) return;
+  clearTimeout(timers[k]); timers[k] = setTimeout(()=>pushKey(k), 400);
+};
+window.fbAdminOpened = function(){
+  SYNC_KEYS.forEach(k=>{ if(cloudState[k]==='missing') pushKey(k); });
+  resubscribeOrders();
+};
+window.fbUploadAll = async function(){
+  if(!state.adminLogged){ toast('Masuk sebagai admin dulu','warning'); return; }
+  setStatus('wait','Mengunggah semua data…');
+  SYNC_KEYS.forEach(k=>{ delete lastJson[k]; });
+  Object.keys(lastOrderJson).forEach(id=>delete lastOrderJson[id]);
+  for(const k of SYNC_KEYS) await pushKey(k);
+  pushOrders();
+  toast('Semua data diunggah ke Firebase','success');
+};
+window.fbPullAll = async function(){
+  setStatus('wait','Mengambil data dari Firebase…');
+  try{
+    for(const k of SYNC_KEYS){
+      const m = await getDoc(doc(db,'store',k));
+      if(m.exists()){ delete lastJson[k]; delete localV[k]; await fetchKey(k, m.data()); }
+    }
+    setStatus('ok','Data terbaru dari Firebase dimuat');
+    toast('Data dimuat dari Firebase','success');
+  }catch(e){ fail(e); }
+};
+
+/* ---------- Upload video ke Firebase Storage (agar tampil di semua perangkat) ---------- */
+window.fbUploadVideo = async function(file, id, onProgress){
+  const sm = await import("https://www.gstatic.com/firebasejs/13.4.0/firebase-storage.js");
+  const storage = sm.getStorage(app);
+  const safe = String(file.name||'video').replace(/[^\w.\-]+/g,'_');
+  const r = sm.ref(storage, 'videos/'+id+'-'+Date.now()+'-'+safe);
+  const task = sm.uploadBytesResumable(r, file, {contentType: file.type || 'video/mp4'});
+  await new Promise((resolve, reject)=>{
+    let guard = setTimeout(()=>{ try{ task.cancel(); }catch(e){} reject(new Error('Tidak ada respons dari Firebase Storage')); }, 25000);
+    task.on('state_changed',
+      snap=>{ clearTimeout(guard); guard = setTimeout(()=>{ try{ task.cancel(); }catch(e){} reject(new Error('Upload terhenti')); }, 60000); if(onProgress) onProgress(Math.round(snap.bytesTransferred/snap.totalBytes*100)); },
+      err=>{ clearTimeout(guard); reject(err); },
+      ()=>{ clearTimeout(guard); resolve(); });
+  });
+  return await sm.getDownloadURL(task.snapshot.ref);
+};
+
+/* ---------- Mulai ---------- */
+SYNC_KEYS.forEach(listenKey);
+resubscribeOrders();
+setInterval(resubscribeOrders, 4000);
+setStatus('wait','Menghubungkan ke Firebase…');
 </script>
 </body>
 </html>

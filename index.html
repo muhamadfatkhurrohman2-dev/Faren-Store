@@ -531,17 +531,7 @@ footer{background:linear-gradient(135deg,#1b1730 0%,#2b2540 100%);color:#c9c3d4;
 .va-btn-del{background:var(--danger);color:#fff}
 .va-btn-toggle{background:var(--primary);color:#fff}
 .va-btn-toggle.on{background:var(--success)}
-#vPreviewBox{display:none;width:100%;max-width:360px;margin-top:12px}
-.va-stage{width:100%;aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:#000;position:relative}
-.va-stage video,.va-stage iframe,.ad-video-stage iframe{width:100%;height:100%;border:0;display:block;background:#000}
-.va-stage video{object-fit:contain}
-.vp-empty{display:flex;align-items:center;justify-content:center;flex-direction:column;gap:6px;height:100%;color:#aaa;font-size:13px;text-align:center;padding:10px}
-.vp-empty a,.vp-open{color:var(--accent-light);font-weight:700;font-size:12px;text-decoration:underline}
-.vp-open{display:inline-block;margin-top:6px}
-.v-src-toggle{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap}
-.v-src-toggle button{padding:9px 16px;border-radius:22px;border:1.5px solid var(--border);background:var(--card);font-size:13px;font-weight:700;color:var(--text-light)}
-.v-src-toggle button.active{background:var(--primary);border-color:var(--primary);color:#fff}
-.v-hint{font-size:11px;color:var(--text-light);margin-top:6px;line-height:1.5}
+#vPreview{width:100%;max-width:340px;aspect-ratio:16/9;border-radius:10px;background:#000;margin-top:12px;display:none}
 .voucher-admin-card{border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:10px;background:var(--bg);display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
 .voucher-admin-card.inactive{opacity:.6}
 .voucher-admin-code{font-family:'Courier New',monospace;font-weight:800;font-size:16px;color:var(--accent);letter-spacing:1.5px}
@@ -1067,7 +1057,7 @@ body.has-sticky .ai-panel{bottom:170px}
 
     <div id="adminTab-videos" class="admin-tab-content">
       <h3 style="margin-bottom:15px">🎬 Kelola Video Iklan (16:9, Maks 2 Menit)</h3>
-      <p style="font-size:12px;color:var(--text-light);margin-bottom:12px">ℹ️ Video bisa dari upload file (disimpan di browser ini) atau dari link mana saja. Agar video tampil di semua perangkat pengunjung, gunakan link.</p>
+      <p style="font-size:12px;color:var(--text-light);margin-bottom:12px">ℹ️ Video disimpan lokal di browser (disarankan ukuran kecil agar cepat).</p>
       <div id="adminVideoList"></div>
       <hr style="margin:20px 0;border:none;border-top:2px solid var(--border)">
       <h4 style="margin-bottom:12px;font-size:14px;text-transform:uppercase;letter-spacing:.5px;color:var(--accent)" id="videoFormTitle">➕ Tambah Video Iklan Baru</h4>
@@ -1075,20 +1065,9 @@ body.has-sticky .ai-panel{bottom:170px}
         <input type="hidden" id="vEditId">
         <label>Judul Video *</label><input type="text" id="vTitle" required placeholder="Promo Spesial 12.12">
         <label>Deskripsi</label><textarea id="vDesc" placeholder="Deskripsi singkat video iklan..."></textarea>
-        <label>Sumber Video * (maks 2 menit disarankan)</label>
-        <div class="v-src-toggle">
-          <button type="button" id="vSrcFileBtn" class="active" onclick="setVideoSource('file')">📁 Upload File</button>
-          <button type="button" id="vSrcUrlBtn" onclick="setVideoSource('url')">🔗 Link / URL</button>
-        </div>
-        <div id="vSrcFile">
-          <input type="file" accept="video/*,.mp4,.webm,.ogg,.ogv,.mov,.m4v" id="vFile" onchange="handleVideoUpload(event)">
-          <p class="v-hint">Format MP4 (H.264) atau WebM paling aman. File disimpan permanen di browser ini (IndexedDB), tidak hilang saat refresh.</p>
-        </div>
-        <div id="vSrcUrl" style="display:none">
-          <input type="text" id="vUrl" oninput="handleVideoUrl()" placeholder="https://youtube.com/watch?v=... atau link .mp4 / .m3u8 / Google Drive / dll">
-          <p class="v-hint">Didukung: YouTube (termasuk Shorts &amp; live), Vimeo, Google Drive (set "Siapa saja yang memiliki link"), Dailymotion, Facebook, Instagram, TikTok, Streamable, Dropbox, link langsung .mp4/.webm/.ogg/.mov, stream HLS (.m3u8), atau tempel kode &lt;iframe&gt; embed.</p>
-        </div>
-        <div id="vPreviewBox"></div>
+        <label>Upload Video File * (MP4/WebM, maks 2 menit)</label>
+        <input type="file" accept="video/*" id="vFile" onchange="handleVideoUpload(event)">
+        <video id="vPreview" controls></video>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px">
           <div><label>Nilai Voucher (Rp)</label><input type="number" id="vVoucherValue" min="0" value="15000"></div>
           <div><label>Min. Belanja (Rp)</label><input type="number" id="vVoucherMin" min="0" value="50000"></div>
@@ -1278,7 +1257,7 @@ body.has-sticky .ai-panel{bottom:170px}
         <li><a>📞 08xxxxxxxxxxx</a></li>
       
         <li><a>📍 UNAKIPRIDE, Indonesia</a></li>
-        <li><a>🕘 Senin–Sabtu, 08.00–20.00</a></li>
+        <li><a>🕘 Senin–Sabtu, Tidury</a></li>
       </ul>
     </div>
   </div>
@@ -2723,21 +2702,21 @@ function renderVideoAds(){
   const act = state.videos.filter(v=>Number(v.active)===1);
   if(!act.length){ c.innerHTML=''; return; }
   c.innerHTML = act.map(v=>{
-    const info = videoInfo(v);
+    const src = blobCache[v.id] || v.dataUrl || '';
     const claimed = myV().some(m=>m.videoId===v.id);
     return '<div class="ad-video">'+
       '<span class="ad-tag" style="z-index:10">IKLAN</span>'+
       '<div class="ad-video-stage"><div class="ad-video-live">LIVE</div>'+
-        playerHTML(info)+
+        (src ? '<video src="'+src+'" controls playsinline preload="metadata"></video>'
+             : '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#888;font-size:13px">Video tidak tersedia</div>')+
       '</div>'+
       '<div class="ad-video-info"><div class="info-text">'+
-        '<div class="eyebrow">Video Promo</div><h3>'+esc(v.title)+'</h3><p>'+esc(v.desc||'')+'</p>'+(info&&info.link&&info.kind==='iframe'?'<a class="vp-open" href="'+esc(info.link)+'" target="_blank" rel="noopener">↗ Tidak muncul? Buka di tab baru</a>':'')+
+        '<div class="eyebrow">Video Promo</div><h3>'+esc(v.title)+'</h3><p>'+esc(v.desc||'')+'</p>'+
         (Number(v.voucherValue)>0 && !claimed ? '<div class="ad-video-voucher">🎫 Voucher '+rp(v.voucherValue)+' · min '+rp(v.voucherMin)+'</div>' : '')+
       '</div>'+
       (Number(v.voucherValue)>0 ? '<button class="ad-video-btn '+(claimed?'claimed':'')+'" onclick="'+(claimed?'goMyVouchers()':'claimVideoVoucher(\''+v.id+'\')')+'">'+(claimed?'✅ Sudah Diklaim — Buka Voucher Saya':'🎁 Klaim Voucher')+'</button>' : '')+
       '</div></div>';
   }).join('');
-  initHls(c);
 }
 function claimVideoVoucher(id){
   const v = state.videos.find(x=>x.id===id); if(!v) return;
@@ -3442,176 +3421,32 @@ function deleteVoucher(id){
   toast('Voucher dihapus','warning');
 }
 
-/* ---------- VIDEO ENGINE ---------- */
-const vidDB = {
-  _db:null,
-  open(){ return new Promise((res,rej)=>{
-    if(this._db) return res(this._db);
-    if(!window.indexedDB) return rej(new Error('IndexedDB tidak tersedia'));
-    const r = indexedDB.open('fs7_videos',1);
-    r.onupgradeneeded = ()=>r.result.createObjectStore('files');
-    r.onsuccess = ()=>{ this._db=r.result; res(this._db); };
-    r.onerror = ()=>rej(r.error);
-  }); },
-  async put(k,blob){ const db=await this.open(); return new Promise((res,rej)=>{ const t=db.transaction('files','readwrite'); t.objectStore('files').put(blob,k); t.oncomplete=()=>res(); t.onerror=t.onabort=()=>rej(t.error||new Error('Penyimpanan penuh')); }); },
-  async get(k){ const db=await this.open(); return new Promise((res,rej)=>{ const q=db.transaction('files').objectStore('files').get(k); q.onsuccess=()=>res(q.result||null); q.onerror=()=>rej(q.error); }); },
-  async del(k){ const db=await this.open(); return new Promise((res,rej)=>{ const t=db.transaction('files','readwrite'); t.objectStore('files').delete(k); t.oncomplete=()=>res(); t.onerror=()=>rej(t.error); }); }
-};
-async function loadVideoBlobs(){
-  for(const v of state.videos){
-    if(v.url || blobCache[v.id]) continue;
-    try{ const blob = await vidDB.get(v.id); if(blob) blobCache[v.id] = URL.createObjectURL(blob); }catch(e){ console.warn('load video gagal',e); }
-  }
-  renderVideoAds(); renderAdminVideos();
-}
-
-function parseVideoUrl(raw){
-  let u = String(raw||'').trim();
-  if(!u) return null;
-  const fm = u.match(/<iframe[^>]+src=["']([^"']+)["']/i);
-  if(fm){ u = fm[1]; if(u.indexOf('//')===0) u='https:'+u; }
-  if(!/^https?:\/\//i.test(u)){
-    if(/^[\w-]+(\.[\w-]+)+\/?/.test(u)) u='https://'+u; else return null;
-  }
-  let url; try{ url = new URL(u); }catch(e){ return null; }
-  const h = url.hostname.toLowerCase().replace(/^(www|m|web|mobile)\./,'');
-  const path = url.pathname; let m;
-  const ifr = (s,l)=>({kind:'iframe',src:s,link:l||u});
-  // YouTube
-  let yid = null;
-  if(h==='youtu.be'){ m=path.match(/^\/([\w-]{11})/); if(m) yid=m[1]; }
-  else if(h==='youtube.com'||h==='music.youtube.com'||h==='youtube-nocookie.com'){
-    yid = url.searchParams.get('v');
-    if(!yid){ m=path.match(/^\/(?:embed|shorts|live|v)\/([\w-]{11})/); if(m) yid=m[1]; }
-  }
-  if(yid){
-    const t = parseInt(url.searchParams.get('t')||url.searchParams.get('start')||'0',10)||0;
-    return ifr('https://www.youtube.com/embed/'+yid+'?rel=0&playsinline=1'+(t?'&start='+t:''),'https://www.youtube.com/watch?v='+yid);
-  }
-  if(h==='vimeo.com'||h==='player.vimeo.com'){
-    m = path.match(/\/(?:video\/)?(\d+)(?:\/([a-f0-9]+))?/);
-    if(m) return ifr('https://player.vimeo.com/video/'+m[1]+(m[2]?'?h='+m[2]:''),'https://vimeo.com/'+m[1]);
-  }
-  if(h==='drive.google.com'||h==='docs.google.com'){
-    m = path.match(/\/file\/d\/([\w-]+)/); const id = m?m[1]:url.searchParams.get('id');
-    if(id) return ifr('https://drive.google.com/file/d/'+id+'/preview','https://drive.google.com/file/d/'+id+'/view');
-  }
-  if(h==='dailymotion.com'||h==='dai.ly'){
-    m = path.match(/\/(?:video\/)?([a-z0-9]+)/i);
-    if(m) return ifr('https://www.dailymotion.com/embed/video/'+m[1]);
-  }
-  if(h==='facebook.com'||h==='fb.watch'||h==='fb.com'){
-    return ifr('https://www.facebook.com/plugins/video.php?show_text=false&href='+encodeURIComponent(u));
-  }
-  if(h==='tiktok.com'){
-    m = path.match(/\/video\/(\d+)/); if(m) return ifr('https://www.tiktok.com/embed/v2/'+m[1]);
-  }
-  if(h==='instagram.com'){
-    m = path.match(/\/(p|reel|reels|tv)\/([\w-]+)/);
-    if(m) return ifr('https://www.instagram.com/'+(m[1]==='reels'?'reel':m[1])+'/'+m[2]+'/embed');
-  }
-  if(h==='streamable.com'){
-    m = path.match(/^\/(?:e\/)?(\w+)/); if(m) return ifr('https://streamable.com/e/'+m[1],'https://streamable.com/'+m[1]);
-  }
-  if(h==='dropbox.com'){
-    url.hostname='dl.dropboxusercontent.com'; url.searchParams.delete('dl');
-    return {kind:'video',src:url.toString(),link:u};
-  }
-  if(/\.m3u8(\?|$)/i.test(path+url.search)) return {kind:'hls',src:u,link:u};
-  return {kind:'video',src:u,link:u};
-}
-function videoInfo(v){
-  if(v.url) return parseVideoUrl(v.url);
-  const s = blobCache[v.id] || v.dataUrl || '';
-  return s ? {kind:'video',src:s,link:''} : null;
-}
-function playerHTML(info,o){
-  o = o||{};
-  if(!info) return '<div class="vp-empty">🎬<span>Video tidak tersedia</span><span style="font-size:11px;opacity:.8">Upload ulang file atau pakai link</span></div>';
-  if(info.kind==='iframe')
-    return '<iframe src="'+esc(info.src)+'" loading="lazy" allow="autoplay; fullscreen; picture-in-picture; encrypted-media; clipboard-write" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>';
-  const common = ' controls playsinline preload="metadata"'+(o.muted?' muted':'')+' data-link="'+esc(info.link||'')+'" onerror="videoFail(this)"';
-  if(info.kind==='hls') return '<video'+common+' data-hls="'+esc(info.src)+'"></video>';
-  return '<video'+common+' src="'+esc(info.src)+'"></video>';
-}
-function videoFail(el){
-  const link = el.getAttribute('data-link')||'';
-  const box = el.parentNode; if(!box) return;
-  box.innerHTML = '<div class="vp-empty">⚠️<span>Video gagal diputar (format tidak didukung atau link diblokir)</span>'+
-    (/^https?:/.test(link)?'<a href="'+esc(link)+'" target="_blank" rel="noopener">↗ Buka link video</a>':'')+'</div>';
-}
-function loadHlsLib(){
-  if(window.Hls) return Promise.resolve();
-  if(loadHlsLib.p) return loadHlsLib.p;
-  const urls = ['https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.5.17/hls.min.js','https://cdn.jsdelivr.net/npm/hls.js@1.5.17/dist/hls.min.js'];
-  loadHlsLib.p = urls.reduce((p,u)=>p.catch(()=>new Promise((res,rej)=>{ const s=document.createElement('script'); s.src=u; s.onload=res; s.onerror=rej; document.head.appendChild(s); })), Promise.reject());
-  return loadHlsLib.p;
-}
-function initHls(root){
-  (root||document).querySelectorAll('video[data-hls]').forEach(el=>{
-    if(el.dataset.hlsInit) return; el.dataset.hlsInit='1';
-    const s = el.dataset.hls;
-    if(el.canPlayType('application/vnd.apple.mpegurl')){ el.src=s; return; }
-    loadHlsLib().then(()=>{
-      if(window.Hls && Hls.isSupported()){
-        const h = new Hls(); h.loadSource(s); h.attachMedia(el);
-        h.on(Hls.Events.ERROR,(e,d)=>{ if(d.fatal) videoFail(el); });
-      } else videoFail(el);
-    }).catch(()=>videoFail(el));
-  });
-}
-
 /* ---------- VIDEO ADMIN ---------- */
-let currentVideoFile = null;
-let videoSrcMode = 'file';
-let vUrlTimer = null;
-function showVideoPreview(info){
-  const box = $('#vPreviewBox');
-  if(!info){ box.style.display='none'; box.innerHTML=''; return; }
-  box.style.display='block';
-  box.innerHTML = '<div class="va-stage">'+playerHTML(info)+'</div>';
-  initHls(box);
-}
-function setVideoSource(mode){
-  videoSrcMode = mode;
-  $('#vSrcFileBtn').classList.toggle('active', mode==='file');
-  $('#vSrcUrlBtn').classList.toggle('active', mode==='url');
-  $('#vSrcFile').style.display = mode==='file'?'block':'none';
-  $('#vSrcUrl').style.display = mode==='url'?'block':'none';
-  if(mode==='url') handleVideoUrl();
-  else if(currentVideoFile) showVideoPreview({kind:'video',src:URL.createObjectURL(currentVideoFile)});
-  else showVideoPreview(null);
-}
-function handleVideoUrl(){
-  clearTimeout(vUrlTimer);
-  vUrlTimer = setTimeout(()=>{
-    const val = $('#vUrl').value.trim();
-    showVideoPreview(val ? parseVideoUrl(val) : null);
-  }, 400);
-}
+let currentVideoData = '';
 function handleVideoUpload(e){
   const f = e.target.files[0]; if(!f) return;
-  if(f.type && f.type.indexOf('video/')!==0 && !/\.(mp4|webm|ogg|ogv|mov|m4v)$/i.test(f.name)){ toast('File harus berupa video','warning'); e.target.value=''; return; }
-  currentVideoFile = f;
   const url = URL.createObjectURL(f);
-  showVideoPreview({kind:'video',src:url});
+  currentVideoData = url;
+  const pv = $('#vPreview');
+  pv.src = url; pv.style.display='block';
   const vd = document.createElement('video');
-  vd.preload='metadata'; vd.src = url;
-  vd.onloadedmetadata = ()=>{ if(vd.duration > 120) toast('Video lebih dari 2 menit, tetap disimpan','warning'); };
+  vd.src = url;
+  vd.onloadedmetadata = ()=>{
+    if(vd.duration > 120) toast('Video lebih dari 2 menit, tetap disimpan','warning');
+  };
 }
 function renderAdminVideos(){
-  const box = $('#adminVideoList'); if(!box) return;
+  const box = $('#adminVideoList');
   if(!state.videos.length){ box.innerHTML = '<p style="color:var(--text-light);font-size:13px">Belum ada video iklan.</p>'; return; }
   box.innerHTML = state.videos.map(v=>{
-    const info = videoInfo(v);
+    const src = blobCache[v.id] || v.dataUrl || '';
     const on = Number(v.active)===1;
-    const srcLabel = v.url ? '🔗 Link' : '📁 File';
     return '<div class="video-admin-card">'+
-      '<div class="va-preview"><div class="va-stage">'+playerHTML(info,{muted:true})+'</div></div>'+
+      '<div class="va-preview">'+(src?'<video src="'+src+'" controls muted></video>':'<div class="no-video">🎬<span>Video tidak tersedia</span></div>')+'</div>'+
       '<div class="va-info">'+
         '<div class="va-title">'+esc(v.title)+'</div>'+
         '<div class="va-desc">'+esc(v.desc||'')+'</div>'+
-        '<div class="va-meta"><span class="va-badge type">'+srcLabel+'</span><span class="va-badge '+(on?'active':'inactive')+'">'+(on?'Aktif':'Nonaktif')+'</span>'+
+        '<div class="va-meta"><span class="va-badge type">Video Ads</span><span class="va-badge '+(on?'active':'inactive')+'">'+(on?'Aktif':'Nonaktif')+'</span>'+
         (Number(v.voucherValue)>0?'<span class="va-badge type">Voucher '+rp(v.voucherValue)+'</span>':'')+'</div>'+
         '<div class="va-actions">'+
           '<button class="va-btn va-btn-edit" onclick="editVideo(\''+v.id+'\')">✏ Edit</button>'+
@@ -3620,7 +3455,6 @@ function renderAdminVideos(){
         '</div>'+
       '</div></div>';
   }).join('');
-  initHls(box);
 }
 function editVideo(id){
   const v = state.videos.find(x=>x.id===id); if(!v) return;
@@ -3632,33 +3466,22 @@ function editVideo(id){
   $('#vVoucherMin').value = v.voucherMin||0;
   $('#vVoucherCode').value = v.voucherCode||'';
   $('#vActive').value = Number(v.active)===1?'1':'0';
-  currentVideoFile = null; $('#vFile').value='';
-  $('#vUrl').value = v.url||'';
-  setVideoSource(v.url?'url':'file');
-  if(!v.url) showVideoPreview(videoInfo(v));
+  const src = blobCache[v.id] || v.dataUrl || '';
+  if(src){ const pv=$('#vPreview'); pv.src=src; pv.style.display='block'; }
   $('#adminTab-videos').scrollIntoView({behavior:'smooth'});
 }
 function resetVideoForm(){
   $('#videoForm').reset();
   $('#vEditId').value='';
   $('#videoFormTitle').textContent = '➕ Tambah Video Iklan Baru';
-  currentVideoFile = null;
-  setVideoSource('file');
-  showVideoPreview(null);
+  const pv = $('#vPreview'); pv.src=''; pv.style.display='none';
+  currentVideoData='';
 }
-async function submitVideoAd(e){
+function submitVideoAd(e){
   e.preventDefault();
   const id = $('#vEditId').value;
   const title = $('#vTitle').value.trim();
   if(!title){ toast('Judul video wajib diisi','warning'); return; }
-  const old = id ? state.videos.find(x=>x.id===id) : null;
-  const urlVal = $('#vUrl').value.trim();
-  if(videoSrcMode==='url'){
-    if(!urlVal){ toast('Isi link video dulu','warning'); return; }
-    if(!parseVideoUrl(urlVal)){ toast('Link video tidak valid','warning'); return; }
-  } else if(!currentVideoFile && !(old && !old.url && videoInfo(old))){
-    toast('Pilih file video dulu, atau pakai tab Link / URL','warning'); return;
-  }
   const data = {
     title: title,
     desc: $('#vDesc').value.trim(),
@@ -3667,29 +3490,17 @@ async function submitVideoAd(e){
     voucherCode: ($('#vVoucherCode').value.trim()||('VIDEO'+uid().slice(0,4).toUpperCase())).toUpperCase(),
     active: Number($('#vActive').value)
   };
-  const vid = old || {id:'vid'+uid()};
-  if(videoSrcMode==='url'){
-    vid.url = urlVal; vid.dataUrl = '';
-    if(blobCache[vid.id]){ URL.revokeObjectURL(blobCache[vid.id]); delete blobCache[vid.id]; }
-    try{ await vidDB.del(vid.id); }catch(err){}
+  if(id){
+    const v = state.videos.find(x=>x.id===id);
+    Object.assign(v, data);
+    if(currentVideoData){ blobCache[id] = currentVideoData; v.dataUrl = ''; }
+    toast('Video diperbarui','success');
   } else {
-    vid.url = '';
-    if(currentVideoFile){
-      if(blobCache[vid.id]) URL.revokeObjectURL(blobCache[vid.id]);
-      blobCache[vid.id] = URL.createObjectURL(currentVideoFile);
-      vid.dataUrl = '';
-      try{
-        await vidDB.put(vid.id, currentVideoFile);
-        if(navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(()=>{});
-      }catch(err){
-        console.warn(err);
-        toast('Gagal menyimpan permanen (penyimpanan penuh / mode privat). Video hanya bisa diputar sementara — gunakan link agar permanen.','warning');
-      }
-    }
+    const newId = 'vid'+uid();
+    if(currentVideoData) blobCache[newId] = currentVideoData;
+    state.videos.unshift(Object.assign({id:newId}, data));
+    toast('Video iklan ditambahkan','success');
   }
-  Object.assign(vid, data);
-  if(!old) state.videos.unshift(vid);
-  toast(old?'Video diperbarui':'Video iklan ditambahkan','success');
   save('videos'); resetVideoForm(); renderAdminVideos(); renderVideoAds();
 }
 function toggleVideo(id){
@@ -3701,8 +3512,7 @@ function deleteVideo(id){
   const v = state.videos.find(x=>x.id===id); if(!v) return;
   if(!confirm('Hapus video "'+v.title+'"?')) return;
   state.videos = state.videos.filter(x=>x.id!==id);
-  if(blobCache[id]){ URL.revokeObjectURL(blobCache[id]); delete blobCache[id]; }
-  vidDB.del(id).catch(()=>{});
+  delete blobCache[id];
   save('videos'); renderAdminVideos(); renderVideoAds();
   toast('Video dihapus','warning');
 }
@@ -4518,7 +4328,6 @@ document.addEventListener('keydown', function(e){
   renderHomePromos();
   renderProducts();
   renderVideoAds();
-  loadVideoBlobs();
   renderCart();
   updateBadges();
   renderUserMenu();

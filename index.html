@@ -1396,7 +1396,7 @@ footer{background:linear-gradient(135deg,#14163A 0%,#1E1B4B 100%);border-top:4px
         <li><a>📞 08xxxxxxxxxxx</a></li>
       
         <li><a>📍 UNAKIPRIDE, Indonesia</a></li>
-        <li><a>🕘 Senin–Sabtu, 08.00–20.00</a></li>
+        <li><a>🕘 Senin–Sabtu, Nugas</a></li>
       </ul>
     </div>
   </div>
@@ -1912,11 +1912,11 @@ function renderVoucherPage(){
     html += avail.length ? avail.map(availCardHTML).join('')
       : empty('🎫','Belum ada promo dan voucher baru','Semua promo &amp; voucher yang tersedia sudah kamu klaim. Cek tab <strong>Promo dan Voucher Saya</strong>, atau tunggu promo berikutnya.');
   } else if(tab==='mine'){
-    html += act.length ? act.map(mineCardHTML).join('') : empty('👜','Belum ada voucher aktif','Klaim dulu di tab Promo dan Voucher Tersedia.');
+    html += act.length ? act.map(mineCardHTML).join('') : empty('👜','Belum ada Promo/voucher aktif','Klaim dulu di tab Promo dan Voucher Tersedia.');
   } else if(tab==='used'){
-    html += usedL.length ? usedL.map(mineCardHTML).join('') : empty('🧾','Belum ada voucher terpakai','Voucher yang sudah kamu pakai akan tercatat di sini.');
+    html += usedL.length ? usedL.map(mineCardHTML).join('') : empty('🧾','Belum ada Promo/voucher terpakai','Promo/Voucher yang sudah kamu pakai akan tercatat di sini.');
   } else {
-    html += expL.length ? expL.map(mineCardHTML).join('') : empty('⌛','Tidak ada voucher hangus','Voucher yang tidak dipakai sampai batas waktu akan hangus otomatis dan tercatat di sini.');
+    html += expL.length ? expL.map(mineCardHTML).join('') : empty('⌛','Tidak ada Promo/voucher hangus','Promo/Voucher yang tidak dipakai sampai batas waktu akan hangus otomatis dan tercatat di sini.');
   }
   html += '</div></div>';
   grid.innerHTML = html;

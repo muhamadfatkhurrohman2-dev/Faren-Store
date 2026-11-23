@@ -930,7 +930,7 @@ body.no-fashion .hero,body.no-fashion .shopping-banner{display:none}
 @media(max-width:640px){.seg-grid{grid-template-columns:repeat(auto-fit,minmax(140px,1fr))}}
 </style>
 </head>
-<body class="has-top-ad has-sticky">
+<body>
 
 <div class="admin-login-overlay" id="adminLoginOverlay">
   <div class="admin-login-box">
@@ -944,11 +944,6 @@ body.no-fashion .hero,body.no-fashion .shopping-banner{display:none}
     </form>
     <button type="button" class="admin-login-cancel" onclick="closeAdminLogin()">Batal &amp; Kembali ke Toko</button>
   </div>
-</div>
-
-<div class="ad-sticky-top" id="topStickyAd">
-  <span class="ad-sticky-tag">IKLAN</span><span style="font-size:16px">🎉</span><span style="font-weight:700">Fashion Sale 12.12 — Diskon hingga 70%!</span><span style="opacity:.8;font-size:11px">Berakhir dalam 2 hari</span>
-  <button class="ad-sticky-top-btn" onclick="filterByNav('promo')">Belanja →</button><button class="ad-x" onclick="closeTopSticky()">✕</button>
 </div>
 
 <div class="topbar">
@@ -1050,17 +1045,6 @@ body.no-fashion .hero,body.no-fashion .shopping-banner{display:none}
     <div class="ad-mini-visual" style="background:linear-gradient(135deg,#00c4cc,#7d2ae8);color:#fff;font-weight:800">C</div>
     <div class="ad-mini-content"><div class="ad-mini-badge" style="background:#7d2ae8;color:#fff">IKLAN</div><h4>Canva Pro</h4><p>Desain seperti pro!</p><button class="ad-mini-btn" style="background:#7d2ae8">Coba →</button></div>
   </div>
-</div>
-<div class="ad-float" id="floatAd3" onclick="openAdLink('https://shopee.co.id/flash-sale')" style="bottom:200px;right:20px;--rot:-1deg">
-  <div class="ad-mini">
-    <button class="ad-x" onclick="event.stopPropagation();closeFloatAd('floatAd3')">✕</button>
-    <div class="ad-mini-visual" style="background:linear-gradient(135deg,#b8903f,#d4a854);color:#fff">🛍️</div>
-    <div class="ad-mini-content"><div class="ad-mini-badge" style="background:#b8903f;color:#1b1730">IKLAN</div><h4>Flash Sale</h4><p>Diskon hingga 70%!</p><button class="ad-mini-btn" style="background:#b8903f;color:#1b1730">Belanja →</button></div>
-  </div>
-</div>
-
-<div class="ad-sticky" id="stickyBottom">
-  <span class="ad-sticky-tag">IKLAN</span><span style="font-size:20px">🎁</span><div class="ad-sticky-text"><strong>Belum punya akun? Daftar sekarang!</strong><p>Langsung dapat voucher Rp 25.000 + gratis ongkir</p></div><button class="ad-sticky-btn" onclick="openAuth('register')">Daftar Gratis</button><button class="ad-x" onclick="closeStickyBottom()">✕</button>
 </div>
 
 <div class="modal-overlay" id="cartOverlay" onclick="if(event.target===this) toggleCart(false)"></div>
@@ -1460,7 +1444,7 @@ body.no-fashion .hero,body.no-fashion .shopping-banner{display:none}
         <li><a onclick="openHelp()">Pusat Bantuan</a></li>
         <li><a onclick="openOrders()">Lacak Pesanan</a></li>
         <li><a onclick="openAbout()">Tentang Kami</a></li>
-        <li><a onclick="openHelp()">Kebijakan Pengembalian</a></li>
+        <li><a onclick="openReturnPolicy()">Kebijakan Pengembalian</a></li>
       </ul>
     </div>
     <div class="footer-col">
@@ -1468,7 +1452,7 @@ body.no-fashion .hero,body.no-fashion .shopping-banner{display:none}
       <ul>
         <li><a>📞 08xxxxxxxxxxx</a></li>
       
-        <li><a>📍 Unaki Pride, Semarang</a></li>
+        <li><a>📍 Jl. Imam Bonjol No. 15–17, Kelurahan Dadapsari, Kecamatan Semarang Utara, Kota Semarang, Jawa Tengah</a></li>
         <li><a>🕘 Senin–Sabtu, Nugas</a></li>
       </ul>
     </div>
@@ -1706,7 +1690,6 @@ DEFAULT_VOUCHERS.push(
 
 const SECTION_DEFS = [
   {k:'topbar',    ico:'📣', label:'Bar atas',                   desc:'Info gratis ongkir, nomor telepon, Bantuan & Lacak Pesanan', sel:'.topbar'},
-  {k:'adTop',     ico:'🎉', label:'Iklan strip paling atas',    desc:'Banner “Fashion Sale 12.12” yang menempel di atas halaman',  sel:'#topStickyAd'},
   {k:'features',  ico:'🚚', label:'Strip keunggulan toko',      desc:'Gratis Ongkir, Pembayaran Aman, Tukar Ukuran, Support 24/7', sel:'.features-top'},
   {k:'hero',      ico:'🖼️', label:'Slider banner utama',        desc:'Banner besar bergeser di beranda',                           sel:'#hero'},
   {k:'promoHome', ico:'🔥', label:'Promo Spesial di beranda',   desc:'Kartu promo di bawah banner utama',                          sel:'#promoSection'},
@@ -1716,7 +1699,6 @@ const SECTION_DEFS = [
   {k:'shopBanner',ico:'🛍️', label:'Banner “Tampil Stylish”',    desc:'Banner statistik di bawah daftar produk',                    sel:'.shopping-banner'},
   {k:'adCards',   ico:'🧩', label:'Kartu iklan (3 kolom)',      desc:'ChatGPT, Hostinger, Adobe',                                  sel:'.ad-row'},
   {k:'adFloat',   ico:'🎈', label:'Iklan melayang',             desc:'Kartu iklan kecil yang bergerak di sisi layar',              sel:'.ad-float'},
-  {k:'adSticky',  ico:'🎁', label:'Iklan strip paling bawah',   desc:'Ajakan daftar yang menempel di bawah layar',                 sel:'#stickyBottom'},
   {k:'wishlist',  ico:'❤️', label:'Tombol Wishlist',            desc:'Ikon hati di header',                                        sel:'#wishBtn'},
   {k:'ai',        ico:'🤖', label:'Asisten AI (Faren AI)',      desc:'Tombol & jendela chat AI untuk semua pengunjung',            sel:'#aiFab,#aiPanel'},
   {k:'footer',    ico:'🦶', label:'Footer',                     desc:'Bagian bawah: tautan, layanan & kontak',                     sel:'footer'}
@@ -3350,8 +3332,57 @@ function openHelp(){
       '<p style="color:var(--text-light);font-size:14px;line-height:1.8;margin-bottom:16px">Butuh bantuan? Tim CS kami siap membantu setiap hari.</p>'+
       '<div class="summary-item"><span>📞 Telepon</span><strong>08xxxxxxxxxxx</strong></div>'+
       '<div class="summary-item"><span>✉️ Email</span><strong>cs@farenstore7.id</strong></div>'+
+      '<div class="summary-item"><span>📍 Alamat</span><strong style="text-align:right;max-width:70%">Jl. Imam Bonjol No. 15–17, Kelurahan Dadapsari, Kecamatan Semarang Utara, Kota Semarang, Jawa Tengah</strong></div>'+
       '<div class="summary-item"><span>🕘 Jam Operasional</span><strong>08.00 – 20.00 WIB</strong></div>'+
       '<div class="summary-item"><span>↩️ Kebijakan Retur</span><strong>30 hari setelah pembelian</strong></div>'+
+    '</div>';
+  $('#modalOverlay').classList.add('active');
+}
+function openReturnPolicy(){
+  const h = t => '<h4 style="font-size:15px;margin:22px 0 8px;font-family:var(--font-serif)">'+t+'</h4>';
+  const li = a => '<ul style="margin:0 0 4px 18px;font-size:13.5px;color:var(--text-light);line-height:1.8">'+a.map(x=>'<li>'+x+'</li>').join('')+'</ul>';
+  $('#modalContent').innerHTML =
+    '<button class="modal-close" onclick="closeModal()">✕</button>'+
+    '<div style="padding:34px 32px">'+
+      '<h2 style="font-size:24px;margin-bottom:6px">↩️ Kebijakan Pengembalian</h2>'+
+      '<p style="color:var(--text-light);font-size:13.5px;line-height:1.7">Belanja di Faren Store 7 aman dan tanpa ribet. Kamu bisa menukar atau mengembalikan barang dalam <b>30 hari</b> setelah pembelian sesuai ketentuan berikut.</p>'+
+      '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:16px 0 0">'+
+        '<div style="background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:12px;text-align:center"><div style="font-size:22px;font-weight:800;color:var(--accent)">30 hari</div><div style="font-size:11px;color:var(--text-light)">Masa retur / tukar</div></div>'+
+        '<div style="background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:12px;text-align:center"><div style="font-size:22px;font-weight:800;color:var(--accent)">Gratis</div><div style="font-size:11px;color:var(--text-light)">Tukar ukuran</div></div>'+
+        '<div style="background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:12px;text-align:center"><div style="font-size:22px;font-weight:800;color:var(--accent)">1×24 jam</div><div style="font-size:11px;color:var(--text-light)">Verifikasi pengajuan</div></div>'+
+      '</div>'+
+      h('1. Alasan yang dapat diproses')+
+      li(['<b>Salah ukuran</b> — tukar ukuran gratis, sesuai ketersediaan stok.',
+          '<b>Barang cacat / rusak</b> saat diterima (sobek, jahitan lepas, resleting atau sol rusak, noda produksi).',
+          '<b>Barang tidak sesuai pesanan</b> (salah model, warna, atau ukuran dari pihak toko).',
+          '<b>Barang kurang / tidak lengkap</b> dibandingkan pesanan.'])+
+      h('2. Syarat barang')+
+      li(['Barang belum dipakai, belum dicuci, dan tidak diubah/dipermak.',
+          'Label, tag, dan kemasan asli masih lengkap.',
+          'Menyertakan nomor pesanan (contoh: FS7-12345678) atau nomor resi.',
+          'Untuk barang cacat atau salah kirim, sertakan <b>foto/video unboxing</b> sebagai bukti.'])+
+      h('3. Barang yang tidak dapat dikembalikan')+
+      li(['Pakaian dalam, kaus kaki, dan barang kebersihan pribadi lainnya.',
+          'Barang yang sudah dipakai, dicuci, atau rusak akibat pemakaian, serta tanpa tag/label.',
+          'Produk yang pada halaman produknya ditandai tidak dapat diretur.',
+          'Pengajuan setelah lewat 30 hari.'])+
+      h('4. Cara mengajukan')+
+      li(['Hubungi CS lewat telepon/WhatsApp <b>08xxxxxxxxxxx</b> atau email <b>cs@farenstore7.id</b>, sebutkan nomor pesanan dan alasan retur.',
+          'Tim kami memeriksa pengajuan maksimal <b>1×24 jam</b> pada jam layanan (08.00 – 20.00 WIB).',
+          'Jika disetujui, kirim barang kembali lewat kurir pilihanmu atau antar langsung ke alamat toko, lalu simpan bukti resi.',
+          'Setelah barang kami terima dan lolos pengecekan, kami proses penukaran atau pengembalian dana.'])+
+      h('5. Penukaran &amp; pengembalian dana')+
+      li(['<b>Tukar ukuran / model:</b> barang pengganti dikirim setelah barang retur kami terima.',
+          'Jika stok pengganti habis, kamu bisa memilih produk lain atau pengembalian dana.',
+          '<b>Pengembalian dana</b> dikirim ke metode pembayaran awal (e-wallet, rekening bank, atau kartu) dalam 3–7 hari kerja setelah barang lolos pengecekan. Untuk pesanan COD, dana dikirim ke rekening/e-wallet yang kamu berikan.'])+
+      h('6. Biaya pengiriman retur')+
+      li(['Tukar ukuran: <b>gratis</b>.',
+          'Barang cacat, rusak, atau salah kirim: ongkir retur <b>ditanggung Faren Store 7</b>.',
+          'Alasan lain (berubah pikiran, tidak cocok selera): ongkir retur ditanggung pembeli.'])+
+      h('7. Alamat pengembalian')+
+      '<div style="background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:14px;font-size:13.5px;line-height:1.7"><b>Faren Store 7</b><br>Jl. Imam Bonjol No. 15–17, Kelurahan Dadapsari, Kecamatan Semarang Utara, Kota Semarang, Jawa Tengah</div>'+
+      '<p style="font-size:12px;color:var(--text-light);margin-top:16px;line-height:1.6">Hubungi CS terlebih dahulu sebelum mengirim barang agar pengembalian dapat dicatat dan diproses dengan cepat.</p>'+
+      '<div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap"><button class="btn-checkout" style="max-width:220px" onclick="openOrders()">📦 Lihat Pesanan Saya</button><button class="btn-secondary" onclick="openHelp()">🎧 Hubungi CS</button></div>'+
     '</div>';
   $('#modalOverlay').classList.add('active');
 }
@@ -3370,8 +3401,6 @@ function openAbout(){
    ========================================================= */
 function openAdLink(url){ window.open(url,'_blank'); }
 function closeFloatAd(id){ const el=document.getElementById(id); if(el) el.classList.add('hidden'); }
-function closeStickyBottom(){ $('#stickyBottom').classList.add('hidden'); document.body.classList.remove('has-sticky'); }
-function closeTopSticky(){ $('#topStickyAd').classList.add('hidden'); document.body.classList.remove('has-top-ad'); }
 
 /* ---------- VIDEO: file (tersimpan awet) + link dari mana saja ---------- */
 function videoLink(raw){
@@ -3465,7 +3494,7 @@ function claimVideoVoucher(id){
 
 /* Floating ads drift */
 (function driftAds(){
-  const ids = ['floatAd1','floatAd2','floatAd3'];
+  const ids = ['floatAd1','floatAd2'];
   setInterval(()=>{
     ids.forEach(id=>{
       const el = document.getElementById(id);
@@ -5134,8 +5163,8 @@ function aiFaqCustom(S){
   return best ? {html:esc(best.answer).replace(/\n/g,'<br>'), chips:['Promo & voucher','Produk terbaru']} : null;
 }
 function aiSite(S, any){
-  if(any('retur','kembali','refund','garansi','tukar')) return aiLines(['🔄 '+aiB('Retur & garansi'),'Barang bisa diretur dalam <b>30 hari</b> setelah pembelian, selama kondisi sesuai ketentuan. Hubungi CS untuk proses retur.']);
-  if(any('kontak','hubungi','cs','customer service','telepon','whatsapp','email','alamat toko')) return aiLines(['📞 '+aiB('Hubungi kami'),'Telepon/WA: 08xxxxxxxxxxx','Email: cs@farenstore7.id','Jam layanan: 08.00 – 20.00 WIB']);
+  if(any('retur','kembali','refund','garansi','tukar')) return aiLines(['🔄 '+aiB('Retur & garansi'),'Barang bisa diretur/ditukar dalam <b>30 hari</b> setelah pembelian, selama tag masih utuh &amp; belum dipakai/dicuci. Tukar ukuran gratis. Klik <b>Kebijakan Pengembalian</b> di footer untuk aturan lengkap.']);
+  if(any('kontak','hubungi','cs','customer service','telepon','whatsapp','email','alamat toko')) return aiLines(['📞 '+aiB('Hubungi kami'),'Telepon/WA: 08xxxxxxxxxxx','Email: cs@farenstore7.id','📍 Alamat: Jl. Imam Bonjol No. 15–17, Kelurahan Dadapsari, Kecamatan Semarang Utara, Kota Semarang, Jawa Tengah','Jam layanan: 08.00 – 20.00 WIB']);
   if(any('jam buka','jam operasional','buka jam','operasional')) return '🕗 Layanan CS kami buka setiap hari <b>08.00 – 20.00 WIB</b>. Belanja online bisa 24 jam.';
   if(any('cara belanja','cara order','cara pesan','cara beli','cara checkout','gimana belanja','bagaimana belanja')) return aiLines(['🛍️ '+aiB('Cara belanja'),'1. Pilih produk → pilih warna/ukuran → <b>Tambah ke Keranjang</b>.','2. Buka keranjang → <b>Checkout</b>, isi alamat.','3. Pilih voucher (opsional) &amp; metode pembayaran → <b>Buat Pesanan</b>.','4. Bayar sesuai instruksi, lalu pantau resi di <b>Pesanan Saya</b>.']);
   if(any('daftar','register','registrasi','login','masuk','akun','member')) return aiLines(['👤 '+aiB('Akun'),'Klik ikon akun untuk <b>Daftar</b> / <b>Masuk</b>. Pengguna baru mendapat bonus voucher &amp; bisa klaim <b>Gratis Ongkir</b> + <b>Promo Pengguna Baru</b> (1x klaim, berlaku 7 hari).']);

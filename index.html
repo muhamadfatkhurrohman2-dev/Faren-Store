@@ -940,8 +940,6 @@ body.dark .logo .logo-mark{box-shadow:0 0 0 2px rgba(251,191,36,.55),0 4px 14px 
 .social-icons a.wa{background:#25D366;border-color:#25D366;color:#fff}
 .social-icons a.wa:hover{background:#1EBE5A;border-color:#1EBE5A}
 /* Iklan melayang Hostinger */
-#floatAd3 .ad-mini{border-color:#673de6}
-body.dark #floatAd3 .ad-mini{border-color:#9b7bff}
 
 /* Ikon sosial warna resmi */
 .social-icons a.ig{background:radial-gradient(circle at 30% 107%,#fdf497 0%,#fdf497 5%,#fd5949 45%,#d6249f 60%,#285AEB 90%);border-color:transparent;color:#fff}
@@ -1221,6 +1219,39 @@ body{overflow-x:hidden}
   .controls{max-width:1440px;margin-left:auto;margin-right:auto;padding-left:0;padding-right:0;box-sizing:border-box}
   .section-header{padding-left:0;padding-right:0}
 }
+
+/* ===== Nama toko: aliran 2 warna (biru ↔ emas) yang elegan ===== */
+@keyframes nameFlow{0%{background-position:0% 50%}100%{background-position:100% 50%}}
+.logo .logo-text .ln{
+  background:linear-gradient(100deg,#1E3A9E 0%,#2F6FE0 28%,#A8741F 50%,#2F6FE0 72%,#1E3A9E 100%);
+  background-size:220% 100%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:#1E3A9E;
+  animation:nameFlow 6s ease-in-out infinite alternate}
+.logo .logo-text .ln b{-webkit-text-fill-color:#fff;color:#fff}
+body.dark .logo .logo-text .ln{
+  background:linear-gradient(100deg,#86BFFF 0%,#BBDAFF 28%,#FFD27A 50%,#BBDAFF 72%,#86BFFF 100%);
+  background-size:220% 100%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:#BBDAFF;
+  filter:drop-shadow(0 0 8px rgba(134,191,255,.28))}
+body.dark .logo .logo-text .ln b{-webkit-text-fill-color:#fff;color:#fff;filter:none}
+.footer-brand h3 .brand-name{
+  background:linear-gradient(100deg,#86BFFF 0%,#BBDAFF 28%,#FFD27A 50%,#BBDAFF 72%,#86BFFF 100%);background-size:220% 100%;
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:#BBDAFF;animation:nameFlow 6s ease-in-out infinite alternate}
+.footer-brand h3 .brand-name b{-webkit-text-fill-color:#fff;color:#fff}
+@media(prefers-reduced-motion:reduce){.logo .logo-text .ln,.footer-brand h3 .brand-name{animation:none}}
+
+/* Dashboard: iklan mengambang */
+.fa-card{display:grid;grid-template-columns:170px 1fr auto;gap:16px;align-items:start;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:12px}
+.fa-prev{display:flex;flex-direction:column;gap:8px;align-items:center}
+.fa-prev-box{width:150px}
+.fa-prev-box .ad-mini{transform:none}
+.fa-on{font-size:12px;font-weight:600;display:flex;gap:6px;align-items:center;cursor:pointer}
+.fa-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.fa-f{display:flex;flex-direction:column;gap:4px;font-size:11px;color:var(--text-light);font-weight:600}
+.fa-f input[type=text],.fa-f input[type=url]{padding:9px 10px;border:1.5px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-size:13px;width:100%;box-sizing:border-box}
+.fa-f input:focus{outline:none;border-color:var(--accent)}
+.fa-col input[type=color]{width:100%;height:38px;border:1.5px solid var(--border);border-radius:8px;background:var(--bg);padding:2px;cursor:pointer}
+.fa-del{background:transparent;border:1.5px solid var(--danger,#e5484d);color:var(--danger,#e5484d);border-radius:8px;padding:8px 12px;font-size:12px;font-weight:700;cursor:pointer}
+.fa-del:hover{background:var(--danger,#e5484d);color:#fff}
+@media(max-width:760px){.fa-card{grid-template-columns:1fr}.fa-prev{flex-direction:row;justify-content:space-between}.fa-form{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -1308,45 +1339,11 @@ body{overflow-x:hidden}
   <div class="shopping-banner-stats"><div class="sb-stat"><div class="num">5K+</div><div class="label">Item Fashion</div></div><div class="sb-stat"><div class="num">1M+</div><div class="label">Pelanggan</div></div><div class="sb-stat"><div class="num">4.9★</div><div class="label">Rating</div></div></div>
 </div>
 
-<div class="ad-row">
-  <div class="ad-row-3">
-    <div class="ad-card ad-ai" onclick="openAdLink('https://chat.openai.com/')">
-      <button class="ad-x" onclick="event.stopPropagation();this.closest('.ad-card').remove()">✕</button><span class="ad-tag" style="background:rgba(255,255,255,.25)">IKLAN</span>
-      <h3>ChatGPT</h3><p>Tulis artikel, caption &amp; copywriting 10x lebih cepat.</p><button class="ad-ai-btn">Buka ChatGPT →</button>
-    </div>
-    <div class="ad-card ad-hosting" onclick="openAdLink('https://www.hostinger.co.id/')">
-      <button class="ad-x" onclick="event.stopPropagation();this.closest('.ad-card').remove()">✕</button><span class="ad-tag" style="background:rgba(255,255,255,.25)">IKLAN</span>
-      <h3>Domain + Hosting</h3><div class="price-tag">80% OFF</div><p>Diskon pertama. Gratis domain .com + SSL.</p><button class="ad-hosting-btn">Buka Hostinger →</button>
-    </div>
-    <div class="ad-card ad-adobe" onclick="openAdLink('https://www.adobe.com/creativecloud.html')">
-      <button class="ad-x" onclick="event.stopPropagation();this.closest('.ad-card').remove()">✕</button><span class="ad-tag" style="background:rgba(255,255,255,.25)">IKLAN</span>
-      <h3>Diskon 40% Pelajar</h3><p>Akses 20+ aplikasi premium: Photoshop, Illustrator, dll.</p><button class="ad-adobe-btn">Buka Adobe →</button>
-    </div>
-  </div>
-</div>
 
-<div class="ad-float" id="floatAd1" onclick="openAdLink('https://chat.openai.com/')" style="top:120px;left:20px;--rot:-2deg">
-  <div class="ad-mini">
-    <button class="ad-x" onclick="event.stopPropagation();closeFloatAd('floatAd1')">✕</button>
-    <div class="ad-mini-visual" style="background:linear-gradient(135deg,#4a4180,#6a4d80);color:#fff">✨</div>
-    <div class="ad-mini-content"><div class="ad-mini-badge" style="background:#4a4180;color:#fff">IKLAN</div><h4>ChatGPT</h4><p>Tulis konten 10x lebih cepat!</p><button class="ad-mini-btn" style="background:#4a4180">Buka →</button></div>
-  </div>
-</div>
-<div class="ad-float" id="floatAd2" onclick="openAdLink('https://www.canva.com/pro/')" style="top:300px;right:20px;--rot:2deg">
-  <div class="ad-mini">
-    <button class="ad-x" onclick="event.stopPropagation();closeFloatAd('floatAd2')">✕</button>
-    <div class="ad-mini-visual" style="background:linear-gradient(135deg,#00c4cc,#7d2ae8);color:#fff;font-weight:800">C</div>
-    <div class="ad-mini-content"><div class="ad-mini-badge" style="background:#7d2ae8;color:#fff">IKLAN</div><h4>Canva Pro</h4><p>Desain seperti pro!</p><button class="ad-mini-btn" style="background:#7d2ae8">Coba →</button></div>
-  </div>
-</div>
 
-<div class="ad-float" id="floatAd3" onclick="openAdLink('https://www.hostinger.co.id/')" style="top:480px;left:20px;--rot:1.5deg">
-  <div class="ad-mini">
-    <button class="ad-x" onclick="event.stopPropagation();closeFloatAd('floatAd3')">✕</button>
-    <div class="ad-mini-visual" style="background:linear-gradient(135deg,#673de6,#2f1c6a);color:#fff;font-weight:800">H</div>
-    <div class="ad-mini-content"><div class="ad-mini-badge" style="background:#673de6;color:#fff">IKLAN</div><h4>Domain + Hosting</h4><p>Diskon hingga 80% + gratis domain &amp; SSL.</p><button class="ad-mini-btn" style="background:#673de6">Buka Hostinger →</button></div>
-  </div>
-</div>
+<div id="floatAdsHost"></div>
+
+
 
 <div class="modal-overlay" id="cartOverlay" onclick="if(event.target===this) toggleCart(false)"></div>
 <aside class="cart-sidebar" id="cartSidebar">
@@ -1398,6 +1395,7 @@ body{overflow-x:hidden}
       <button class="admin-tab" data-tab="add" onclick="adminTab('add', this)">➕ Tambah Produk</button>
       <button class="admin-tab" data-tab="promos" onclick="adminTab('promos', this)">🔥 Promo</button>
       <button class="admin-tab" data-tab="videos" onclick="adminTab('videos', this)">🎬 Video Ads</button>
+      <button class="admin-tab" data-tab="floatads" onclick="adminTab('floatads', this)">📢 Iklan Mengambang</button>
       <button class="admin-tab" data-tab="vouchers" onclick="adminTab('vouchers', this)">🎫 Voucher</button>
       <button class="admin-tab" data-tab="payments" onclick="adminTab('payments', this)">💳 Pembayaran</button>
       <button class="admin-tab" data-tab="users" onclick="adminTab('users', this)">👥 Pengguna</button>
@@ -1529,7 +1527,16 @@ body{overflow-x:hidden}
       </form>
     </div>
 
-    <div id="adminTab-videos" class="admin-tab-content">
+        <div id="adminTab-floatads" class="admin-tab-content">
+      <h3 style="margin-bottom:6px">📢 Iklan Mengambang</h3>
+      <p style="font-size:12.5px;color:var(--text-light);margin-bottom:14px;line-height:1.6">Edit bebas judul, teks, tombol, link, ikon, dan warna iklan. Perubahan langsung tampil di toko (layar lebar 900px ke atas). Kamu juga bisa menambah atau menghapus iklan.</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
+        <button type="button" class="admin-btn-save" onclick="faAdd()">➕ Tambah Iklan</button>
+        <button type="button" class="admin-btn-reset" onclick="faReset()">↻ Kembalikan ke bawaan</button>
+      </div>
+      <div id="adminFloatAdList"></div>
+    </div>
+<div id="adminTab-videos" class="admin-tab-content">
       <h3 style="margin-bottom:15px">🎬 Kelola Video Iklan (16:9, Maks 2 Menit)</h3>
       <p style="font-size:12px;color:var(--text-light);margin-bottom:12px">ℹ️ Upload file dari perangkat atau tempel link video dari mana saja. Video langsung bisa diputar.</p>
       <div id="adminVideoList"></div>
@@ -1991,7 +1998,6 @@ const SECTION_DEFS = [
   {k:'videoAds',  ico:'🎬', label:'Video iklan',                desc:'Video promosi di beranda',                                   sel:'#videoAdsContainer'},
   {k:'filterBar', ico:'🔎', label:'Filter & urutan produk',     desc:'Tombol chip sub-kategori dan menu “Urutkan”',                sel:'.controls'},
   {k:'shopBanner',ico:'🛍️', label:'Banner “Tampil Stylish”',    desc:'Banner statistik di bawah daftar produk',                    sel:'.shopping-banner'},
-  {k:'adCards',   ico:'🧩', label:'Kartu iklan (3 kolom)',      desc:'ChatGPT, Hostinger, Adobe',                                  sel:'.ad-row'},
   {k:'adFloat',   ico:'🎈', label:'Iklan melayang',             desc:'Kartu iklan kecil yang bergerak di sisi layar',              sel:'.ad-float'},
   {k:'wishlist',  ico:'❤️', label:'Tombol Wishlist',            desc:'Ikon hati di header',                                        sel:'#wishBtn'},
   {k:'ai',        ico:'🤖', label:'Asisten AI (Faren AI)',      desc:'Tombol & jendela chat AI untuk semua pengunjung',            sel:'#aiFab,#aiPanel'},
@@ -2288,6 +2294,7 @@ const state = {
   orders:   store.get('orders', []),
   users:    store.get('users', []),
   videos:   store.get('videos', []),
+  floatAds: store.get('floatAds', null),
   payMethods: store.get('payMethods', clonePay()),
   siteCfg:  store.get('siteCfg', null),
   user:     store.get('user', null),
@@ -3834,7 +3841,80 @@ function videoStorageFail(err){
 }
 
 function openAdLink(url){ window.open(url,'_blank'); }
-function closeFloatAd(id){ const el=document.getElementById(id); if(el) el.classList.add('hidden'); }
+function closeFloatAd(id){ closedFloat.add(id); const el=document.getElementById(id); if(el) el.classList.add('hidden'); }
+
+/* ---------- Iklan mengambang (bisa diedit di dashboard) ---------- */
+const DEFAULT_FLOAT_ADS = [
+  {id:'fa_chatgpt', title:'ChatGPT',        desc:'Tulis konten 10x lebih cepat!',        btn:'Buka →',          url:'https://chat.openai.com/',                  icon:'✨', c1:'#4a4180', c2:'#6d5fc7', badge:'IKLAN', active:true},
+  {id:'fa_canva',   title:'Canva Pro',      desc:'Desain seperti pro!',                  btn:'Coba →',          url:'https://www.canva.com/pro/',                icon:'C',  c1:'#7d2ae8', c2:'#00c4cc', badge:'IKLAN', active:true},
+  {id:'fa_hosting', title:'Domain + Hosting',desc:'Diskon hingga 80% + gratis domain & SSL.', btn:'Buka Hostinger →', url:'https://www.hostinger.co.id/',          icon:'H',  c1:'#673de6', c2:'#2f1c6a', badge:'IKLAN', active:true},
+  {id:'fa_figma',   title:'Figma',          desc:'Desain UI & kolaborasi tim, mulai gratis.', btn:'Coba Gratis →', url:'https://www.figma.com/',                 icon:'F',  c1:'#F24E1E', c2:'#A259FF', badge:'IKLAN', active:true},
+  {id:'fa_adobe',   title:'Adobe Creative Cloud', desc:'Diskon 40% pelajar: Photoshop, Illustrator, dll.', btn:'Lihat Promo →', url:'https://www.adobe.com/creativecloud.html', icon:'A', c1:'#FA0F00', c2:'#7A0A00', badge:'IKLAN', active:true}
+];
+const closedFloat = new Set();
+let _floatSig = '';
+function getFloatAds(){ return Array.isArray(state.floatAds) ? state.floatAds : DEFAULT_FLOAT_ADS; }
+function ensureFloatAds(){ if(!Array.isArray(state.floatAds)) state.floatAds = JSON.parse(JSON.stringify(DEFAULT_FLOAT_ADS)); return state.floatAds; }
+function faColor(c,d){ return /^#[0-9a-f]{6}$/i.test(String(c||'')) ? c : d; }
+function faUrl(u){ u = String(u||'').trim(); if(!u) return ''; if(!/^https?:\/\//i.test(u)) u = 'https://'+u; return /^https?:\/\/[^\s"'<>]+$/i.test(u) ? u : ''; }
+function faIcon(ic){ ic = String(ic||'').trim(); if(/^https?:\/\//i.test(ic)) return '<img src="'+esc(ic)+'" alt="" style="height:26px;max-width:80%;object-fit:contain">'; return esc(ic.slice(0,4)); }
+function floatMiniHTML(a, withClose){
+  const c1 = faColor(a.c1,'#4F46E5'), c2 = faColor(a.c2,'#7C3AED');
+  return '<div class="ad-mini" style="border-color:'+c1+'">'+(withClose?'<button class="ad-x" onclick="event.stopPropagation();closeFloatAd(\''+esc(a.id)+'\')">✕</button>':'')+
+    '<div class="ad-mini-visual" style="background:linear-gradient(135deg,'+c1+','+c2+');color:#fff;font-weight:800">'+faIcon(a.icon)+'</div>'+
+    '<div class="ad-mini-content"><div class="ad-mini-badge" style="background:'+c1+';color:#fff">'+esc(a.badge||'IKLAN')+'</div><h4>'+esc(a.title)+'</h4><p>'+esc(a.desc)+'</p>'+
+    (a.btn?'<button class="ad-mini-btn" style="background:'+c1+'">'+esc(a.btn)+'</button>':'')+'</div></div>';
+}
+function renderFloatAds(){
+  const host = document.getElementById('floatAdsHost'); if(!host) return;
+  const list = getFloatAds().filter(a=>a && a.active!==false && !closedFloat.has(a.id));
+  const sig = JSON.stringify(list); if(sig===_floatSig) return; _floatSig = sig;
+  host.innerHTML = list.map((a,i)=>{
+    const top = 110 + Math.floor(i/2)*185, side = (i%2===0) ? 'left:20px' : 'right:20px', rot = (i%2===0?-2:2)+(i%3===0?0:0.5);
+    return '<div class="ad-float" id="'+esc(a.id)+'" data-url="'+esc(faUrl(a.url))+'" onclick="if(this.dataset.url) openAdLink(this.dataset.url)" style="top:'+top+'px;'+side+';--rot:'+rot+'deg">'+floatMiniHTML(a,true)+'</div>';
+  }).join('');
+}
+let _faTimer;
+function faUpdate(id, field, val){
+  const a = ensureFloatAds().find(x=>x.id===id); if(!a) return;
+  a[field] = val; save('floatAds');
+  const pv = document.getElementById('fapv-'+id); if(pv) pv.innerHTML = floatMiniHTML(a,false);
+  clearTimeout(_faTimer); _faTimer = setTimeout(renderFloatAds, 500);
+}
+function faAdd(){
+  ensureFloatAds().push({id:'fa_'+Date.now().toString(36), title:'Iklan Baru', desc:'Tulis deskripsi singkat iklan di sini.', btn:'Buka →', url:'https://', icon:'🔥', c1:'#4F46E5', c2:'#7C3AED', badge:'IKLAN', active:true});
+  save('floatAds'); renderFloatAds(); renderAdminFloatAds(); toast('Iklan ditambahkan. Silakan edit isinya','success');
+}
+function faDelete(id){
+  if(!confirm('Hapus iklan ini?')) return;
+  state.floatAds = ensureFloatAds().filter(x=>x.id!==id); save('floatAds'); renderFloatAds(); renderAdminFloatAds(); toast('Iklan dihapus','success');
+}
+function faReset(){
+  if(!confirm('Kembalikan semua iklan mengambang ke bawaan? Perubahanmu akan hilang.')) return;
+  state.floatAds = JSON.parse(JSON.stringify(DEFAULT_FLOAT_ADS)); closedFloat.clear(); save('floatAds'); renderFloatAds(); renderAdminFloatAds(); toast('Dikembalikan ke bawaan','success');
+}
+function renderAdminFloatAds(){
+  const box = document.getElementById('adminFloatAdList'); if(!box) return;
+  const list = getFloatAds();
+  if(!list.length){ box.innerHTML = '<p style="color:var(--text-light);font-size:13px">Belum ada iklan. Klik “Tambah Iklan”.</p>'; return; }
+  const f = (id,label,field,val,ph,type)=>'<label class="fa-f"><span>'+label+'</span><input type="'+(type||'text')+'" value="'+esc(val||'')+'" placeholder="'+(ph||'')+'" oninput="faUpdate(\''+id+'\',\''+field+'\',this.value)"></label>';
+  box.innerHTML = list.map(a=>{ const id = esc(a.id);
+    return '<div class="fa-card">'+
+      '<div class="fa-prev"><div class="fa-prev-box" id="fapv-'+id+'">'+floatMiniHTML(a,false)+'</div>'+
+        '<label class="fa-on"><input type="checkbox" '+(a.active!==false?'checked':'')+' onchange="faUpdate(\''+id+'\',\'active\',this.checked)"> Tampilkan</label></div>'+
+      '<div class="fa-form">'+
+        f(id,'Judul','title',a.title,'Nama iklan')+
+        f(id,'Deskripsi','desc',a.desc,'Teks singkat')+
+        f(id,'Teks tombol','btn',a.btn,'Buka →')+
+        f(id,'Link tujuan','url',a.url,'https://…','url')+
+        f(id,'Ikon (emoji / huruf / link gambar)','icon',a.icon,'🔥 atau F')+
+        f(id,'Label','badge',a.badge,'IKLAN')+
+        '<label class="fa-f fa-col"><span>Warna 1</span><input type="color" value="'+faColor(a.c1,'#4F46E5')+'" oninput="faUpdate(\''+id+'\',\'c1\',this.value)"></label>'+
+        '<label class="fa-f fa-col"><span>Warna 2</span><input type="color" value="'+faColor(a.c2,'#7C3AED')+'" oninput="faUpdate(\''+id+'\',\'c2\',this.value)"></label>'+
+      '</div>'+
+      '<button type="button" class="fa-del" onclick="faDelete(\''+id+'\')">🗑️ Hapus</button></div>';
+  }).join('');
+}
 
 /* ---------- VIDEO: file (tersimpan awet) + link dari mana saja ---------- */
 function videoLink(raw){
@@ -3928,11 +4008,9 @@ function claimVideoVoucher(id){
 
 /* Floating ads drift */
 (function driftAds(){
-  const ids = ['floatAd1','floatAd2','floatAd3'];
   setInterval(()=>{
-    ids.forEach(id=>{
-      const el = document.getElementById(id);
-      if(!el || el.classList.contains('hidden')) return;
+    document.querySelectorAll('.ad-float').forEach(el=>{
+      if(el.classList.contains('hidden')) return;
       if(window.innerWidth < 900) return;
       const top = 100 + Math.random()*(window.innerHeight-320);
       const left = Math.random()*(window.innerWidth-200);
@@ -4001,13 +4079,14 @@ function adminTab(tab, el){
   if(tab==='vouchers') renderAdminVouchers();
   if(tab==='payments') renderAdminPayments();
   if(tab==='videos') renderAdminVideos();
+  if(tab==='floatads') renderAdminFloatAds();
   if(tab==='users') renderAdminUsers();
   if(tab==='ai') renderAdminAI();
   if(tab==='orders') renderResiPref();
 }
 function renderAdminAll(){
   renderAdminStats(); renderAdminOrders(); renderAdminProducts(); renderAdminSite();
-  renderAdminPromos(); renderAdminVouchers(); renderAdminVideos(); renderAdminUsers(); renderAdminPayments(); renderAdminAI(); renderResiPref();
+  renderAdminPromos(); renderAdminVouchers(); renderAdminVideos(); renderAdminFloatAds(); renderAdminUsers(); renderAdminPayments(); renderAdminAI(); renderResiPref();
 }
 function renderAdminStats(){
   const totalSales = state.orders.filter(o=>o.status!=='canceled').reduce((s,o)=>s+o.total,0);
@@ -5827,6 +5906,7 @@ document.addEventListener('keydown', function(e){
   applySiteCfg(true);
   bootExtras();
   videoRestoreLocal();
+  renderFloatAds();
   aiApplyCfg();
   renderHomePromos();
   renderProducts();
@@ -5865,7 +5945,7 @@ const firebaseConfig = {
   measurementId: "G-LR4V70YPHW"
 };
 
-const SYNC_KEYS = ['products','promos','vouchers','payMethods','payExtra','videos','aiFaq','siteCfg'];
+const SYNC_KEYS = ['products','promos','vouchers','payMethods','payExtra','videos','aiFaq','siteCfg','floatAds'];
 const CHUNK = 250000;           // karakter per dokumen (batas Firestore 1 MiB)
 const MAX_JSON = 6000000;       // batas total per kunci
 const app = initializeApp(firebaseConfig);
@@ -5920,7 +6000,7 @@ function refreshAfterRemote(){
   try{
     if(typeof applySiteCfg==='function') applySiteCfg(true);
     if(typeof renderHomePromos==='function') renderHomePromos();
-    renderProducts(); renderVideoAds(); refreshVoucherViews(); renderCart(); updateBadges();
+    renderFloatAds(); renderProducts(); renderVideoAds(); refreshVoucherViews(); renderCart(); updateBadges();
     if(typeof aiApplyCfg==='function') aiApplyCfg();
     const ae = document.activeElement;
     if(state.adminLogged && !(ae && /INPUT|TEXTAREA|SELECT/.test(ae.tagName) && ae.closest('#adminDashboard'))) renderAdminAll();

@@ -5901,15 +5901,225 @@ function aiTrack(raw){
   if(!mine.length) return {html:'Kamu belum punya pesanan 📭 Yuk belanja dulu! Kirim nomor pesanan (FS7-xxxxxxxx) atau nomor resi jika ingin melacak.', chips:['Produk terbaru','Promo & voucher']};
   return {html:'Pesanan terakhirmu:<br><br>'+mine.map(aiOrderCard).join('<hr style="border:none;border-top:1px dashed var(--border);margin:8px 0">')+'<br>Kirim nomor pesanan / resi untuk detail satu pesanan.', chips:['Ongkir berapa?','Cara bayar']};
 }
-function aiFaqCustom(S){
-  let best = null, bs = 0;
-  aiKB().faq.forEach(f=>{
-    const ks = String(f.keywords).split(',').map(aiNorm).filter(Boolean); let s = 0;
-    ks.forEach(k=>{ if(S.indexOf(k)>-1) s += k.split(' ').length+1; });
-    if(s>bs){ bs = s; best = f; }
-  });
-  return best ? {html:esc(best.answer).replace(/\n/g,'<br>'), chips:['Promo & voucher','Produk terbaru']} : null;
+/* =========================================================
+   KECERDASAN AI — memahami pertanyaan yang MIRIP + pengetahuan website
+   - FAQ dashboard dicocokkan secara "fuzzy" (sinonim, imbuhan, typo)
+   - Basis pengetahuan website bawaan (AI_KB) untuk pertanyaan seputar website
+   ========================================================= */
+const AI_Q_STOP = new Set('yang dan atau di ke dari untuk dengan ini itu saya aku kamu anda mau ingin tolong dong ya kak kakak min admin tidak bisa boleh kah lah sih nih deh aja saja juga lagi sedang pada oleh akan telah sudah belum masih sama banget sekali ada adakah apakah apa mohon minta tanya tanyakan info informasi tentang soal kasih kasi mengenai terkait sebenarnya emang memang nya barang bagaimana gimana gmn kenapa mengapa bgmn dong sih tuh itu gitu begini begitu'.split(' '));
+const AI_CON = {};
+(function(){
+  const G = {
+    buat:['buat','bikin','bikinin','cipta','kembang','rancang','desain','bangun','develop','developer','programmer','pembuat','pencipta','pengembang','creator','author','coding','rakit','susun','dibuat','membuat','dibikin','membikin','diciptakan','dikembangkan','dirancang','dibangun','dikerjakan','garap','digarap'],
+    web:['web','website','situs','laman','aplikasi','app','toko','store','faren','farenstore','platform','online','webnya','shop','market'],
+    milik:['pemilik','owner','punya','penjual','founder','pendiri','pengelola','manajer','empunya','memiliki','dimiliki','mengelola','dikelola'],
+    kontak:['kontak','hubungi','menghubungi','telepon','telp','whatsapp','cs','customer','layanan','bantuan','help','call','nomor','hp','telpon','chat'],
+    alamat:['alamat','lokasi','letak','map','maps','peta','offline','cabang','gerai','dimana','domisili','kantor'],
+    jam:['jam','buka','tutup','operasional','jadwal'],
+    bayar:['bayar','pembayaran','transfer','metode','payment','lunas','membayar','dibayar','tagihan'],
+    kirim:['kirim','pengiriman','ongkir','ekspedisi','kurir','antar','delivery','shipping','sampai','paket','dikirim','mengirim','diantar','ongkos'],
+    retur:['retur','kembali','refund','tukar','garansi','jaminan','balikin','mengembalikan','pengembalian','menukar','ditukar','diretur','kembalikan'],
+    pesan:['pesan','order','pesanan','beli','belanja','checkout','pemesanan','purchase','borong','membeli','dibeli','memesan','berbelanja'],
+    akun:['daftar','register','registrasi','akun','login','masuk','signup','member','mendaftar','mendaftarkan','sandi','password','username','keluar','logout'],
+    lacak:['lacak','resi','tracking','track','pantau','melacak','cek','posisi','status'],
+    diskon:['diskon','potongan','promo','voucher','kupon','sale','cashback','hemat','coret','potong'],
+    stok:['stok','stock','tersedia','ready','sisa','persediaan','habis','kosong','restock','tersisa'],
+    varian:['ukuran','size','warna','varian','variasi','model','tipe','variant'],
+    aman:['aman','terpercaya','penipuan','tipu','scam','legit','resmi','asli','percaya','keamanan','privasi','dipercaya','amankah','bohong','abal'],
+    teknologi:['teknologi','tech','pakai','menggunakan','digunakan','dipakai','memakai','framework','bahasa','pemrograman','tools','alat','software','firebase','cloudflare','github','vscode','html','javascript','css','hosting','database','server','coding'],
+    ai:['ai','asisten','chatbot','bot','robot','kecerdasan','buatan'],
+    tema:['gelap','dark','tema','terang','mode','tampilan'],
+    siapa:['siapa','who','nama'],
+    kapan:['kapan','when','tanggal','sejak','berdiri','rilis','dirilis','launching','tahun'],
+    link:['link','url','domain','tautan','tayang'],
+    fitur:['fitur','kelebihan','keunggulan','fasilitas','kemampuan','manfaat','kegunaan','guna','fungsi','fungsinya'],
+    batal:['batal','batalkan','membatalkan','cancel','dibatalkan','salah'],
+    grosir:['grosir','reseller','dropship','dropshipper','partai','kerjasama','kolaborasi','agen','distributor'],
+    jelas:['jelaskan','ceritakan','terangkan','jelasin','cerita','tau','tahu','kenalkan','perkenalkan','deskripsi','gambaran','penjelasan'],
+    biaya:['biaya','modal','anggaran','gratis','berbayar','tarif'],
+    sosmed:['instagram','ig','twitter','media','sosial','sosmed','medsos','follow','ikuti','x']
+  };
+  Object.keys(G).forEach(k=>G[k].forEach(w=>{ if(!AI_CON[w]) AI_CON[w]=k; }));
+})();
+const AI_GEN = {web:1, siapa:1, pesan:1};
+const AI_DISC = {teknologi:1, kirim:1, bayar:1, retur:1, jam:1, alamat:1, stok:1, varian:1, aman:1, link:1, tema:1, ai:1, kontak:1, kapan:1, diskon:1, batal:1, grosir:1, sosmed:1, fitur:1, lacak:1, biaya:1};
+function aiStem(w){
+  let x = w;
+  x = x.replace(/(nya|lah|kah|kan|an|i)$/, m=>(x.length-m.length>=4 ? '' : m));
+  x = x.replace(/^(meng|meny|mem|men|me|peng|peny|pem|pen|pe|ber|ter|di|ke|se)/, m=>(x.length-m.length>=4 ? '' : m));
+  return x;
 }
+const AI_TOK_CACHE = {};
+function aiTokens(text){
+  const key = String(text);
+  if(AI_TOK_CACHE[key]) return AI_TOK_CACHE[key];
+  const out = [];
+  aiNorm(text).split(' ').forEach(w=>{
+    if(!w || w.length<2 || AI_Q_STOP.has(w)) return;
+    const st = aiStem(w);
+    out.push({raw:w, stem:st, con:AI_CON[w]||AI_CON[st]||null});
+  });
+  if(Object.keys(AI_TOK_CACHE).length>800) for(const k in AI_TOK_CACHE) delete AI_TOK_CACHE[k];
+  AI_TOK_CACHE[key] = out; return out;
+}
+function aiSimTok(a, b){
+  if(a.raw===b.raw) return 1;
+  if(a.stem===b.stem && a.stem.length>=3) return .95;
+  if(a.con && a.con===b.con) return .8;
+  const x = a.raw, y = b.raw;
+  if(x.length>=5 && y.length>=5){ const d = aiLev(x,y); if(d<=1) return .8; if(d<=2 && Math.min(x.length,y.length)>=8) return .7; }
+  if(a.stem.length>=5 && b.stem.length>=5 && (a.stem.indexOf(b.stem)===0 || b.stem.indexOf(a.stem)===0)) return .7;
+  return 0;
+}
+function aiPhraseScore(Q, P){
+  if(!P.length || !Q.length) return 0;
+  let sum = 0, strong = 0; const used = new Set();
+  P.forEach(p=>{
+    let b = 0, bi = -1;
+    Q.forEach((q,i)=>{ const s = aiSimTok(q,p); if(s>b){ b=s; bi=i; } });
+    sum += b;
+    if(b>=.7){ used.add(bi); if(!(p.con && AI_GEN[p.con])) strong++; }
+  });
+  const cover = sum/P.length;
+  let sc = cover*(0.72 + 0.28*Math.min(1, used.size/Q.length));
+  if(!strong) sc *= 0.5;
+  // kata penentu topik di pertanyaan yang tidak ada di frasa -> kemungkinan topiknya beda
+  const pc = {}; P.forEach(p=>{ if(p.con) pc[p.con] = 1; });
+  let miss = 0; Q.forEach(q=>{ if(q.con && AI_DISC[q.con] && !pc[q.con]) miss++; });
+  if(miss) sc *= Math.max(.3, 1-.45*miss);
+  return sc;
+}
+/* items: [{ref, phrases:[...]}] -> daftar terurut dari yang paling mirip */
+function aiMatch(q, items){
+  const Q = aiTokens(q); const out = [];
+  if(!Q.length) return out;
+  items.forEach(it=>{
+    let best = 0, bp = '';
+    it.phrases.forEach(ph=>{ const s = aiPhraseScore(Q, aiTokens(ph)); if(s>best){ best=s; bp=ph; } });
+    if(best>0) out.push({ref:it.ref, score:best, phrase:bp});
+  });
+  return out.sort((a,b)=>b.score-a.score);
+}
+function aiAnyFor(S){
+  const T = new Set(S.split(' ').filter(Boolean));
+  const W = w=> w.indexOf(' ')>-1 ? S.indexOf(w)>-1 : (w.length>=5 ? S.indexOf(w)>-1 : T.has(w));
+  return (...ws)=>ws.some(W);
+}
+function aiSiteKey(key){ try{ return aiSite(key, aiAnyFor(key)) || ''; }catch(e){ return ''; } }
+const AI_LINK = 'www.faren.store-7.workers.dev';
+const AI_KB = [
+  {q:['siapa yang membuat website ini','siapa pembuat website','website ini dibuat oleh siapa','siapa developer website ini','siapa yang bikin web ini','siapa pencipta website','siapa yang mengembangkan website','siapa tim pembuat website','siapa saja anggota kelompok pembuat','kelompok 7 itu siapa','dibuat siapa toko ini'],
+   a:()=>aiLines(['🛠️ '+aiB('Pembuat website'),'Website <b>Faren Store 7</b> dibuat oleh tim <b>Kelompok 7</b> sebagai proyek kewirausahaan, dibantu asisten AI untuk proses coding.','Nama lengkap tim pembuat bisa Kakak tanyakan ke CS atau lihat di bagian <b>Tentang Kami</b>.'])},
+  {q:['siapa pemilik toko ini','siapa yang punya toko','siapa owner website ini','toko ini milik siapa','siapa pengelola toko','siapa yang mengelola website'],
+   a:()=>aiLines(['🏬 '+aiB('Pemilik & pengelola'),'Faren Store 7 dikelola oleh tim <b>Kelompok 7</b>. Untuk pertanyaan seputar pemilik atau kerja sama, hubungi CS ya.'])},
+  {q:['website ini untuk apa','tujuan website ini dibuat','apa itu faren store 7','faren store 7 itu apa','ceritakan tentang website ini','jelaskan tentang toko ini','tentang toko ini','website ini jual apa','toko ini jual apa saja','profil toko'],
+   a:()=>{ const kb = aiKB(); const cats = aiCatList(kb).map(c=>esc(c.label)+' ('+c.n+')').join(', ');
+     return aiLines(['🏬 '+aiB('Faren Store 7'),'Toko fashion online yang berfokus pada '+esc(storeKind())+' untuk pria, wanita, serta hijab &amp; muslim.', kb.products.length?('Saat ini ada <b>'+kb.products.length+' produk</b>: '+cats+'.'):'', 'Ada promo, voucher, gratis ongkir, pelacakan resi, banyak metode pembayaran, dan asisten AI yang siap membantu 24 jam.','Website ini dibuat oleh Kelompok 7 sebagai proyek kewirausahaan.']); }},
+  {q:['arti nama faren store 7','kenapa namanya faren store','makna nama faren','kenapa ada angka 7','asal usul nama toko','nama toko ini dari mana','apa arti faren'],
+   a:()=>aiLines(['✨ '+aiB('Makna nama “Faren Store 7”'),'• <b>F — Faren:</b> nama khas yang singkat, unik, mudah diingat &amp; mudah dicari di Google.','• <b>S — Store:</b> menegaskan bahwa ini toko yang tertata dan terpercaya.','• <b>7:</b> berasal dari Kelompok 7, angka keberuntungan sekaligus identitas brand kami.'])},
+  {q:['website ini dibuat pakai apa','teknologi yang dipakai website','bahasa pemrograman apa yang digunakan','framework website ini','tools untuk membuat website','website ini pakai firebase','dibuat dengan coding apa','pakai hosting apa'],
+   a:()=>aiLines(['💻 '+aiB('Teknologi website'),'• Kode: <b>HTML, CSS, JavaScript</b> (ditulis di <b>VS Code</b>).','• Data realtime: <b>Firebase (Firestore)</b>.','• Hosting: <b>Cloudflare Workers</b>, kode disimpan &amp; diedit lewat <b>GitHub</b>.','• Asisten coding: <b>DeepSeek</b> dan <b>Claude</b>.','• Biaya pembuatan website: <b>Rp 0</b> (cukup laptop &amp; internet).'])},
+  {q:['apakah data website realtime','data tersinkron lewat firebase','database apa yang dipakai','kenapa data langsung berubah','produk langsung update','update otomatis','sinkron antar perangkat'],
+   a:()=>aiLines(['⚡ '+aiB('Data realtime'),'Data produk, stok, promo, voucher, dan FAQ disimpan di <b>Firebase</b>. Begitu admin mengubah sesuatu di dashboard, tampilan website ikut berubah tanpa perlu muat ulang, di HP maupun laptop.'])},
+  {q:['link website ini apa','alamat website toko','url toko online','domain website','website ini tayang dimana','hosting website dimana','bagaimana kalau website diedit apakah link berubah','link website berubah tidak','link','url','domain','alamat web'],
+   a:()=>aiLines(['🔗 '+aiB('Link website'),'Alamat website: <b>'+AI_LINK+'</b>','Website di-hosting di <b>Cloudflare</b> dan tersambung ke <b>GitHub</b>, jadi kalau kode diedit, website diperbarui otomatis <b>tanpa mengubah link</b>.'])},
+  {q:['biaya membuat website ini','website ini gratis','berapa modal untuk membuat website','website dibuat berapa biaya','apakah bikin website bayar'],
+   a:()=>aiLines(['💸 '+aiB('Biaya website'),'Biaya pembuatan website ini <b>Rp 0</b>. Semua alat yang dipakai (VS Code, Firebase, Cloudflare, GitHub, DeepSeek, Claude) memakai paket gratis, jadi cukup bermodal laptop dan internet.'])},
+  {q:['apakah website ini aman','toko ini terpercaya tidak','apakah ini penipuan','apakah data saya aman','keamanan data pengguna','privasi data pembeli','apakah toko ini legit','bisa dipercaya tidak'],
+   a:()=>aiLines(['🔒 '+aiB('Keamanan & kepercayaan'),'• Ada <b>Garansi Aman 30 hari</b> untuk tukar/retur sesuai ketentuan.','• Pembayaran lewat metode resmi (QRIS, e-wallet, transfer bank, kartu, COD).','• Pesananmu punya nomor pesanan &amp; resi yang bisa dilacak.','• Akun dan keranjang disimpan di perangkatmu; aku tidak pernah membagikan password atau data pengguna.','Tetap jaga kerahasiaan password dan jangan membagikan kode OTP ke siapa pun ya.'])},
+  {q:['bisa dibuka lewat hp','apakah website responsif','ada aplikasi mobile','apakah ada aplikasi android','bisa diakses dari laptop','download aplikasi toko'],
+   a:()=>aiLines(['📱 '+aiB('Akses website'),'Website bisa dibuka lewat browser di HP, tablet, maupun laptop, dan tampilannya menyesuaikan ukuran layar. Saat ini belum ada aplikasi terpisah, cukup buka <b>'+AI_LINK+'</b>.'])},
+  {q:['apa saja fitur website ini','fitur apa yang ada di toko','website ini bisa apa saja','kelebihan website ini','keunggulan toko ini','fasilitas apa saja'],
+   a:()=>aiLines(['🌟 '+aiB('Fitur Faren Store 7'),'• Katalog fashion: Pria, Wanita, Hijab &amp; Muslim, lengkap dengan pencarian &amp; filter.','• Pilihan warna/ukuran dengan stok &amp; harga per variasi.','• Diskon, harga coret, promo &amp; voucher (gratis ongkir, pengguna baru).','• Keranjang, wishlist, checkout dengan banyak metode bayar.','• Pelacakan pesanan &amp; resi, Garansi Aman 30 hari.','• Mode gelap/terang dan asisten <b>Faren AI</b> 24 jam.','• Dashboard admin dengan data realtime.'])},
+  {q:['cara belanja di website ini','cara memesan produk','gimana cara beli','bagaimana cara order','langkah checkout','cara pesan barang','mau beli gimana caranya','tutorial belanja'],
+   a:()=>aiSiteKey('cara belanja')},
+  {q:['cara daftar akun','cara login','bagaimana masuk akun','buat akun baru','cara mendaftar member','lupa password bagaimana','tidak bisa login'],
+   a:(S)=>aiSiteKey('daftar akun')+(/lupa|reset|tidak bisa|gagal/.test(S)?'<br>🔑 Kalau lupa password atau gagal masuk, hubungi CS agar dibantu ya.':'')},
+  {q:['cara menggunakan keranjang','ubah jumlah barang di keranjang','hapus produk dari keranjang','dimana keranjang belanja'],
+   a:()=>aiSiteKey('keranjang')},
+  {q:['apa itu wishlist','cara menyimpan produk favorit','dimana wishlist','simpan barang untuk nanti'],
+   a:()=>aiSiteKey('wishlist')},
+  {q:['cara mencari produk','fitur pencarian produk','filter kategori produk','bagaimana cari barang','urutkan produk berdasarkan harga'],
+   a:()=>aiLines(['🔎 '+aiB('Mencari produk'),'• Ketik di kolom <b>pencarian</b> di bagian atas (ada saran otomatis).','• Pilih menu kategori/segmen untuk menyaring produk.','• Atau langsung tanya aku, misalnya “kaos pria di bawah 150 ribu” atau “produk termurah”.'])},
+  {q:['cara memilih ukuran dan warna','stok per ukuran','ukuran saya habis','warna tidak tersedia','variasi produk','harga beda tiap ukuran','kenapa tidak bisa pilih ukuran','stok variasi'],
+   a:()=>aiLines(['🎨 '+aiB('Ukuran & warna'),'• Pilih dulu <b>warna/ukuran</b> di halaman detail sebelum menambah ke keranjang.','• Tiap ukuran/warna bisa punya <b>stok sendiri</b> (tampil “Stok N”). Yang “Habis” tidak bisa dipilih dan jumlah beli dibatasi sesuai stok.','• Harga bisa berbeda per ukuran/warna. Jika produk sedang diskon, diskon <b>otomatis</b> ikut ke harga tiap variasi.'])},
+  {q:['cara kerja diskon','harga coret itu apa','diskon otomatis pada variasi','kenapa harga berbeda','potongan harga produk','bagaimana diskon dihitung','apakah diskon berlaku ke semua ukuran'],
+   a:()=>aiLines(['🏷️ '+aiB('Diskon & harga coret'),'Harga yang dicoret adalah harga normal, harga besar di sampingnya adalah harga setelah diskon. Diskon produk berlaku otomatis ke semua <b>ukuran &amp; warna</b>. Selain itu ada <b>promo</b> dan <b>voucher</b> yang bisa dipakai saat checkout.'])},
+  {q:['cara klaim voucher','bagaimana cara pakai voucher','cara menggunakan kupon','klaim promo pengguna baru'],
+   a:()=>aiHowVoucher()},
+  {q:['masa berlaku voucher','voucher hangus kapan','promo apa yang aktif','ada voucher apa sekarang','kupon diskon yang tersedia'],
+   a:(S,any)=>aiVouchers(S,any)},
+  {q:['berapa ongkos kirim','biaya pengiriman','berapa lama pengiriman sampai','estimasi pengiriman','kurir apa saja','minimal belanja gratis ongkir','pakai ekspedisi apa'],
+   a:()=>aiShipping()},
+  {q:['metode pembayaran apa saja','cara bayar','bisa bayar pakai apa','apakah bisa cod','bisa transfer bank','ada qris tidak','pembayaran e-wallet'],
+   a:(S,any)=>aiPay(S,any)},
+  {q:['cara retur barang','bisa tukar ukuran','garansi barang bagaimana','kebijakan pengembalian','barang rusak harus bagaimana','proses refund','barang tidak sesuai'],
+   a:()=>aiSiteKey('garansi retur')},
+  {q:['hubungi customer service','kontak toko','nomor whatsapp toko','alamat toko dimana','toko offline ada tidak','lokasi toko','nomor telepon cs'],
+   a:()=>aiSiteKey('kontak')},
+  {q:['jam buka toko','jam operasional cs','toko buka jam berapa','layanan buka kapan','hari libur toko'],
+   a:()=>aiSiteKey('jam operasional')},
+  {q:['cara ganti tema gelap','bagaimana mode gelap','dark mode ada tidak','ubah tampilan terang'],
+   a:()=>aiSiteKey('dark tema')},
+  {q:['apa itu faren ai','apa yang bisa kamu lakukan','kamu bisa bantu apa','fitur chatbot ini apa','bisa tanya apa saja ke kamu'],
+   a:()=>aiLines(['🤖 '+aiB(esc(state.aiCfg.name||'Faren AI')),'Aku asisten AI Faren Store 7. Aku bisa membantu:','• Cari &amp; rekomendasi produk (harga, stok, warna, ukuran, diskon).','• Info promo, voucher, ongkir, dan metode pembayaran.','• Lacak pesanan lewat nomor pesanan/resi.','• Menjawab pertanyaan seputar website: cara belanja, garansi, kontak, teknologi, dan pembuat website.','Tanya dengan bahasa santai juga boleh, pertanyaan yang mirip tetap aku coba pahami 😊'])},
+  {q:['akun instagram toko','media sosial toko','instagram faren store','akun x twitter toko','ikuti kami dimana','sosial media faren'],
+   a:()=>{ const L = ['📣 '+aiB('Media sosial')]; try{ ['ig','sx'].forEach(k=>{ if(typeof SOCIALS!=='undefined' && SOCIALS[k]) L.push('• '+esc(SOCIALS[k].label)+': <b>'+esc(SOCIALS[k].handle)+'</b>'); }); }catch(e){} if(L.length<2) L.push('Ikuti kami di Instagram dan X untuk promo terbaru!'); return aiLines(L); }},
+  {q:['apa itu dashboard admin','fungsi dashboard','admin bisa apa saja','cara mengelola toko','bagaimana admin menambah produk'],
+   a:()=>aiLines(['🧰 '+aiB('Dashboard admin'),'Dashboard dipakai pengelola untuk menambah/mengubah produk (termasuk stok &amp; harga per ukuran/warna), promo, voucher, metode bayar, pesanan, tampilan toko, dan pengaturan Faren AI. Akses dashboard hanya untuk admin, jadi aku tidak bisa membagikan detail login.'])},
+  {q:['produk stok habis bagaimana','kapan restock','barang kosong bisa dipesan','bisa preorder tidak','stok produk sedikit'],
+   a:()=>aiLines(['📦 '+aiB('Stok produk'),'Stok ditampilkan di tiap produk (dan per ukuran/warna bila ada). Kalau stok habis, produk tidak bisa dimasukkan ke keranjang. Stok kami diisi bertahap dan ditambah dari hasil penjualan, jadi pantau terus atau tanya CS untuk jadwal restock.'])},
+  {q:['rating produk dari mana','ada review pembeli','testimoni pelanggan','bintang produk artinya apa'],
+   a:()=>aiLines(['⭐ '+aiB('Rating & ulasan'),'Rating bintang tampil di kartu dan halaman detail produk sebagai gambaran kualitas. Kamu juga bisa menyimpan produk favorit ke <b>Wishlist</b>.'])},
+  {q:['cara membatalkan pesanan','bisa cancel pesanan','salah pesan bagaimana','ubah alamat pesanan','ganti ukuran setelah pesan'],
+   a:()=>aiLines(['↩️ '+aiB('Batal / ubah pesanan'),'Hubungi CS <b>secepatnya</b> dan sebutkan nomor pesanan (contoh: FS7-12345678) supaya bisa dibantu sebelum pesanan dikirim. Cek juga nomor resi di <b>Pesanan Saya</b>.'])},
+  {q:['minimal belanja berapa','ada minimum order','minimal pembelian','belanja berapa dapat gratis ongkir'],
+   a:()=>aiLines(['🛒 '+aiB('Minimal belanja'),'Belanja mulai <b>'+rp(FREE_SHIP_MIN)+'</b> otomatis <b>gratis ongkir</b>; di bawah itu ongkir flat <b>'+rp(SHIP_FEE)+'</b>. Beberapa voucher/promo punya syarat minimum belanja sendiri (tertera di kartunya).'])},
+  {q:['bisa jadi reseller','beli grosir ada tidak','dropship bisa','kerja sama dengan toko','mau jadi agen'],
+   a:()=>aiLines(['🤝 '+aiB('Reseller & kerja sama'),'Untuk reseller, grosir, dropship, atau kerja sama, silakan hubungi CS ya. Detail kontak ada di menu <b>Pusat Bantuan</b>.'])},
+  {q:['berapa jumlah produk di website','ada berapa produk','total produk yang dijual','katalog ada berapa item'],
+   a:()=>{ const kb = aiKB(); const cats = aiCatList(kb).map(c=>'• '+esc(c.label)+' ('+c.n+')'); return aiLines(['🛍️ Saat ini ada '+aiB(kb.products.length+' produk')+(cats.length?' dalam kategori:':'.')].concat(cats)); }}
+];
+function aiMentionsProduct(S){
+  const toks = S.split(' ').filter(w=>w.length>=4 && !AI_STOP.has(w));
+  if(!toks.length) return false;
+  return aiKB().products.some(p=>{ const nm = aiNorm(p.name).split(' '); return toks.some(t=>nm.indexOf(t)>-1); });
+}
+function aiKbAnswer(q, S, th){
+  if(/kamu (bisa|dapat) (apa|bantu)|bisa apa aja|bisa bantu apa/.test(S)){ const h = AI_KB.find(e=>e.q[0]==='apa itu faren ai'); if(h){ const o = h.a(S, aiAnyFor(S), q); return {html:o, chips:aiChipsDefault()}; } }
+  if(aiMentionsProduct(S)) return null;
+  const hits = aiMatch(q, AI_KB.map(e=>({ref:e, phrases:e.q})));
+  const b = hits[0]; if(!b || b.score<th) return null;
+  let out; try{ out = b.ref.a(S, aiAnyFor(S), q); }catch(e){ console.error(e); return null; }
+  if(!out) return null;
+  return (typeof out==='string') ? {html:out, chips:aiChipsDefault()} : out;
+}
+function aiSuggest(q){
+  const items = AI_KB.map(e=>({ref:e, phrases:e.q})).concat(aiKB().faq.map(f=>({ref:f, phrases:String(f.keywords).split(/[,;\n|]/).map(x=>x.trim()).filter(Boolean)})));
+  return aiMatch(q, items).filter(h=>h.score>=0.4).slice(0,4).map(h=>{ const t = String(h.ref.q ? h.ref.q[0] : h.phrase).trim(); return t.charAt(0).toUpperCase()+t.slice(1)+(h.ref.q?'?':''); });
+}
+function aiWebKnowledgeText(){
+  const out = [];
+  AI_KB.forEach(e=>{ try{ const r = e.a('', aiAnyFor('')); const html = (typeof r==='string') ? r : (r&&r.html)||''; const t = String(html).replace(/<br\s*\/?>/gi,' ').replace(/<[^>]+>/g,' ').replace(/&amp;/g,'&').replace(/\s+/g,' ').trim(); if(t) out.push(e.q[0]+' => '+t.slice(0,700)); }catch(err){} });
+  return out.join('\n');
+}
+function aiFaqCustom(S, raw){
+  const faq = aiKB().faq; if(!faq.length) return null;
+  const answer = f=>esc(f.answer).replace(/\n/g,'<br>');
+  let best = null, bs = 0;
+  faq.forEach(f=>{
+    String(f.keywords).split(/[,;\n|]/).map(aiNorm).filter(Boolean).forEach(k=>{
+      if(S.indexOf(k)>-1){ const s = k.split(' ').length+1; if(s>bs){ bs = s; best = f; } }
+    });
+  });
+  if(best) return {html:answer(best), chips:['Promo & voucher','Produk terbaru']};
+  const hits = aiMatch(raw||S, faq.map(f=>({ref:f, phrases:String(f.keywords).split(/[,;\n|]/).map(x=>x.trim()).filter(Boolean)})));
+  const h = hits[0]; if(!h) return null;
+  if(h.score>=0.62) return {html:answer(h.ref), chips:['Promo & voucher','Produk terbaru']};
+  if(h.score>=0.5) return {html:'Sepertinya maksud Kakak: <i>“'+esc(h.phrase)+'”</i><br>'+answer(h.ref), chips:['Promo & voucher','Produk terbaru']};
+  return null;
+}
+
 function aiSite(S, any){
   if(any('retur','kembali','refund','garansi','tukar')) return aiLines(['🛡️ '+aiB('Garansi Aman'),'Barang bisa diretur/ditukar dalam <b>30 hari</b> setelah pembelian, selama tag masih utuh &amp; belum dipakai/dicuci. Tukar ukuran gratis. Klik <b>Garansi Aman</b> di footer untuk aturan lengkap.']);
   if(any('kontak','hubungi','cs','customer service','telepon','whatsapp','alamat toko')) return aiLines(['📞 '+aiB('Hubungi kami'),'Telepon/WA: 08xxxxxxxxxxx','📍 Alamat: Jl. Imam Bonjol No. 15–17, Kelurahan Dadapsari, Kecamatan Semarang Utara, Kota Semarang, Jawa Tengah','Jam layanan: 08.00 – 20.00 WIB']);
@@ -5929,12 +6139,13 @@ function aiAnswer(raw){
   const W = w=> w.indexOf(' ')>-1 ? S.indexOf(w)>-1 : (w.length>=5 ? S.indexOf(w)>-1 : T.has(w));
   const any = (...ws)=>ws.some(W);
   const kb = aiKB();
-  if(any('password admin','sandi admin','akun admin','data pengguna','data user','password pengguna','email pengguna','dashboard admin','login admin','kata sandi')) return {html:'🔒 Maaf, data akun/pengguna dan akses dashboard admin bersifat rahasia, jadi aku tidak bisa membagikannya. Untuk bantuan akun, hubungi CS ya.', chips:['Hubungi CS']};
-  const fq = aiFaqCustom(S); if(fq) return fq;
+  if(any('password admin','sandi admin','akun admin','data pengguna','data user','password pengguna','email pengguna','login admin','kata sandi') || (any('dashboard admin','panel admin') && any('password','sandi','login','masuk','akses','buka','username'))) return {html:'🔒 Maaf, data akun/pengguna dan akses dashboard admin bersifat rahasia, jadi aku tidak bisa membagikannya. Untuk bantuan akun, hubungi CS ya.', chips:['Hubungi CS']};
+  const fq = aiFaqCustom(S, q); if(fq) return fq;
   if(T.size<=4 && any('halo','hai','hi','hello','pagi','siang','sore','malam','assalamualaikum','permisi','p')) return {html:'Halo Kak! 👋 Ada yang bisa kubantu? Tanya produk, promo, voucher, ongkir, pembayaran, atau lacak pesanan.', chips:aiChipsDefault()};
   if(any('terima kasih','makasih','thanks','thx','terimakasih')) return {html:'Sama-sama! 😊 Kalau ada yang lain, tanya aja ya.', chips:aiChipsDefault()};
   if(any('dadah','bye','sampai jumpa')) return {html:'Sampai jumpa! Selamat berbelanja 🛍️', chips:[]};
   if(any('kamu siapa','siapa kamu','nama kamu','kamu ai','kamu bot')) return {html:'Aku '+esc(state.aiCfg.name||'Faren AI')+', asisten AI Faren Store 7 🤖. Aku membaca data toko secara langsung, jadi produk, promo, dan voucher terbaru selalu ikut terjawab.', chips:aiChipsDefault()};
+  { const ctxAttr = !!AI.ctx.product && any('harga','stok','warna','ukuran','spesifikasi','spek','rating','size','berapa') && !any('cara','bagaimana','kenapa','mengapa','aturan','kebijakan','website','web','situs','toko'); if(!ctxAttr){ const kb1 = aiKbAnswer(q, S, 0.72); if(kb1) return kb1; } }
   if(/fs7\s*-?\s*\d{6,10}/i.test(q) || /\b[A-Za-z]{0,6}\d{8,}\b/.test(q) || any('lacak','resi','pesanan saya','status pesanan','order saya','paket saya','tracking','kiriman')) return aiTrack(q);
   if(any('voucher saya','promo saya','kupon saya','voucher aku') || ((any('voucher','promo','kupon')) && any('punya','aktif saya','sisa','hangus','kedaluwarsa','expired','sudah klaim','udah klaim'))) return aiMine();
   if(any('voucher','promo','kupon','cashback','kode','klaim','claim') && any('cara','bagaimana','pakai','gunakan','klaim','claim') && !any('daftar promo')) return aiHowVoucher();
@@ -5949,7 +6160,12 @@ function aiAnswer(raw){
   const hasAttr = any('harga','stok','warna','ukuran','spesifikasi','spek','rating','berapa','size','fitur');
   const r = aiProducts(q, S, T, any);
   if(r.miss && hasAttr && AI.ctx.product) return aiProductDetail(AI.ctx.product, S, any);
-  if(r.miss) return {html:r.html, chips:r.chips};
+  if(r.miss){
+    const kb2 = aiKbAnswer(q, S, 0.5); if(kb2) return kb2;
+    const sg = aiSuggest(q);
+    if(sg.length) return {html:'Hmm, aku belum menemukan jawaban yang pas untuk <strong>“'+esc(q)+'”</strong> 🤔<br>Mungkin maksud Kakak salah satu ini? Klik pertanyaannya, atau tulis ulang dengan kata lain ya.', chips:sg};
+    return {html:r.html, chips:r.chips};
+  }
   return r;
 }
 function aiChipsDefault(){ return ['🛍️ Produk terbaru','🔥 Promo & voucher','🚚 Ongkir berapa?','💳 Cara bayar','📦 Lacak pesanan']; }
@@ -5992,7 +6208,8 @@ function aiKnowledgeText(){
     '\nPROMO:\n'+kb.promos.filter(p=>Number(p.active)===1).map(p=>p.title+' | '+p.code+' | '+p.desc).join('\n')+
     '\nVOUCHER:\n'+kb.vouchers.filter(v=>Number(v.active)===1).map(v=>v.title+' | '+v.code+' | '+(v.desc||'')).join('\n')+
     '\nPEMBAYARAN:\n'+kb.pay.filter(m=>Number(m.active)===1).map(m=>m.name+' | '+(m.accNo||'')).join('\n')+
-    '\nFAQ:\n'+kb.faq.map(f=>f.keywords+' => '+f.answer).join('\n');
+    '\nFAQ:\n'+kb.faq.map(f=>f.keywords+' => '+f.answer).join('\n')+
+    '\nINFO WEBSITE:\n'+aiWebKnowledgeText();
 }
 /* =========================================================
    API KEY AI — banyak penyedia (ChatGPT, Gemini, DeepSeek, Grok, Claude, dll)
@@ -6015,7 +6232,7 @@ function aiHasKey(){ return state.aiCfg.useLLM!==false && AI_PROVIDERS.some(x=>a
 function aiLocalOnly(q){ return /password|kata sandi|sandi admin|data pengguna|data user|dashboard admin|login admin|fs7\s*-?\s*\d{6,10}|\b[a-z]{0,6}\d{8,}\b|lacak|\bresi\b|status pesanan|pesanan saya|tracking|paket saya/i.test(q); }
 function aiFmt(t){ return esc(String(t)).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/`([^`]+)`/g,'<code>$1</code>').replace(/\n/g,'<br>'); }
 function aiSystemPrompt(){
-  return 'Kamu adalah '+(state.aiCfg.name||'Faren AI')+', asisten AI untuk toko online ('+storeKind()+') "Faren Store 7". Kamu boleh menjawab pertanyaan APA SAJA (pengetahuan umum, matematika, coding, saran, terjemahan, dan lainnya), tidak terbatas pada toko. Jawab dengan bahasa yang dipakai pengguna (default Bahasa Indonesia), ramah, jelas, dan ringkas. Sapa dan panggil pengguna dengan "Kak" (jangan memakai nama pribadi). Untuk pertanyaan tentang toko (produk, harga, stok, promo, voucher, pembayaran) gunakan DATA TOKO di bawah dan jangan mengarang. Jangan pernah membagikan password, data pengguna, atau akses dashboard admin.\n\nDATA TOKO:\n'+aiKnowledgeText();
+  return 'Kamu adalah '+(state.aiCfg.name||'Faren AI')+', asisten AI untuk toko online ('+storeKind()+') "Faren Store 7". Kamu boleh menjawab pertanyaan APA SAJA (pengetahuan umum, matematika, coding, saran, terjemahan, dan lainnya), tidak terbatas pada toko. Jawab dengan bahasa yang dipakai pengguna (default Bahasa Indonesia), ramah, jelas, dan ringkas. Sapa dan panggil pengguna dengan "Kak" (jangan memakai nama pribadi). Untuk pertanyaan tentang toko (produk, harga, stok, promo, voucher, pembayaran) gunakan DATA TOKO di bawah dan jangan mengarang. Jangan pernah membagikan password, data pengguna, atau akses dashboard admin. Jika pertanyaan pengguna mirip atau menyerupai isi FAQ dan INFO WEBSITE di bawah (walau kata-katanya berbeda), jawab berdasarkan isi tersebut; boleh diparafrasekan tetapi jangan mengarang di luar data. Jika ditanya siapa pembuat atau pemilik website, utamakan jawaban dari FAQ.\n\nDATA TOKO:\n'+aiKnowledgeText();
 }
 function aiHistory(q){
   const h = AI.log.slice(-10).map(m=>({role:m.role==='assistant'?'assistant':'user', content:String(m.content||'').slice(0,2000)}));
